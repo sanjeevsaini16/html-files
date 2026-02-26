@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React — Zero to Interview Ready</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04050a;--s1:#090b14;--s2:#0e1019;--s3:#141824;
+  --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);
+  --tx:#f0eeff;--mt:rgba(240,238,255,.52);--dm:rgba(240,238,255,.26);
+  /* React brand color + palette */
+  --re:#61dafb;--re2:rgba(97,218,251,.15);--re3:rgba(97,218,251,.08);
+  --gr:#4ade80;--or:#fb923c;--pu:#c084fc;--ye:#facc15;--pk:#f472b6;
+  --sw:272px;
+  --hf:'Plus Jakarta Sans',sans-serif;
+  --bf:'Plus Jakarta Sans',sans-serif;
+  --mf:'JetBrains Mono',monospace;
+  --mono:'Space Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--bf);background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex;font-size:14.5px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(97,218,251,.2);border-radius:2px}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sw);min-width:var(--sw);height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.sb-brand{padding:18px 16px 12px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--s1);z-index:9}
+.sb-logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;font-size:20px;background:radial-gradient(circle,rgba(97,218,251,.3) 0%,rgba(97,218,251,.08) 100%);border:1px solid rgba(97,218,251,.35);position:relative;overflow:hidden}
+.sb-logo::after{content:'⚛';font-size:18px;animation:spin 8s linear infinite;display:block}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.sb-title{font-family:var(--hf);font-size:15px;font-weight:800;color:var(--tx);line-height:1.2}
+.sb-sub{font-size:10px;color:var(--dm);margin-top:2px;font-family:var(--mf);letter-spacing:.04em}
+.sb-sec{font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--dm);padding:12px 16px 3px}
+.sb-a{display:flex;align-items:center;gap:7px;padding:6px 16px;font-size:12px;font-family:var(--hf);font-weight:500;color:var(--mt);border:none;background:none;cursor:pointer;width:100%;text-align:left;border-left:2px solid transparent;transition:all .12s ease}
+.sb-a:hover{color:var(--tx);background:rgba(97,218,251,.04);border-left-color:rgba(97,218,251,.2)}
+.sb-a.on{color:var(--re);border-left-color:var(--re);background:var(--re3)}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sb-prog{padding:11px 16px;border-top:1px solid var(--bd);margin-top:auto}
+.pl{font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dm);margin-bottom:4px}
+.pb{height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--re),var(--pu));width:0%;transition:width .4s ease;border-radius:2px}
+.pn{font-family:var(--mf);font-size:8.5px;color:var(--dm);margin-top:3px;text-align:right}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;min-width:0}
+
+/* ── HERO ── */
+.hero{padding:48px 56px 40px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 80% at -10% 50%,rgba(97,218,251,.07) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 60% at 110% 20%,rgba(192,132,252,.06) 0%,transparent 55%);
+  pointer-events:none}
+.hero-orbit{position:absolute;right:56px;top:50%;transform:translateY(-50%);width:140px;height:140px;opacity:.35}
+.orbit-ring{position:absolute;inset:0;border:1.5px solid rgba(97,218,251,.4);border-radius:50%;animation:orbit 4s linear infinite}
+.orbit-ring:nth-child(2){width:80%;height:80%;top:10%;left:10%;animation-duration:2.5s;animation-direction:reverse;border-color:rgba(192,132,252,.5)}
+.orbit-dot{width:8px;height:8px;background:var(--re);border-radius:50%;position:absolute;top:-4px;left:50%;transform:translateX(-50%)}
+.hero-ey{font-family:var(--mf);font-size:10px;color:var(--re);text-transform:uppercase;letter-spacing:.2em;margin-bottom:12px;display:flex;align-items:center;gap:8px;animation:fadeUp .5s ease both}
+.hero-ey::before{content:'';width:20px;height:1px;background:var(--re)}
+.hero-h1{font-family:var(--hf);font-size:clamp(28px,3.5vw,46px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:10px;animation:fadeUp .5s ease .06s both}
+.hero-h1 .re{color:var(--re)}
+.hero-h1 .dim{color:var(--mt)}
+.hero-p{max-width:560px;font-size:14.5px;color:var(--mt);line-height:1.75;margin-bottom:20px;animation:fadeUp .5s ease .12s both;font-weight:400}
+.hero-pills{display:flex;gap:7px;flex-wrap:wrap;animation:fadeUp .5s ease .18s both}
+.pill{padding:4px 12px;border-radius:50px;font-family:var(--mf);font-size:10px;border:1px solid var(--bd2);color:var(--mt);background:rgba(255,255,255,.03);letter-spacing:.03em}
+.pill.re{border-color:rgba(97,218,251,.35);color:var(--re);background:rgba(97,218,251,.06)}
+.pill.gr{border-color:rgba(74,222,128,.35);color:var(--gr);background:rgba(74,222,128,.06)}
+
+/* ── CONTENT ── */
+.ct{max-width:900px;padding:0 56px;margin:0 auto}
+.sec{padding:44px 0 20px;border-top:1px solid var(--bd)}
+.sec:first-child{border-top:none}
+.sec-n{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sec-n::after{content:'';height:1px;flex:1;max-width:28px;opacity:.3;background:currentColor}
+.sec-title{font-family:var(--hf);font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.15;margin-bottom:7px}
+.sec-desc{font-size:14px;color:var(--mt);line-height:1.78;margin-bottom:22px;max-width:700px}
+
+/* ── TOPIC CARDS ── */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px;margin-bottom:20px}
+.tc{background:var(--s2);border:1px solid var(--bd);border-radius:11px;padding:15px 17px;transition:all .16s ease;position:relative;overflow:hidden;cursor:default}
+.tc::after{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:var(--cat,var(--re));opacity:0;transition:opacity .16s ease}
+.tc:hover{border-color:var(--bd2);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.tc:hover::after{opacity:1}
+.tc-n{font-family:var(--hf);font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3;color:var(--tx)}
+.tc-d{font-size:12px;color:var(--mt);line-height:1.65}
+.tc-t{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+
+/* ── TAGS ── */
+.tag{font-family:var(--mf);font-size:9.5px;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:rgba(255,255,255,.04);color:var(--dm)}
+.tag.re{background:rgba(97,218,251,.12);color:var(--re);border-color:rgba(97,218,251,.28)}
+.tag.gr{background:rgba(74,222,128,.12);color:var(--gr);border-color:rgba(74,222,128,.28)}
+.tag.or{background:rgba(251,146,60,.12);color:var(--or);border-color:rgba(251,146,60,.28)}
+.tag.pu{background:rgba(192,132,252,.12);color:var(--pu);border-color:rgba(192,132,252,.28)}
+.tag.ye{background:rgba(250,204,21,.12);color:var(--ye);border-color:rgba(250,204,21,.28)}
+.tag.pk{background:rgba(244,114,182,.12);color:var(--pk);border-color:rgba(244,114,182,.28)}
+
+/* ── CODE ── */
+.cb{background:#06080f;border:1px solid var(--bd2);border-radius:11px;overflow:hidden;margin:12px 0}
+.ch{background:rgba(255,255,255,.035);padding:7px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.cdots{display:flex;gap:5px}
+.cd{width:9px;height:9px;border-radius:50%}
+.cd:nth-child(1){background:#ff5f57}.cd:nth-child(2){background:#febc2e}.cd:nth-child(3){background:#28c840}
+.cf{font-family:var(--mf);font-size:10px;color:rgba(97,218,251,.7)}
+.clg{font-family:var(--mf);font-size:9px;color:var(--dm);text-transform:uppercase;letter-spacing:.1em}
+pre{padding:14px 17px;overflow-x:auto;font-family:var(--mf);font-size:12px;line-height:1.85;color:#c9d1ff;tab-size:2}
+.k{color:#ff79c6}.s{color:#f1fa8c}.n{color:#bd93f9}.f{color:#8be9fd}.c{color:#44475a;font-style:italic}.t{color:#50fa7b}.o{color:#ff79c6}.cm{color:#6272a4;font-style:italic}.jsx{color:#ffb86c}
+
+/* ── CALLOUTS ── */
+.cl{border-radius:11px;padding:13px 18px;margin:10px 0 18px;font-size:13px;line-height:1.68}
+.cll{font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;font-weight:700}
+.cl p,.cl li{color:var(--mt)}
+.ci{background:rgba(97,218,251,.07);border:1px solid rgba(97,218,251,.2)}.ci .cll{color:var(--re)}
+.cg{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2)}.cg .cll{color:var(--gr)}
+.cw{background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.22)}.cw .cll{color:var(--or)}
+.cr{background:rgba(244,114,182,.07);border:1px solid rgba(244,114,182,.2)}.cr .cll{color:var(--pk)}
+
+/* ── VIZ ── */
+.viz{background:var(--s2);border:1px solid var(--bd);border-radius:13px;padding:20px;margin:16px 0;overflow:hidden}
+.viz-t{font-family:var(--hf);font-size:12px;font-weight:700;color:var(--mt);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.viz-t span{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:2px 7px;border-radius:4px;background:rgba(97,218,251,.08);color:rgba(97,218,251,.6)}
+
+/* ── INTERVIEW Q ── */
+.iq{border:1px solid rgba(250,204,21,.18);border-radius:11px;padding:15px 18px;margin:12px 0;background:rgba(250,204,21,.04);position:relative}
+.iq-badge{position:absolute;top:-8px;left:13px;background:var(--ye);color:#09090f;font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;padding:2px 8px;border-radius:3px;font-weight:700}
+.iq-q{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:7px}
+.iq-a{font-size:12.5px;color:var(--mt);line-height:1.7}
+.iq-a code{font-family:var(--mf);font-size:11px;background:rgba(255,255,255,.07);padding:2px 5px;border-radius:3px;color:var(--re)}
+
+/* ── TABLE ── */
+.ctab{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.ctab th{background:var(--s3);padding:8px 13px;text-align:left;font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--mt);font-weight:600}
+.ctab td{padding:8px 13px;border-bottom:1px solid var(--bd);vertical-align:top;color:var(--mt);line-height:1.55}
+.ctab tr:hover td{background:rgba(255,255,255,.015)}
+.ctab th:first-child,.ctab td:first-child{color:var(--re);font-family:var(--mf);font-size:11px}
+
+/* ── FORMULA / HIGHLIGHT ── */
+.formula{background:var(--s3);border-radius:7px;padding:11px 16px;font-family:var(--mf);font-size:11.5px;color:#c9d1ff;margin:9px 0;border-left:2px solid var(--re);line-height:1.85}
+
+/* ── CHECKLIST ── */
+.chk{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--bd2);border-radius:11px;padding:18px 22px;margin:22px 0}
+.chk-l{font-family:var(--mf);font-size:8.5px;text-transform:uppercase;letter-spacing:.15em;color:rgba(250,204,21,.7);margin-bottom:9px}
+.chk h3{font-family:var(--hf);font-size:14px;color:var(--tx);margin-bottom:9px;font-weight:700}
+.chk-li{list-style:none;display:flex;flex-direction:column;gap:5px}
+.chk-li li{font-size:12.5px;color:var(--mt);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.chk-li li::before{content:'□';color:rgba(250,204,21,.5);flex-shrink:0;font-family:var(--mf)}
+
+/* ── LEVEL BADGE ── */
+.lvl{display:inline-flex;align-items:center;gap:5px;font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:3px 9px;border-radius:50px;margin-bottom:12px}
+.lvl.easy{background:rgba(74,222,128,.12);color:var(--gr);border:1px solid rgba(74,222,128,.28)}
+.lvl.med{background:rgba(251,146,60,.12);color:var(--or);border:1px solid rgba(251,146,60,.28)}
+.lvl.hard{background:rgba(244,114,182,.12);color:var(--pk);border:1px solid rgba(244,114,182,.28)}
+
+/* ── DIVIDER ── */
+.hdiv{display:flex;align-items:center;gap:12px;margin:20px 0 8px;font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--dm)}
+.hdiv::before,.hdiv::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+footer{background:var(--s1);border-top:1px solid var(--bd);padding:20px 56px;text-align:center;font-size:12px;color:var(--dm);font-family:var(--mf)}
+footer strong{color:var(--re)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orbit{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo"></div>
+    <div class="sb-title">React — Zero to ∞</div>
+    <div class="sb-sub">Scratch → Interview Ready · India 2025</div>
+  </div>
+  <div class="sb-sec">Fundamentals</div>
+  <button class="sb-a on" onclick="go('r1')"><span class="sb-dot" style="background:var(--re)"></span>01 · What is React + JSX</button>
+  <button class="sb-a" onclick="go('r2')"><span class="sb-dot" style="background:var(--re)"></span>02 · Components & Props</button>
+  <button class="sb-a" onclick="go('r3')"><span class="sb-dot" style="background:var(--re)"></span>03 · State & Events</button>
+  <button class="sb-a" onclick="go('r4')"><span class="sb-dot" style="background:var(--re)"></span>04 · Virtual DOM & Reconciliation</button>
+  <button class="sb-a" onclick="go('r5')"><span class="sb-dot" style="background:var(--re)"></span>05 · Lifecycle & Hooks</button>
+  <div class="sb-sec">Core Hooks</div>
+  <button class="sb-a" onclick="go('r6')"><span class="sb-dot" style="background:var(--gr)"></span>06 · useState & useReducer</button>
+  <button class="sb-a" onclick="go('r7')"><span class="sb-dot" style="background:var(--gr)"></span>07 · useEffect Deep Dive</button>
+  <button class="sb-a" onclick="go('r8')"><span class="sb-dot" style="background:var(--gr)"></span>08 · useRef, useContext, useMemo</button>
+  <button class="sb-a" onclick="go('r9')"><span class="sb-dot" style="background:var(--gr)"></span>09 · Custom Hooks</button>
+  <div class="sb-sec">Patterns & Architecture</div>
+  <button class="sb-a" onclick="go('r10')"><span class="sb-dot" style="background:var(--or)"></span>10 · HOC, Render Props, Compound</button>
+  <button class="sb-a" onclick="go('r11')"><span class="sb-dot" style="background:var(--or)"></span>11 · State Management</button>
+  <button class="sb-a" onclick="go('r12')"><span class="sb-dot" style="background:var(--or)"></span>12 · React Router</button>
+  <div class="sb-sec">Performance</div>
+  <button class="sb-a" onclick="go('r13')"><span class="sb-dot" style="background:var(--pu)"></span>13 · Re-renders & Memoization</button>
+  <button class="sb-a" onclick="go('r14')"><span class="sb-dot" style="background:var(--pu)"></span>14 · Code Splitting & Lazy Loading</button>
+  <button class="sb-a" onclick="go('r15')"><span class="sb-dot" style="background:var(--pu)"></span>15 · Web Vitals & Profiling</button>
+  <div class="sb-sec">Advanced</div>
+  <button class="sb-a" onclick="go('r16')"><span class="sb-dot" style="background:var(--pk)"></span>16 · SSR, SSG & Hydration</button>
+  <button class="sb-a" onclick="go('r17')"><span class="sb-dot" style="background:var(--pk)"></span>17 · React 18 & Concurrent Mode</button>
+  <button class="sb-a" onclick="go('r18')"><span class="sb-dot" style="background:var(--pk)"></span>18 · Polyfills & Browser Compat</button>
+  <button class="sb-a" onclick="go('r19')"><span class="sb-dot" style="background:var(--pk)"></span>19 · Testing in React</button>
+  <button class="sb-a" onclick="go('r20')"><span class="sb-dot" style="background:var(--ye)"></span>20 · Interview Mastersheet</button>
+  <div class="sb-prog">
+    <div class="pl">Progress</div>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+    <div class="pn" id="pn">0%</div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main" id="ms">
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orbit">
+    <div class="orbit-ring"><div class="orbit-dot"></div></div>
+    <div class="orbit-ring"></div>
+  </div>
+  <div class="hero-ey">Startup to FAANG · India 2025</div>
+  <h1 class="hero-h1"><span class="re">React</span> —<br><span class="dim">Zero to Interview</span><br>Ready</h1>
+  <p class="hero-p">Every topic asked in Indian interviews — from 1-year to 10-year experience. Fundamentals, hooks, performance, code splitting, polyfills, Web Vitals, SSR, Concurrent Mode, and every pattern that gets asked in Flipkart, Swiggy, Razorpay, Google, Amazon India rounds.</p>
+  <div class="hero-pills">
+    <div class="pill re">⚛ React 18</div>
+    <div class="pill gr">20 Modules</div>
+    <div class="pill">Live Code Examples</div>
+    <div class="pill">Interview Questions</div>
+    <div class="pill">Startup → FAANG</div>
+    <div class="pill">Performance Deep Dive</div>
+  </div>
+</div>
+
+<div class="ct">
+
+<!-- ══ R1: WHAT IS REACT ══ -->
+<section class="sec" id="r1">
+  <div class="sec-n" style="color:var(--re)">Module 01 · Fundamentals</div>
+  <div class="lvl easy">● Beginner</div>
+  <h2 class="sec-title">What is React? + JSX</h2>
+  <p class="sec-desc">React is a JavaScript library (not a framework) by Meta for building UIs from composable components. It maintains a Virtual DOM, diffs it against the real DOM, and surgically updates only what changed. This is the answer to "Why React?" in every interview.</p>
+
+  <div class="viz">
+    <div class="viz-t">React vs Plain JS — What React Solves <span>Concept</span></div>
+    <canvas id="reactVizC" height="180"></canvas>
+  </div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">Library, Not Framework</div>
+      <div class="tc-d">React handles only the View layer. You bring your own routing (React Router), state management (Redux/Zustand), and data fetching (React Query). Angular is a full framework; React is intentionally minimal.</div>
+      <div class="tc-t"><span class="tag re">View only</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">Declarative vs Imperative</div>
+      <div class="tc-d">Imperative (jQuery): "Find element, change its text, add class." Declarative (React): "Given this state, the UI should look like this." React figures out HOW to update the DOM. You just describe WHAT it should look like.</div>
+      <div class="tc-t"><span class="tag re">Key concept</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">Component-Based</div>
+      <div class="tc-d">UI is broken into reusable, self-contained components. Each manages its own state and renders its own HTML. Components compose like Lego bricks. Large apps = many small, testable components.</div>
+      <div class="tc-t"><span class="tag re">Core idea</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">Unidirectional Data Flow</div>
+      <div class="tc-d">Data flows DOWN from parent to child via props. Events flow UP via callback functions. This makes data flow predictable and bugs easy to trace. Unlike Angular's two-way binding.</div>
+      <div class="tc-t"><span class="tag re">Props down, events up</span></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">01_jsx_basics.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// JSX = JavaScript + XML syntax. Babel transforms it to React.createElement()</span>
+<span class="cm">// These two are IDENTICAL:</span>
+
+<span class="cm">// JSX way (what you write):</span>
+<span class="k">const</span> el = &lt;<span class="t">h1</span> <span class="f">className</span>=<span class="s">"title"</span>&gt;Hello, {name}!&lt;/<span class="t">h1</span>&gt;;
+
+<span class="cm">// What Babel compiles it to:</span>
+<span class="k">const</span> el = React.<span class="f">createElement</span>(<span class="s">'h1'</span>, { className: <span class="s">'title'</span> }, <span class="s">`Hello, ${name}!`</span>);
+
+<span class="cm">// ─── JSX Rules ─────────────────────────────────────────────</span>
+<span class="cm">// 1. class → className (class is reserved in JS)</span>
+<span class="cm">// 2. for → htmlFor</span>
+<span class="cm">// 3. Self-close all empty tags: &lt;img /&gt; &lt;input /&gt; &lt;br /&gt;</span>
+<span class="cm">// 4. One root element (or use Fragment &lt;&gt;&lt;/&gt;)</span>
+<span class="cm">// 5. Expressions in {}, NOT statements</span>
+
+<span class="k">function</span> <span class="f">UserCard</span>({ name, age, isOnline }) {
+  <span class="k">return</span> (
+    &lt;&gt;                                         <span class="cm">{/* Fragment — no extra div */}</span>
+      &lt;<span class="t">h2</span>&gt;{name}&lt;/<span class="t">h2</span>&gt;
+      &lt;<span class="t">p</span>&gt;Age: {age}&lt;/<span class="t">p</span>&gt;
+      &lt;<span class="t">span</span> <span class="f">className</span>={isOnline ? <span class="s">'online'</span> : <span class="s">'offline'</span>}&gt;
+        {isOnline ? <span class="s">'● Online'</span> : <span class="s">'○ Offline'</span>}
+      &lt;/<span class="t">span</span>&gt;
+      {age &gt;= <span class="n">18</span> &amp;&amp; &lt;<span class="t">button</span>&gt;Adult Features&lt;/<span class="t">button</span>&gt;}  <span class="cm">{/* conditional render */}</span>
+    &lt;/&gt;
+  );
+}</pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Asked in: Every Company</div>
+    <div class="iq-q">What is the difference between React and Angular/Vue?</div>
+    <div class="iq-a">React is a <strong>library</strong> — only handles the View layer. Angular is a complete <strong>framework</strong> with its own router, HTTP client, forms, DI system. Vue is a <strong>progressive framework</strong> between the two. React has the largest ecosystem and is the most commonly asked in Indian product companies (Flipkart, Swiggy, Meesho, Razorpay all use React).</div>
+  </div>
+</section>
+
+<!-- ══ R2: COMPONENTS & PROPS ══ -->
+<section class="sec" id="r2">
+  <div class="sec-n" style="color:var(--re)">Module 02 · Fundamentals</div>
+  <div class="lvl easy">● Beginner</div>
+  <h2 class="sec-title">Components & Props</h2>
+  <p class="sec-desc">Components are the building blocks of React. Props are the inputs — read-only data passed from parent to child. Understanding prop types, default props, children, and prop drilling lays the foundation for everything that follows.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">02_components_props.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── Functional Component (modern, preferred) ──────────────</span>
+<span class="k">function</span> <span class="f">Button</span>({ label, onClick, variant = <span class="s">'primary'</span>, disabled = <span class="k">false</span> }) {
+  <span class="k">return</span> (
+    &lt;<span class="t">button</span>
+      <span class="f">onClick</span>={onClick}
+      <span class="f">disabled</span>={disabled}
+      <span class="f">className</span>={<span class="s">`btn btn-${variant}`</span>}
+    &gt;
+      {label}
+    &lt;/<span class="t">button</span>&gt;
+  );
+}
+
+<span class="cm">// ─── Children prop ─────────────────────────────────────────</span>
+<span class="k">function</span> <span class="f">Card</span>({ title, children }) {
+  <span class="k">return</span> (
+    &lt;<span class="t">div</span> <span class="f">className</span>=<span class="s">"card"</span>&gt;
+      &lt;<span class="t">h3</span>&gt;{title}&lt;/<span class="t">h3</span>&gt;
+      &lt;<span class="t">div</span> <span class="f">className</span>=<span class="s">"card-body"</span>&gt;{children}&lt;/<span class="t">div</span>&gt;  <span class="cm">{/* slot pattern */}</span>
+    &lt;/<span class="t">div</span>&gt;
+  );
+}
+<span class="cm">// Usage: &lt;Card title="Profile"&gt;&lt;UserCard /&gt;&lt;/Card&gt;</span>
+
+<span class="cm">// ─── Props spreading (careful — don't overuse) ─────────────</span>
+<span class="k">function</span> <span class="f">Input</span>({ label, ...rest }) {     <span class="cm">// rest = remaining props</span>
+  <span class="k">return</span> (
+    &lt;<span class="t">label</span>&gt;
+      {label}
+      &lt;<span class="t">input</span> {...rest} /&gt;              <span class="cm">{/* spread all HTML attrs */}</span>
+    &lt;/<span class="t">label</span>&gt;
+  );
+}
+
+<span class="cm">// ─── Prop types of data you can pass ──────────────────────</span>
+&lt;<span class="t">MyComponent</span>
+  <span class="f">str</span>=<span class="s">"hello"</span>           <span class="cm">// string</span>
+  <span class="f">num</span>={<span class="n">42</span>}             <span class="cm">// number (curly braces!)</span>
+  <span class="f">bool</span>={<span class="k">true</span>}          <span class="cm">// boolean (or just write: bool)</span>
+  <span class="f">arr</span>={[<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>]}      <span class="cm">// array</span>
+  <span class="f">obj</span>={{ key: <span class="s">'val'</span> }} <span class="cm">// object</span>
+  <span class="f">fn</span>={() =&gt; {}}         <span class="cm">// function</span>
+  <span class="f">jsx</span>={&lt;<span class="t">Icon</span> /&gt;}       <span class="cm">// JSX element</span>
+/&gt;</pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Startup round</div>
+    <div class="iq-q">What is prop drilling and how do you avoid it?</div>
+    <div class="iq-a">Prop drilling is passing props through many intermediate components that don't need them, just to reach a deeply nested child. Solutions: (1) <code>Context API</code> for global/shared state. (2) <code>Component composition</code> — pass the child component directly instead of its data. (3) State management libraries (Redux, Zustand). Prefer composition first, then Context, then Redux.</div>
+  </div>
+</section>
+
+<!-- ══ R3: STATE & EVENTS ══ -->
+<section class="sec" id="r3">
+  <div class="sec-n" style="color:var(--re)">Module 03 · Fundamentals</div>
+  <div class="lvl easy">● Beginner</div>
+  <h2 class="sec-title">State & Event Handling</h2>
+  <p class="sec-desc">State is private, mutable data owned by a component. When state changes, React re-renders the component. Understanding when to use state vs props, and how events work, is fundamental for every interview.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">03_state_events.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { useState } from <span class="s">'react'</span>;
+
+<span class="k">function</span> <span class="f">Counter</span>() {
+  <span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);   <span class="cm">// [value, setter]</span>
+
+  <span class="cm">// ─── NEVER mutate state directly ──────────────────────</span>
+  <span class="cm">// ❌ count++            (mutation — won't trigger re-render)</span>
+  <span class="cm">// ✅ setCount(count + 1) (creates new value, triggers re-render)</span>
+
+  <span class="cm">// ─── Functional update (when new state depends on old) ─</span>
+  <span class="k">const</span> <span class="f">increment</span> = () =&gt; setCount(prev =&gt; prev + <span class="n">1</span>);  <span class="cm">// safe</span>
+
+  <span class="cm">// ─── State batching (React 18 batches everything) ──────</span>
+  <span class="k">const</span> <span class="f">handleClick</span> = () =&gt; {
+    setCount(c =&gt; c + <span class="n">1</span>);  <span class="cm">// batched — only ONE re-render total</span>
+    setCount(c =&gt; c + <span class="n">1</span>);  <span class="cm">// functional updates still stack correctly</span>
+  };                         <span class="cm">// count increases by 2, but 1 re-render</span>
+
+  <span class="cm">// ─── Object state — spread to preserve other keys ─────</span>
+  <span class="k">const</span> [form, setForm] = <span class="f">useState</span>({ name: <span class="s">''</span>, email: <span class="s">''</span> });
+  <span class="k">const</span> <span class="f">handleChange</span> = (e) =&gt; setForm(prev =&gt; ({
+    ...prev,                    <span class="cm">// keep other fields</span>
+    [e.target.name]: e.target.value  <span class="cm">// update only this field</span>
+  }));
+
+  <span class="k">return</span> (
+    &lt;<span class="t">div</span>&gt;
+      &lt;<span class="t">p</span>&gt;Count: {count}&lt;/<span class="t">p</span>&gt;
+      &lt;<span class="t">button</span> <span class="f">onClick</span>={increment}&gt;+&lt;/<span class="t">button</span>&gt;
+      <span class="cm">{/* Synthetic events — React wraps native events */}</span>
+      &lt;<span class="t">input</span> <span class="f">onChange</span>={handleChange} <span class="f">name</span>=<span class="s">"name"</span> /&gt;
+      &lt;<span class="t">form</span> <span class="f">onSubmit</span>={(e) =&gt; { e.<span class="f">preventDefault</span>(); }}&gt; <span class="cm">{/* prevent default! */}</span>
+    &lt;/<span class="t">div</span>&gt;
+  );
+}</pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Very common — Flipkart, Meesho</div>
+    <div class="iq-q">Why doesn't React state update immediately after calling setState?</div>
+    <div class="iq-a">State updates in React are <strong>asynchronous and batched</strong>. When you call <code>setState</code>, React schedules a re-render — it doesn't happen synchronously. After the function finishes, React batches all state updates and does one re-render. If you need the new state value immediately, use a <code>useEffect</code> with the state as a dependency, or use functional updates like <code>setState(prev => prev + 1)</code>.</div>
+  </div>
+</section>
+
+<!-- ══ R4: VIRTUAL DOM ══ -->
+<section class="sec" id="r4">
+  <div class="sec-n" style="color:var(--re)">Module 04 · Fundamentals</div>
+  <div class="lvl easy">● Beginner → Mid</div>
+  <h2 class="sec-title">Virtual DOM & Reconciliation</h2>
+  <p class="sec-desc">The Virtual DOM is React's secret weapon. Understanding it — and the diffing algorithm — is asked in almost every interview in India, from startups to Google. This is where React's performance story begins.</p>
+
+  <div class="viz">
+    <div class="viz-t">Virtual DOM → Diff → Patch Real DOM <span>Animated</span></div>
+    <canvas id="vdomC" height="220"></canvas>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="animVDOM()" style="padding:4px 14px;border-radius:50px;border:1px solid var(--re);background:var(--re2);color:var(--re);font-family:var(--mf);font-size:10px;cursor:pointer">▶ Show Update Cycle</button>
+      <button onclick="resetVDOM()" style="padding:4px 14px;border-radius:50px;border:1px solid var(--bd2);background:var(--s3);color:var(--mt);font-family:var(--mf);font-size:10px;cursor:pointer">↺ Reset</button>
+    </div>
+    <p style="font-size:11.5px;color:var(--dm);margin-top:8px">React keeps two VDOMs: previous and next. It diffs them (O(n) with heuristics), finds the minimal set of DOM operations, then batches and applies them to the real DOM.</p>
+  </div>
+
+  <div class="formula">
+Real DOM update = Expensive (reflow + repaint + layout recalculation)
+Virtual DOM diff = Cheap (plain JS object comparison in memory)
+React's work = diff VDOMs → find minimum changes → apply to real DOM</div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">Diffing Algorithm (Reconciliation)</div>
+      <div class="tc-d">React's O(n) heuristics: (1) If element type changes, tear down and rebuild the subtree entirely. (2) Same type = update attributes/props in place. (3) Lists use the key prop to match old and new items without re-mounting.</div>
+      <div class="tc-t"><span class="tag re">O(n) not O(n³)</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">The key Prop</div>
+      <div class="tc-d">Without keys, React re-renders the entire list on any change. With stable keys (IDs, not array index), React matches existing components to new ones → only mounts/unmounts what actually changed. Never use array index as key if list can reorder.</div>
+      <div class="tc-t"><span class="tag re">Critical</span><span class="tag or">Never use index</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--re)">
+      <div class="tc-n">React Fiber</div>
+      <div class="tc-d">React 16's rewrite of the reconciler. Breaks rendering work into small "fibers" (units of work) that can be paused, resumed, prioritized, or abandoned. Enables concurrent mode, Suspense, and time-slicing. Prioritizes user interactions over background rendering.</div>
+      <div class="tc-t"><span class="tag pu">Concurrent Mode</span></div>
+    </div>
+  </div>
+
+  <div class="iq"><div class="iq-badge">🎯 Google, Amazon, Flipkart — very common</div>
+    <div class="iq-q">Explain Virtual DOM. Why is it faster than the real DOM?</div>
+    <div class="iq-a">The Virtual DOM is a lightweight JavaScript object representation of the real DOM. When state changes: (1) React creates a new VDOM tree. (2) Diffs it against the previous VDOM (reconciliation) — this is pure JS, very fast. (3) Computes minimal DOM mutations. (4) Applies them in a single batch to the real DOM. The real DOM is expensive because every change can trigger reflow (layout recalculation) and repaint. Batching updates via the VDOM minimizes these expensive operations.</div>
+  </div>
+</section>
+
+<!-- ══ R5: LIFECYCLE ══ -->
+<section class="sec" id="r5">
+  <div class="sec-n" style="color:var(--re)">Module 05 · Fundamentals</div>
+  <div class="lvl easy">● Beginner → Mid</div>
+  <h2 class="sec-title">Component Lifecycle & Hooks Overview</h2>
+  <p class="sec-desc">Class components had lifecycle methods. Hooks replaced them for functional components. You must know both — class components still exist in old codebases and lifecycle questions still appear in interviews.</p>
+
+  <table class="ctab">
+    <thead><tr><th>Class Lifecycle</th><th>Hook Equivalent</th><th>When It Runs</th></tr></thead>
+    <tbody>
+      <tr><td>constructor()</td><td>useState / useReducer</td><td>Component created — initialize state</td></tr>
+      <tr><td>componentDidMount()</td><td>useEffect(() => {}, [])</td><td>After first render — fetch data, subscriptions</td></tr>
+      <tr><td>componentDidUpdate()</td><td>useEffect(() => {}, [deps])</td><td>After every render when deps changed</td></tr>
+      <tr><td>componentWillUnmount()</td><td>useEffect cleanup (return fn)</td><td>Before component removed — cleanup timers, listeners</td></tr>
+      <tr><td>shouldComponentUpdate()</td><td>React.memo / useMemo</td><td>Decide whether to re-render</td></tr>
+      <tr><td>render()</td><td>return JSX from function</td><td>Every render</td></tr>
+      <tr><td>componentDidCatch()</td><td>No hook equivalent</td><td>Error boundary — still needs class component</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cl ci"><div class="cll">💡 Key Interview Point</div><p>Error Boundaries <strong>cannot be implemented with hooks</strong> — they still require class components with <code>componentDidCatch</code> and <code>getDerivedStateFromError</code>. This is the one remaining reason you'd write a class component today.</p></div>
+</section>
+
+<!-- ══ R6: USESTATE USEREDUCER ══ -->
+<section class="sec" id="r6">
+  <div class="sec-n" style="color:var(--gr)">Module 06 · Core Hooks</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">useState & useReducer</h2>
+  <p class="sec-desc">useState is for simple state. useReducer is for complex state with multiple related updates — the same pattern as Redux but local to one component. Choosing between them correctly shows seniority.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">06_state_hooks.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── useState — for simple, independent pieces of state ────</span>
+<span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);
+<span class="k">const</span> [user, setUser] = <span class="f">useState</span>(<span class="k">null</span>);
+<span class="k">const</span> [items, setItems] = <span class="f">useState</span>([]);
+
+<span class="cm">// Lazy initializer — function runs ONCE (avoids expensive recompute)</span>
+<span class="k">const</span> [data, setData] = <span class="f">useState</span>(() =&gt; JSON.<span class="f">parse</span>(localStorage.<span class="f">getItem</span>(<span class="s">'data'</span>)));
+
+<span class="cm">// ─── useReducer — for complex state logic ──────────────────</span>
+<span class="k">const</span> initialState = { count: <span class="n">0</span>, loading: <span class="k">false</span>, error: <span class="k">null</span> };
+
+<span class="k">function</span> <span class="f">reducer</span>(state, action) {
+  <span class="k">switch</span> (action.type) {
+    <span class="k">case</span> <span class="s">'INCREMENT'</span>: <span class="k">return</span> { ...state, count: state.count + <span class="n">1</span> };
+    <span class="k">case</span> <span class="s">'SET_LOADING'</span>: <span class="k">return</span> { ...state, loading: action.payload };
+    <span class="k">case</span> <span class="s">'SET_ERROR'</span>:  <span class="k">return</span> { ...state, error: action.payload, loading: <span class="k">false</span> };
+    <span class="k">default</span>: <span class="k">return</span> state;
+  }
+}
+
+<span class="k">function</span> <span class="f">MyComponent</span>() {
+  <span class="k">const</span> [state, dispatch] = <span class="f">useReducer</span>(reducer, initialState);
+
+  <span class="k">const</span> <span class="f">fetchData</span> = <span class="k">async</span> () =&gt; {
+    dispatch({ type: <span class="s">'SET_LOADING'</span>, payload: <span class="k">true</span> });
+    <span class="k">try</span> {
+      <span class="k">const</span> data = <span class="k">await</span> api.<span class="f">fetch</span>();
+      dispatch({ type: <span class="s">'INCREMENT'</span> });
+    } <span class="k">catch</span> (e) {
+      dispatch({ type: <span class="s">'SET_ERROR'</span>, payload: e.message });
+    }
+  };
+}</pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Swiggy, Razorpay — common</div>
+    <div class="iq-q">When do you use useReducer over useState?</div>
+    <div class="iq-a">Use <code>useReducer</code> when: (1) Next state depends on previous state in complex ways. (2) Multiple pieces of state update together (loading, error, data — the "fetch" pattern). (3) State transitions have named actions — makes debugging much easier. (4) You have 3+ related useState calls that always update together. Rule of thumb: if your setState logic is complex enough to have bugs, move it to a reducer.</div>
+  </div>
+</section>
+
+<!-- ══ R7: USEEFFECT ══ -->
+<section class="sec" id="r7">
+  <div class="sec-n" style="color:var(--gr)">Module 07 · Core Hooks</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">useEffect — Deep Dive</h2>
+  <p class="sec-desc">useEffect is the most misunderstood hook. It's NOT a lifecycle method replacement — it's a synchronization tool. Getting the dependency array right, cleanup functions, and avoiding race conditions are key interview topics.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">07_useeffect.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { useState, useEffect } from <span class="s">'react'</span>;
+
+<span class="cm">// ─── Three forms of useEffect ─────────────────────────────</span>
+<span class="f">useEffect</span>(() =&gt; {});              <span class="cm">// runs after EVERY render (rarely want this)</span>
+<span class="f">useEffect</span>(() =&gt; {}, []);          <span class="cm">// runs ONCE after mount (componentDidMount)</span>
+<span class="f">useEffect</span>(() =&gt; {}, [userId]);    <span class="cm">// runs when userId changes</span>
+
+<span class="cm">// ─── Data fetching with cleanup (race condition fix) ───────</span>
+<span class="k">function</span> <span class="f">UserProfile</span>({ userId }) {
+  <span class="k">const</span> [user, setUser] = <span class="f">useState</span>(<span class="k">null</span>);
+
+  <span class="f">useEffect</span>(() =&gt; {
+    <span class="k">let</span> cancelled = <span class="k">false</span>;        <span class="cm">// ← race condition fix</span>
+
+    <span class="k">async function</span> <span class="f">fetchUser</span>() {
+      <span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(<span class="s">`/api/users/${userId}`</span>).<span class="f">then</span>(r =&gt; r.<span class="f">json</span>());
+      <span class="k">if</span> (!cancelled) <span class="f">setUser</span>(data);  <span class="cm">// only set if component still mounted</span>
+    }
+
+    <span class="f">fetchUser</span>();
+    <span class="k">return</span> () =&gt; { cancelled = <span class="k">true</span>; }; <span class="cm">// cleanup: cancel stale request</span>
+  }, [userId]);                             <span class="cm">// re-fetch when userId changes</span>
+
+  <span class="k">return</span> user ? &lt;<span class="t">div</span>&gt;{user.name}&lt;/<span class="t">div</span>&gt; : &lt;<span class="t">div</span>&gt;Loading...&lt;/<span class="t">div</span>&gt;;
+}
+
+<span class="cm">// ─── Event listeners with cleanup ─────────────────────────</span>
+<span class="f">useEffect</span>(() =&gt; {
+  <span class="k">const</span> <span class="f">handleResize</span> = () =&gt; <span class="f">setWidth</span>(window.innerWidth);
+  window.<span class="f">addEventListener</span>(<span class="s">'resize'</span>, handleResize);
+  <span class="k">return</span> () =&gt; window.<span class="f">removeEventListener</span>(<span class="s">'resize'</span>, handleResize); <span class="cm">// ← critical!</span>
+}, []);</pre></div>
+
+  <div class="cl cw"><div class="cll">⚠️ Most Common useEffect Mistakes</div>
+  <p style="margin-bottom:6px">1. <strong>Missing dependency</strong>: using a variable in the effect but not listing it → stale closure bug. ESLint exhaustive-deps catches this.<br>
+  2. <strong>Object/array in deps</strong>: {a:1} !== {a:1} in JS → infinite loop. Use useMemo or move object inside effect.<br>
+  3. <strong>No cleanup</strong>: event listeners, timers, subscriptions leak memory → always return cleanup function.<br>
+  4. <strong>Async function directly</strong>: useEffect callback can't be async — create an inner async function.</p></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Very common — all levels</div>
+    <div class="iq-q">What is a stale closure in useEffect?</div>
+    <div class="iq-a">A stale closure occurs when an effect captures a variable from its outer scope, but that variable later changes and the effect still uses the old value. Example: <code>useEffect(() => { setInterval(() => console.log(count), 1000) }, [])</code> — count will always log 0 because the effect closed over the initial value. Fix: add <code>count</code> to deps array, or use <code>useRef</code> to store the latest value, or use functional state updates.</div>
+  </div>
+</section>
+
+<!-- ══ R8: MORE HOOKS ══ -->
+<section class="sec" id="r8">
+  <div class="sec-n" style="color:var(--gr)">Module 08 · Core Hooks</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">useRef, useContext & useMemo</h2>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">08_hooks.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── useRef — persists value without re-render ─────────────</span>
+<span class="k">const</span> inputRef = <span class="f">useRef</span>(<span class="k">null</span>);         <span class="cm">// DOM reference</span>
+<span class="k">const</span> timerRef = <span class="f">useRef</span>(<span class="k">null</span>);         <span class="cm">// mutable value, NO re-render on change</span>
+<span class="k">const</span> prevCount = <span class="f">useRef</span>(count);       <span class="cm">// track previous value</span>
+
+<span class="cm">// DOM access:</span>
+&lt;<span class="t">input</span> <span class="f">ref</span>={inputRef} /&gt;
+<span class="k">const</span> <span class="f">focus</span> = () =&gt; inputRef.current.<span class="f">focus</span>();  <span class="cm">// imperatively focus input</span>
+
+<span class="cm">// ─── useContext — consume context without Consumer wrapper ─</span>
+<span class="k">const</span> ThemeContext = React.<span class="f">createContext</span>(<span class="s">'light'</span>);
+
+<span class="k">function</span> <span class="f">App</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="t">ThemeContext.Provider</span> <span class="f">value</span>=<span class="s">"dark"</span>&gt;
+      &lt;<span class="t">Child</span> /&gt;
+    &lt;/<span class="t">ThemeContext.Provider</span>&gt;
+  );
+}
+
+<span class="k">function</span> <span class="f">Child</span>() {
+  <span class="k">const</span> theme = <span class="f">useContext</span>(ThemeContext);  <span class="cm">// → "dark"</span>
+  <span class="k">return</span> &lt;<span class="t">div</span> <span class="f">className</span>={theme}&gt;...&lt;/<span class="t">div</span>&gt;;
+}
+
+<span class="cm">// ─── useMemo — memoize expensive computation ───────────────</span>
+<span class="k">const</span> sortedList = <span class="f">useMemo</span>(() =&gt; {
+  <span class="k">return</span> [...items].<span class="f">sort</span>((a, b) =&gt; a.price - b.price);  <span class="cm">// expensive sort</span>
+}, [items]);                                                <span class="cm">// only re-sort when items changes</span>
+
+<span class="cm">// ─── useCallback — memoize function reference ──────────────</span>
+<span class="k">const</span> handleDelete = <span class="f">useCallback</span>((id) =&gt; {
+  setItems(prev =&gt; prev.<span class="f">filter</span>(item =&gt; item.id !== id));
+}, []);  <span class="cm">// stable reference — won't cause child re-renders</span>
+
+<span class="cm">// Pass to React.memo children to prevent unnecessary re-renders</span>
+<span class="k">const</span> MemoizedList = React.<span class="f">memo</span>(ExpensiveList);</pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Mid-Senior — Swiggy, Zepto, PhonePe</div>
+    <div class="iq-q">Difference between useMemo and useCallback?</div>
+    <div class="iq-a"><code>useMemo</code> memoizes a <strong>computed value</strong> (returns the value). <code>useCallback</code> memoizes a <strong>function reference</strong> (returns the function). <code>useCallback(fn, deps)</code> is equivalent to <code>useMemo(() => fn, deps)</code>. Use useMemo to avoid expensive recalculation. Use useCallback to give stable function references to memoized child components so they don't re-render when the parent re-renders.</div>
+  </div>
+</section>
+
+<!-- ══ R9: CUSTOM HOOKS ══ -->
+<section class="sec" id="r9">
+  <div class="sec-n" style="color:var(--gr)">Module 09 · Core Hooks</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Custom Hooks</h2>
+  <p class="sec-desc">Custom hooks are functions starting with "use" that encapsulate and reuse stateful logic across components. They're the modern replacement for HOCs and render props. Building one from scratch is a common interview task.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">09_custom_hooks.jsx — Common hooks you'll build in interviews</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── useFetch — data fetching hook ────────────────────────</span>
+<span class="k">function</span> <span class="f">useFetch</span>(url) {
+  <span class="k">const</span> [data, setData] = <span class="f">useState</span>(<span class="k">null</span>);
+  <span class="k">const</span> [loading, setLoading] = <span class="f">useState</span>(<span class="k">true</span>);
+  <span class="k">const</span> [error, setError] = <span class="f">useState</span>(<span class="k">null</span>);
+
+  <span class="f">useEffect</span>(() =&gt; {
+    <span class="k">let</span> cancelled = <span class="k">false</span>;
+    <span class="f">setLoading</span>(<span class="k">true</span>);
+    <span class="f">fetch</span>(url)
+      .<span class="f">then</span>(r =&gt; r.<span class="f">json</span>())
+      .<span class="f">then</span>(d =&gt; { <span class="k">if</span>(!cancelled) { <span class="f">setData</span>(d); <span class="f">setLoading</span>(<span class="k">false</span>); }})
+      .<span class="f">catch</span>(e =&gt; { <span class="k">if</span>(!cancelled) <span class="f">setError</span>(e); });
+    <span class="k">return</span> () =&gt; { cancelled = <span class="k">true</span>; };
+  }, [url]);
+
+  <span class="k">return</span> { data, loading, error };
+}
+<span class="cm">// Usage: const { data, loading } = useFetch('/api/users');</span>
+
+<span class="cm">// ─── useDebounce — search input optimization ───────────────</span>
+<span class="k">function</span> <span class="f">useDebounce</span>(value, delay = <span class="n">300</span>) {
+  <span class="k">const</span> [debounced, setDebounced] = <span class="f">useState</span>(value);
+  <span class="f">useEffect</span>(() =&gt; {
+    <span class="k">const</span> timer = <span class="f">setTimeout</span>(() =&gt; <span class="f">setDebounced</span>(value), delay);
+    <span class="k">return</span> () =&gt; <span class="f">clearTimeout</span>(timer);  <span class="cm">// cancel on every keystroke</span>
+  }, [value, delay]);
+  <span class="k">return</span> debounced;
+}
+<span class="cm">// API call only fires 300ms after user stops typing!</span>
+
+<span class="cm">// ─── useLocalStorage ───────────────────────────────────────</span>
+<span class="k">function</span> <span class="f">useLocalStorage</span>(key, initialValue) {
+  <span class="k">const</span> [stored, setStored] = <span class="f">useState</span>(() =&gt; {
+    <span class="k">try</span> { <span class="k">return</span> JSON.<span class="f">parse</span>(localStorage.<span class="f">getItem</span>(key)) ?? initialValue; }
+    <span class="k">catch</span> { <span class="k">return</span> initialValue; }
+  });
+  <span class="k">const</span> <span class="f">setValue</span> = (value) =&gt; {
+    <span class="f">setStored</span>(value);
+    localStorage.<span class="f">setItem</span>(key, JSON.<span class="f">stringify</span>(value));
+  };
+  <span class="k">return</span> [stored, setValue];
+}
+
+<span class="cm">// ─── useOnClickOutside — dropdown/modal close ─────────────</span>
+<span class="k">function</span> <span class="f">useOnClickOutside</span>(ref, handler) {
+  <span class="f">useEffect</span>(() =&gt; {
+    <span class="k">const</span> <span class="f">listener</span> = (e) =&gt; { <span class="k">if</span> (!ref.current?.contains(e.target)) <span class="f">handler</span>(e); };
+    document.<span class="f">addEventListener</span>(<span class="s">'mousedown'</span>, listener);
+    <span class="k">return</span> () =&gt; document.<span class="f">removeEventListener</span>(<span class="s">'mousedown'</span>, listener);
+  }, [ref, handler]);
+}</pre></div>
+</section>
+
+<!-- ══ R10: PATTERNS ══ -->
+<section class="sec" id="r10">
+  <div class="sec-n" style="color:var(--or)">Module 10 · Patterns</div>
+  <div class="lvl med">◆ Mid → Senior</div>
+  <h2 class="sec-title">HOC, Render Props & Compound Components</h2>
+  <p class="sec-desc">Advanced component patterns asked in senior rounds. HOCs and Render Props are older patterns — important to know conceptually. Compound components are still actively used (Radix UI, Headless UI use them).</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">10_patterns.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── HOC — wraps a component, adds behavior ────────────────</span>
+<span class="k">function</span> <span class="f">withAuth</span>(WrappedComponent) {
+  <span class="k">return function</span> <span class="f">AuthGuard</span>(props) {
+    <span class="k">const</span> { isLoggedIn } = <span class="f">useAuth</span>();
+    <span class="k">if</span> (!isLoggedIn) <span class="k">return</span> &lt;<span class="t">Navigate</span> <span class="f">to</span>=<span class="s">"/login"</span> /&gt;;
+    <span class="k">return</span> &lt;<span class="t">WrappedComponent</span> {...props} /&gt;;
+  };
+}
+<span class="k">const</span> ProtectedDashboard = <span class="f">withAuth</span>(Dashboard); <span class="cm">// HOC composed</span>
+
+<span class="cm">// ─── Render Props — pass render function as prop ───────────</span>
+<span class="k">function</span> <span class="f">DataProvider</span>({ url, render }) {
+  <span class="k">const</span> { data, loading } = <span class="f">useFetch</span>(url);
+  <span class="k">return</span> render({ data, loading });  <span class="cm">// caller controls the UI</span>
+}
+<span class="cm">// Usage:</span>
+&lt;<span class="t">DataProvider</span>
+  <span class="f">url</span>=<span class="s">"/api/users"</span>
+  <span class="f">render</span>={({ data, loading }) =&gt; loading ? &lt;<span class="t">Spinner</span>/&gt; : &lt;<span class="t">UserList</span> <span class="f">data</span>={data} /&gt;}
+/&gt;
+
+<span class="cm">// ─── Compound Components — Tab/Accordion pattern ───────────</span>
+<span class="k">const</span> TabContext = React.<span class="f">createContext</span>();
+
+<span class="k">function</span> <span class="f">Tabs</span>({ children }) {
+  <span class="k">const</span> [active, setActive] = <span class="f">useState</span>(<span class="n">0</span>);
+  <span class="k">return</span> &lt;<span class="t">TabContext.Provider</span> <span class="f">value</span>={{ active, setActive }}>{children}&lt;/<span class="t">TabContext.Provider</span>&gt;;
+}
+<span class="k">function</span> <span class="f">TabList</span>({ children }) { <span class="k">return</span> &lt;<span class="t">div</span> <span class="f">role</span>=<span class="s">"tablist"</span>&gt;{children}&lt;/<span class="t">div</span>&gt;; }
+<span class="k">function</span> <span class="f">Tab</span>({ index, children }) {
+  <span class="k">const</span> { active, setActive } = <span class="f">useContext</span>(TabContext);
+  <span class="k">return</span> &lt;<span class="t">button</span> <span class="f">onClick</span>={() =&gt; <span class="f">setActive</span>(index)} <span class="f">aria-selected</span>={active===index}>{children}&lt;/<span class="t">button</span>&gt;;
+}
+Tabs.List = TabList; Tabs.Tab = Tab;
+<span class="cm">// Usage: &lt;Tabs&gt;&lt;Tabs.List&gt;&lt;Tabs.Tab index={0}&gt;...&lt;/Tabs.Tab&gt;&lt;/Tabs.List&gt;&lt;/Tabs&gt;</span></pre></div>
+</section>
+
+<!-- ══ R11: STATE MANAGEMENT ══ -->
+<section class="sec" id="r11">
+  <div class="sec-n" style="color:var(--or)">Module 11 · Patterns</div>
+  <div class="lvl med">◆ Mid → Senior</div>
+  <h2 class="sec-title">State Management</h2>
+  <p class="sec-desc">The state management landscape has evolved dramatically. Context API, Redux Toolkit, Zustand, and React Query each solve different problems. Knowing which to use when is a top senior interview question.</p>
+
+  <table class="ctab">
+    <thead><tr><th>Tool</th><th>Best For</th><th>When to Use</th><th>Drawback</th></tr></thead>
+    <tbody>
+      <tr><td>useState</td><td>Local UI state</td><td>Form, toggle, modal open/close</td><td>Can't share across tree</td></tr>
+      <tr><td>Context API</td><td>Low-frequency global state</td><td>Theme, auth, locale</td><td>Re-renders all consumers</td></tr>
+      <tr><td>Redux Toolkit</td><td>Complex global state</td><td>Large app, many features sharing state, time-travel debug</td><td>Boilerplate, learning curve</td></tr>
+      <tr><td>Zustand</td><td>Simple global state</td><td>Startup/mid app, replaces Context + Redux</td><td>Less structured than Redux</td></tr>
+      <tr><td>React Query / TanStack</td><td>Server state (API data)</td><td>Always — handles cache, loading, refetch, stale</td><td>Only for server data</td></tr>
+      <tr><td>Jotai / Recoil</td><td>Atomic state</td><td>Fine-grained updates, avoids re-render problems</td><td>Less mature ecosystem</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cl ci"><div class="cll">💡 The Golden Rule</div><p><strong>Server state ≠ Client state.</strong> Use <strong>React Query / TanStack Query</strong> for any data from an API — it handles caching, background refetching, loading/error states automatically. Use <strong>Zustand or Context</strong> for pure UI state (sidebar open, selected filters). Mixing them into one Redux store is the old way.</p></div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">11_zustand_example.jsx — Modern approach</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// Zustand — simplest global state (no Provider needed!)</span>
+<span class="k">import</span> { create } from <span class="s">'zustand'</span>;
+
+<span class="k">const</span> useCartStore = <span class="f">create</span>((set, get) =&gt; ({
+  items: [],
+  total: <span class="n">0</span>,
+  addItem: (item) =&gt; set(state =&gt; ({ items: [...state.items, item] })),
+  removeItem: (id) =&gt; set(state =&gt; ({ items: state.items.<span class="f">filter</span>(i =&gt; i.id !== id) })),
+  clearCart: () =&gt; set({ items: [], total: <span class="n">0</span> }),
+}));
+
+<span class="cm">// In any component — no Provider, no connect():</span>
+<span class="k">function</span> <span class="f">Cart</span>() {
+  <span class="k">const</span> { items, addItem, removeItem } = <span class="f">useCartStore</span>();
+  <span class="k">return</span> &lt;<span class="t">div</span>&gt;{items.<span class="f">length</span>} items in cart&lt;/<span class="t">div</span>&gt;;
+}</pre></div>
+</section>
+
+<!-- ══ R12: ROUTER ══ -->
+<section class="sec" id="r12">
+  <div class="sec-n" style="color:var(--or)">Module 12 · Patterns</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">React Router</h2>
+  <p class="sec-desc">React Router v6 is the standard for client-side routing. Nested routes, protected routes, dynamic params, and lazy-loaded routes are common interview topics and real-world patterns.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">12_router.jsx — React Router v6</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { BrowserRouter, Routes, Route, useParams, useNavigate,
+         useSearchParams, Navigate, Outlet } from <span class="s">'react-router-dom'</span>;
+
+<span class="k">function</span> <span class="f">App</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="t">BrowserRouter</span>&gt;
+      &lt;<span class="t">Routes</span>&gt;
+        &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/"</span> <span class="f">element</span>={&lt;<span class="t">Home</span> /&gt;} /&gt;
+        &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/user/:id"</span> <span class="f">element</span>={&lt;<span class="t">UserPage</span> /&gt;} /&gt;
+        <span class="cm">{/* Protected route pattern */}</span>
+        &lt;<span class="t">Route</span> <span class="f">element</span>={&lt;<span class="t">ProtectedLayout</span> /&gt;}&gt;
+          &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/dashboard"</span> <span class="f">element</span>={&lt;<span class="t">Dashboard</span> /&gt;} /&gt;
+          &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/settings"</span> <span class="f">element</span>={&lt;<span class="t">Settings</span> /&gt;} /&gt;
+        &lt;/<span class="t">Route</span>&gt;
+        &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"*"</span> <span class="f">element</span>={&lt;<span class="t">NotFound</span> /&gt;} /&gt;
+      &lt;/<span class="t">Routes</span>&gt;
+    &lt;/<span class="t">BrowserRouter</span>&gt;
+  );
+}
+
+<span class="cm">// Protected Layout using Outlet</span>
+<span class="k">function</span> <span class="f">ProtectedLayout</span>() {
+  <span class="k">const</span> { user } = <span class="f">useAuth</span>();
+  <span class="k">if</span> (!user) <span class="k">return</span> &lt;<span class="t">Navigate</span> <span class="f">to</span>=<span class="s">"/login"</span> <span class="f">replace</span> /&gt;;
+  <span class="k">return</span> &lt;<span class="t">Outlet</span> /&gt;;  <span class="cm">{/* renders child routes */}</span>
+}
+
+<span class="cm">// Hooks</span>
+<span class="k">const</span> { id } = <span class="f">useParams</span>();                           <span class="cm">// /user/123 → id = "123"</span>
+<span class="k">const</span> navigate = <span class="f">useNavigate</span>();                       <span class="cm">// navigate('/home')</span>
+<span class="k">const</span> [params, setParams] = <span class="f">useSearchParams</span>();       <span class="cm">// ?page=2 → params.get('page')</span></pre></div>
+</section>
+
+<!-- ══ R13: RE-RENDERS ══ -->
+<section class="sec" id="r13">
+  <div class="sec-n" style="color:var(--pu)">Module 13 · Performance</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Re-renders, Memoization & Optimization</h2>
+  <p class="sec-desc">A component re-renders when: state changes, props change, parent re-renders, or context value changes. Senior interviews at Swiggy, Razorpay, and FAANG dig deep into when to prevent re-renders and how.</p>
+
+  <div class="viz">
+    <div class="viz-t">When React Re-renders — Decision Tree <span>Visual</span></div>
+    <canvas id="rerenderC" height="220"></canvas>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">13_optimization.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── React.memo — skip re-render if props unchanged ────────</span>
+<span class="k">const</span> ExpensiveChild = React.<span class="f">memo</span>(({ items, onDelete }) =&gt; {
+  <span class="k">return</span> items.<span class="f">map</span>(item =&gt; &lt;<span class="t">Item</span> <span class="f">key</span>={item.id} {...item} <span class="f">onDelete</span>={onDelete} /&gt;);
+});
+
+<span class="k">function</span> <span class="f">Parent</span>() {
+  <span class="k">const</span> [count, setCount] = <span class="f">useState</span>(<span class="n">0</span>);
+  <span class="k">const</span> [items] = <span class="f">useState</span>([...]);
+
+  <span class="cm">// ❌ Without useCallback: new function ref on every parent render</span>
+  <span class="cm">// → ExpensiveChild re-renders even when count changes (not items)</span>
+  <span class="cm">// ✅ With useCallback: stable reference, ExpensiveChild skips re-render</span>
+  <span class="k">const</span> handleDelete = <span class="f">useCallback</span>((id) =&gt; {
+    setItems(prev =&gt; prev.<span class="f">filter</span>(i =&gt; i.id !== id));
+  }, []);
+
+  <span class="k">return</span> (
+    &lt;&gt;
+      &lt;<span class="t">button</span> <span class="f">onClick</span>={() =&gt; <span class="f">setCount</span>(c =&gt; c + <span class="n">1</span>)}&gt;{count}&lt;/<span class="t">button</span>&gt;
+      &lt;<span class="t">ExpensiveChild</span> <span class="f">items</span>={items} <span class="f">onDelete</span>={handleDelete} /&gt;
+    &lt;/&gt;
+  );
+}
+
+<span class="cm">// ─── Virtualization — for huge lists ──────────────────────</span>
+<span class="k">import</span> { FixedSizeList } from <span class="s">'react-window'</span>;
+
+<span class="k">const</span> Row = ({ index, style }) =&gt; &lt;<span class="t">div</span> style={style}&gt;Row {index}&lt;/<span class="t">div</span>&gt;;
+
+<span class="cm">// Only renders visible rows — 10,000 items, no lag</span>
+&lt;<span class="t">FixedSizeList</span> <span class="f">height</span>={600} <span class="f">itemCount</span>={<span class="n">10000</span>} <span class="f">itemSize</span>={<span class="n">35</span>} <span class="f">width</span>=<span class="s">"100%"</span>&gt;
+  {Row}
+&lt;/<span class="t">FixedSizeList</span>&gt;</pre></div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">React.memo</div>
+      <div class="tc-d">Wraps a component. Shallowly compares props before re-rendering. Skip re-render if props didn't change. Only useful for components that re-render often AND their parents re-render with same props. Don't memoize everything — it costs memory.</div>
+      <div class="tc-t"><span class="tag pu">Shallow compare</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">Context Performance</div>
+      <div class="tc-d">When a Context value changes, ALL consumers re-render — even ones that only use part of the value. Fix: split context into smaller pieces (ThemeContext, AuthContext, SettingsContext). Or use useMemo on the context value object.</div>
+      <div class="tc-t"><span class="tag pu">Split contexts</span><span class="tag or">Common gotcha</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">Virtualization (react-window)</div>
+      <div class="tc-d">Rendering 10,000 list items at once = thousands of DOM nodes = crash. Virtualization renders only the visible rows (windowing). React Window and React Virtual are the go-to libraries. Essential for any list with 100+ items.</div>
+      <div class="tc-t"><span class="tag pu">Windowing</span><span class="tag gr">react-window</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ R14: CODE SPLITTING ══ -->
+<section class="sec" id="r14">
+  <div class="sec-n" style="color:var(--pu)">Module 14 · Performance</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Code Splitting & Lazy Loading</h2>
+  <p class="sec-desc">Your entire React app ships as one JS bundle by default. Code splitting breaks it into smaller chunks loaded on demand. This is one of the highest-impact optimizations — asked in every senior interview in India.</p>
+
+  <div class="viz">
+    <div class="viz-t">Bundle Without vs With Code Splitting <span>Visual</span></div>
+    <canvas id="splitC" height="200"></canvas>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">14_code_splitting.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { lazy, Suspense } from <span class="s">'react'</span>;
+
+<span class="cm">// ─── Route-based splitting (biggest impact) ────────────────</span>
+<span class="k">const</span> Dashboard = <span class="f">lazy</span>(() =&gt; <span class="f">import</span>(<span class="s">'./pages/Dashboard'</span>));
+<span class="k">const</span> Settings  = <span class="f">lazy</span>(() =&gt; <span class="f">import</span>(<span class="s">'./pages/Settings'</span>));
+<span class="k">const</span> Reports   = <span class="f">lazy</span>(() =&gt; <span class="f">import</span>(<span class="s">'./pages/Reports'</span>));
+
+<span class="k">function</span> <span class="f">App</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="t">Suspense</span> <span class="f">fallback</span>={&lt;<span class="t">LoadingSpinner</span> /&gt;}&gt;  <span class="cm">{/* shown while chunk loads */}</span>
+      &lt;<span class="t">Routes</span>&gt;
+        &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/dashboard"</span> <span class="f">element</span>={&lt;<span class="t">Dashboard</span> /&gt;} /&gt;
+        &lt;<span class="t">Route</span> <span class="f">path</span>=<span class="s">"/settings"</span>  <span class="f">element</span>={&lt;<span class="t">Settings</span> /&gt;} /&gt;
+      &lt;/<span class="t">Routes</span>&gt;
+    &lt;/<span class="t">Suspense</span>&gt;
+  );
+}
+<span class="cm">// Users only download Dashboard.chunk.js when they visit /dashboard</span>
+
+<span class="cm">// ─── Component-based splitting (heavy components) ──────────</span>
+<span class="k">const</span> HeavyChart = <span class="f">lazy</span>(() =&gt; <span class="f">import</span>(<span class="s">'./components/HeavyChart'</span>));
+<span class="k">const</span> RichEditor = <span class="f">lazy</span>(() =&gt; <span class="f">import</span>(<span class="s">'./components/RichEditor'</span>));
+
+<span class="cm">// ─── Preloading — start loading before user navigates ──────</span>
+<span class="k">const</span> preloadDashboard = () =&gt; <span class="f">import</span>(<span class="s">'./pages/Dashboard'</span>); <span class="cm">// fire early</span>
+&lt;<span class="t">NavLink</span> <span class="f">onMouseEnter</span>={preloadDashboard} <span class="f">to</span>=<span class="s">"/dashboard"</span>&gt;Dashboard&lt;/<span class="t">NavLink</span>&gt;;
+<span class="cm">// By the time they click, chunk is already loaded!</span>
+
+<span class="cm">// ─── Named chunks (webpack magic comment) ──────────────────</span>
+<span class="f">import</span>(<span class="s">/* webpackChunkName: "analytics" */</span> <span class="s">'./Analytics'</span>);</pre></div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">What to Split</div>
+      <div class="tc-d">Routes (always), heavy libraries (chart.js, Monaco editor, PDF viewer), conditionally rendered features (admin panel), features behind feature flags. Don't split tiny components — chunk overhead not worth it.</div>
+      <div class="tc-t"><span class="tag pu">Routes first</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">Suspense Boundaries</div>
+      <div class="tc-d">Place Suspense closest to the lazy component, not at app root. Multiple Suspense boundaries give granular loading states. The fallback is shown while the chunk downloads. Nest them for different loading strategies per section.</div>
+      <div class="tc-t"><span class="tag pu">Granular</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pu)">
+      <div class="tc-n">Bundle Analysis</div>
+      <div class="tc-d">webpack-bundle-analyzer and vite-bundle-visualizer show you exactly what's in your bundle. Run before optimizing — you'll find massive libraries (moment.js, lodash) that can be swapped or tree-shaken. Always measure before and after.</div>
+      <div class="tc-t"><span class="tag gr">Measure first</span></div>
+    </div>
+  </div>
+
+  <div class="iq"><div class="iq-badge">🎯 Very common — FAANG, Swiggy, Razorpay</div>
+    <div class="iq-q">What is code splitting and how do you implement it in React?</div>
+    <div class="iq-a">Code splitting breaks the JS bundle into smaller chunks loaded on demand, reducing initial bundle size. Implementation: (1) <code>React.lazy()</code> + <code>Suspense</code> for component-level splitting. (2) Dynamic <code>import()</code> for any module. (3) Webpack/Vite automatically creates separate chunks. The biggest win is route-based splitting — users only download code for pages they visit. For a 2MB app, this can reduce initial load to 200KB.</div>
+  </div>
+</section>
+
+<!-- ══ R15: WEB VITALS ══ -->
+<section class="sec" id="r15">
+  <div class="sec-n" style="color:var(--pu)">Module 15 · Performance</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Core Web Vitals & React Profiling</h2>
+  <p class="sec-desc">Google's Core Web Vitals directly affect SEO rankings and user experience. Understanding them and how React affects each metric is now a standard senior-level question in India.</p>
+
+  <div class="viz">
+    <div class="viz-t">Core Web Vitals — What They Measure <span>Reference</span></div>
+    <canvas id="webvitalsC" height="200"></canvas>
+  </div>
+
+  <table class="ctab">
+    <thead><tr><th>Metric</th><th>What it measures</th><th>Good threshold</th><th>React impact</th></tr></thead>
+    <tbody>
+      <tr><td>LCP</td><td>Largest Contentful Paint — when main content loads</td><td>&lt; 2.5s</td><td>SSR, lazy images, code splitting, preloading</td></tr>
+      <tr><td>INP</td><td>Interaction to Next Paint — how fast UI responds to clicks</td><td>&lt; 200ms</td><td>Avoid long tasks, use startTransition, defer non-critical work</td></tr>
+      <tr><td>CLS</td><td>Cumulative Layout Shift — elements moving unexpectedly</td><td>&lt; 0.1</td><td>Set image dimensions, avoid injecting content above fold</td></tr>
+      <tr><td>FCP</td><td>First Contentful Paint — any content visible</td><td>&lt; 1.8s</td><td>SSR, skeleton screens, reduce blocking JS</td></tr>
+      <tr><td>TTFB</td><td>Time To First Byte — server response speed</td><td>&lt; 800ms</td><td>SSR/SSG, CDN, caching</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">15_profiling.jsx — React Profiler + Web Vitals</div><div class="clg">jsx</div></div>
+<pre><span class="cm">// ─── React DevTools Profiler (in code) ────────────────────</span>
+<span class="k">import</span> { Profiler } from <span class="s">'react'</span>;
+
+<span class="k">function</span> <span class="f">onRenderCallback</span>(id, phase, actualDuration) {
+  console.<span class="f">log</span>(`${id} (${phase}): ${actualDuration.toFixed(2)}ms`);
+}
+<span class="cm">// Wrap expensive components to measure render time:</span>
+&lt;<span class="t">Profiler</span> <span class="f">id</span>=<span class="s">"ProductList"</span> <span class="f">onRender</span>={onRenderCallback}&gt;
+  &lt;<span class="t">ProductList</span> /&gt;
+&lt;/<span class="t">Profiler</span>&gt;
+
+<span class="cm">// ─── Web Vitals measurement ────────────────────────────────</span>
+<span class="k">import</span> { onLCP, onINP, onCLS, onFCP } from <span class="s">'web-vitals'</span>;
+
+<span class="f">onLCP</span>(metric =&gt; <span class="f">sendToAnalytics</span>(metric));
+<span class="f">onINP</span>(metric =&gt; <span class="f">sendToAnalytics</span>(metric));
+<span class="f">onCLS</span>(metric =&gt; <span class="f">sendToAnalytics</span>(metric));
+
+<span class="cm">// ─── startTransition — mark non-urgent updates ────────────</span>
+<span class="k">import</span> { startTransition } from <span class="s">'react'</span>;
+
+<span class="k">const</span> <span class="f">handleSearch</span> = (query) =&gt; {
+  setSearchInput(query);           <span class="cm">// urgent — update input immediately</span>
+  <span class="f">startTransition</span>(() =&gt; {
+    setFilteredResults(<span class="f">filter</span>(query));  <span class="cm">// non-urgent — can be interrupted</span>
+  });                              <span class="cm">// typing stays responsive!</span>
+};</pre></div>
+</section>
+
+<!-- ══ R16: SSR ══ -->
+<section class="sec" id="r16">
+  <div class="sec-n" style="color:var(--pk)">Module 16 · Advanced</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">SSR, SSG, CSR & Hydration</h2>
+  <p class="sec-desc">Rendering strategy is a major architect-level question. SSR, SSG, CSR — knowing trade-offs and how React handles hydration is essential for senior roles at product companies.</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">CSR — Client Side Rendering</div>
+      <div class="tc-d">Browser downloads empty HTML + JS bundle. JS executes, React renders the UI. Fast interactivity after load, but: slow initial paint (blank screen), bad SEO (crawlers see empty page). Default for Create React App. Good for: admin dashboards, authenticated apps.</div>
+      <div class="tc-t"><span class="tag pk">Slow initial</span><span class="tag or">Bad SEO</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">SSR — Server Side Rendering</div>
+      <div class="tc-d">Server renders React to HTML, sends full HTML to browser. User sees content immediately (good LCP). Then React "hydrates" — attaches event handlers to server-rendered HTML. Good for: e-commerce, news sites, anything needing fast first paint + SEO. Next.js does this.</div>
+      <div class="tc-t"><span class="tag gr">Fast paint</span><span class="tag gr">Good SEO</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">SSG — Static Site Generation</div>
+      <div class="tc-d">HTML generated at BUILD time, not request time. Served instantly from CDN. Fastest possible load time. Limitation: can't personalize per-user, must rebuild to update content. Good for: blogs, landing pages, docs. ISR (Next.js) adds incremental updates.</div>
+      <div class="tc-t"><span class="tag gr">Fastest</span><span class="tag re">CDN friendly</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Hydration</div>
+      <div class="tc-d">After SSR sends HTML, React re-runs on the client — builds the Virtual DOM, matches it to server-sent HTML (reconciles), and attaches event handlers. If server and client HTML don't match → hydration mismatch error. Time between HTML visible and interactive = "hydration gap".</div>
+      <div class="tc-t"><span class="tag pk">Critical concept</span></div>
+    </div>
+  </div>
+
+  <div class="iq"><div class="iq-badge">🎯 Senior — Amazon, Flipkart, Licious</div>
+    <div class="iq-q">What is hydration? What causes hydration errors?</div>
+    <div class="iq-a">Hydration is React's process of attaching event handlers to server-rendered HTML without re-rendering it. React runs on the client, builds its VDOM, and "hydrates" (adopts) the existing server HTML. Hydration errors occur when the server-rendered HTML doesn't match what React expects on the client — caused by: (1) Different data on server vs client (Date.now(), window object). (2) Browser-only APIs in render logic. (3) Conditional rendering that differs between environments. Fix: use <code>suppressHydrationWarning</code> for intentional mismatches, or <code>useEffect</code> for client-only code.</div>
+  </div>
+</section>
+
+<!-- ══ R17: REACT 18 ══ -->
+<section class="sec" id="r17">
+  <div class="sec-n" style="color:var(--pk)">Module 17 · Advanced</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">React 18 & Concurrent Mode</h2>
+  <p class="sec-desc">React 18 is the current version with major new features. Understanding Automatic Batching, startTransition, Suspense for data fetching, and React Server Components is now expected in senior Indian interviews.</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Automatic Batching</div>
+      <div class="tc-d">React 17: batched updates only in event handlers. React 18: batches ALL updates — setTimeout, Promises, native events. Multiple setStates in an async function = ONE re-render. Massive performance improvement with zero code changes.</div>
+      <div class="tc-t"><span class="tag gr">Free perf win</span><span class="tag pk">React 18+</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">startTransition</div>
+      <div class="tc-d">Mark state updates as "non-urgent." React can interrupt and abandon them to handle urgent updates (user input) first. Use for: filtering large lists, navigating, any update that doesn't need to be immediate. The typing stays smooth even if the filter is slow.</div>
+      <div class="tc-t"><span class="tag pk">Concurrent</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Suspense for Data Fetching</div>
+      <div class="tc-d">Suspend a component while it waits for data — show fallback. Works with React Query, Relay, Next.js. The component "throws a promise" — React catches it, shows Suspense fallback, then re-renders when data is ready. Clean loading UX without loading booleans everywhere.</div>
+      <div class="tc-t"><span class="tag pk">React 18+</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">React Server Components (RSC)</div>
+      <div class="tc-d">Components that run only on the server — zero JS sent to browser. Access databases directly, use server-only APIs. Client Components use 'use client' directive. Requires Next.js App Router. The future of React — completely changes the mental model. RSC = no useState, no hooks.</div>
+      <div class="tc-t"><span class="tag pk">Next.js 13+</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">useId Hook</div>
+      <div class="tc-d">Generates stable, unique IDs that match between server and client (no hydration mismatch). Use for accessibility — connecting label htmlFor to input id. Don't use for list keys.</div>
+      <div class="tc-t"><span class="tag pk">React 18+</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">useDeferredValue</div>
+      <div class="tc-d">Like startTransition but for values, not updates. Pass a slow-to-compute value; React defers recalculating it during urgent updates. The UI stays responsive while the deferred value "catches up." Good for search suggestions, previews.</div>
+      <div class="tc-t"><span class="tag pk">Concurrent</span></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">17_react18.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { startTransition, useDeferredValue, useTransition, useId } from <span class="s">'react'</span>;
+
+<span class="cm">// ─── useTransition — shows pending state ──────────────────</span>
+<span class="k">function</span> <span class="f">SearchPage</span>() {
+  <span class="k">const</span> [query, setQuery] = <span class="f">useState</span>(<span class="s">''</span>);
+  <span class="k">const</span> [results, setResults] = <span class="f">useState</span>([]);
+  <span class="k">const</span> [isPending, startTransition] = <span class="f">useTransition</span>();
+
+  <span class="k">const</span> <span class="f">handleSearch</span> = (q) =&gt; {
+    setQuery(q);                              <span class="cm">// urgent: update input</span>
+    <span class="f">startTransition</span>(() =&gt; {
+      setResults(<span class="f">heavyFilter</span>(q));           <span class="cm">// non-urgent: filter results</span>
+    });
+  };
+
+  <span class="k">return</span> (
+    &lt;&gt;
+      &lt;<span class="t">input</span> <span class="f">value</span>={query} <span class="f">onChange</span>={e =&gt; <span class="f">handleSearch</span>(e.target.value)} /&gt;
+      {isPending ? &lt;<span class="t">Spinner</span>/&gt; : &lt;<span class="t">ResultList</span> <span class="f">items</span>={results} /&gt;}
+    &lt;/&gt;
+  );
+}
+
+<span class="cm">// ─── createRoot — React 18 required ───────────────────────</span>
+<span class="k">import</span> { createRoot } from <span class="s">'react-dom/client'</span>;
+<span class="k">const</span> root = <span class="f">createRoot</span>(document.<span class="f">getElementById</span>(<span class="s">'root'</span>));
+root.<span class="f">render</span>(&lt;<span class="t">App</span> /&gt;);
+<span class="cm">// react-dom/client (NOT react-dom) enables concurrent features</span></pre></div>
+</section>
+
+<!-- ══ R18: POLYFILLS ══ -->
+<section class="sec" id="r18">
+  <div class="sec-n" style="color:var(--pk)">Module 18 · Advanced</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Polyfills, Browser Compatibility & Web APIs</h2>
+  <p class="sec-desc">Polyfills provide modern functionality to older browsers. Understanding what needs polyfilling, how Babel targets work, and which browser APIs need fallbacks is a senior-level concept asked in companies building for broad user bases (like Jio, BSNL network users with older phones).</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">What is a Polyfill?</div>
+      <div class="tc-d">A polyfill is code that implements a modern Web API in browsers that don't support it natively. Example: Promise.allSettled doesn't exist in older browsers — a polyfill adds it. The term comes from "Polyfilla" (wall filler) — fills in the gaps in browser support.</div>
+      <div class="tc-t"><span class="tag pk">Browser compat</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Babel + @babel/preset-env</div>
+      <div class="tc-d">Transpiles modern JS syntax (arrow functions, classes, optional chaining) to ES5 for old browsers. With browserslist config ("> 0.5%, last 2 versions, IE 11"), Babel knows WHAT to transpile. Syntax transpilation ≠ polyfilling — you need both separately.</div>
+      <div class="tc-t"><span class="tag pk">Transpilation</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">core-js Polyfills</div>
+      <div class="tc-d">Add useBuiltIns: "usage" in babel.config to auto-import polyfills for only the browser APIs you actually use. core-js/stable polyfills Promise, Array.from, Object.assign, fetch, etc. Don't include all of core-js — it's huge. Targeted polyfilling only.</div>
+      <div class="tc-t"><span class="tag pk">core-js</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">IntersectionObserver Polyfill</div>
+      <div class="tc-d">Used for lazy loading images and infinite scroll. Not available in IE11. Polyfill: intersection-observer package. Alternatively, use event listeners on scroll — less efficient but works everywhere. Most modern apps target Chrome 60+ and skip IE entirely now.</div>
+      <div class="tc-t"><span class="tag pk">Lazy loading</span></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">18_polyfills_compat.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── browserslist (.browserslistrc) ───────────────────────</span>
+<span class="cm">// > 0.5%           - browsers with >0.5% market share</span>
+<span class="cm">// last 2 versions  - last 2 major versions</span>
+<span class="cm">// not dead         - not discontinued</span>
+<span class="cm">// not IE 11        - exclude IE11 (most apps now)</span>
+
+<span class="cm">// ─── babel.config.js with automatic polyfilling ───────────</span>
+module.exports = {
+  presets: [[<span class="s">'@babel/preset-env'</span>, {
+    useBuiltIns: <span class="s">'usage'</span>,   <span class="cm">// auto-import only used polyfills</span>
+    corejs: <span class="n">3</span>,              <span class="cm">// core-js version</span>
+    targets: <span class="s">"> 0.5%, last 2 versions, not dead"</span>
+  }]]
+};
+
+<span class="cm">// ─── Manual polyfill pattern ──────────────────────────────</span>
+<span class="k">if</span> (!window.IntersectionObserver) {
+  <span class="k">require</span>(<span class="s">'intersection-observer'</span>);  <span class="cm">// load polyfill if needed</span>
+}
+
+<span class="cm">// ─── fetch polyfill for older browsers ───────────────────</span>
+<span class="k">import</span> <span class="s">'whatwg-fetch'</span>;  <span class="cm">// polyfills window.fetch</span>
+
+<span class="cm">// ─── Feature detection (better than browser detection) ────</span>
+<span class="k">if</span> (<span class="s">'IntersectionObserver'</span> <span class="k">in</span> window) {
+  <span class="cm">// use modern API</span>
+} <span class="k">else</span> {
+  <span class="cm">// fallback</span>
+}
+
+<span class="cm">// ─── Common APIs needing polyfills ────────────────────────</span>
+<span class="cm">// Promise.allSettled  → core-js</span>
+<span class="cm">// Array.flat/flatMap  → core-js</span>
+<span class="cm">// Object.fromEntries  → core-js</span>
+<span class="cm">// ResizeObserver      → resize-observer-polyfill</span>
+<span class="cm">// URL API             → core-js</span>
+<span class="cm">// AbortController     → abortcontroller-polyfill</span></pre></div>
+</section>
+
+<!-- ══ R19: TESTING ══ -->
+<section class="sec" id="r19">
+  <div class="sec-n" style="color:var(--pk)">Module 19 · Advanced</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Testing in React</h2>
+  <p class="sec-desc">Testing knowledge is expected at senior levels. React Testing Library (RTL) is the industry standard — it tests behavior, not implementation. Understanding unit tests, integration tests, and mocking is commonly asked.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">19_testing.jsx</div><div class="clg">jsx</div></div>
+<pre><span class="k">import</span> { render, screen, fireEvent, waitFor } from <span class="s">'@testing-library/react'</span>;
+<span class="k">import</span> userEvent from <span class="s">'@testing-library/user-event'</span>;
+<span class="k">import</span> { vi } from <span class="s">'vitest'</span>;
+
+<span class="cm">// ─── Basic component test ─────────────────────────────────</span>
+test(<span class="s">'renders user name'</span>, () =&gt; {
+  <span class="f">render</span>(&lt;<span class="t">UserCard</span> <span class="f">name</span>=<span class="s">"Rahul"</span> <span class="f">age</span>={<span class="n">25</span>} /&gt;);
+  expect(screen.<span class="f">getByText</span>(<span class="s">'Rahul'</span>)).<span class="f">toBeInTheDocument</span>();
+  expect(screen.<span class="f">getByText</span>(<span class="s">'Age: 25'</span>)).<span class="f">toBeInTheDocument</span>();
+});
+
+<span class="cm">// ─── User interaction test ────────────────────────────────</span>
+test(<span class="s">'counter increments on click'</span>, <span class="k">async</span> () =&gt; {
+  <span class="k">const</span> user = userEvent.<span class="f">setup</span>();
+  <span class="f">render</span>(&lt;<span class="t">Counter</span> /&gt;);
+
+  expect(screen.<span class="f">getByText</span>(<span class="s">'Count: 0'</span>)).<span class="f">toBeInTheDocument</span>();
+  <span class="k">await</span> user.<span class="f">click</span>(screen.<span class="f">getByRole</span>(<span class="s">'button'</span>, { name: /increment/i }));
+  expect(screen.<span class="f">getByText</span>(<span class="s">'Count: 1'</span>)).<span class="f">toBeInTheDocument</span>();
+});
+
+<span class="cm">// ─── Async test with API mock ─────────────────────────────</span>
+vi.<span class="f">mock</span>(<span class="s">'../api'</span>, () =&gt; ({
+  fetchUser: vi.<span class="f">fn</span>().<span class="f">mockResolvedValue</span>({ name: <span class="s">'Priya'</span>, email: <span class="s">'p@co.in'</span> })
+}));
+
+test(<span class="s">'displays fetched user'</span>, <span class="k">async</span> () =&gt; {
+  <span class="f">render</span>(&lt;<span class="t">UserProfile</span> <span class="f">userId</span>=<span class="s">"1"</span> /&gt;);
+  expect(screen.<span class="f">getByText</span>(<span class="s">/loading/i</span>)).<span class="f">toBeInTheDocument</span>();
+  <span class="k">await</span> <span class="f">waitFor</span>(() =&gt; expect(screen.<span class="f">getByText</span>(<span class="s">'Priya'</span>)).<span class="f">toBeInTheDocument</span>());
+});
+
+<span class="cm">// ─── Query priority (RTL guideline) ──────────────────────</span>
+<span class="cm">// 1. getByRole       - accessibility-based (best)</span>
+<span class="cm">// 2. getByLabelText  - form labels</span>
+<span class="cm">// 3. getByPlaceholder</span>
+<span class="cm">// 4. getByText       - visible text</span>
+<span class="cm">// 5. getByTestId     - last resort (not user-visible)</span></pre></div>
+</section>
+
+<!-- ══ R20: MASTERSHEET ══ -->
+<section class="sec" id="r20">
+  <div class="sec-n" style="color:var(--ye)">Module 20 · Interview Mastersheet</div>
+  <h2 class="sec-title">Complete Interview Question Bank</h2>
+  <p class="sec-desc">Every question that gets asked in Indian tech interviews — from 1-year experience startups to 5+ year FAANG rounds. Grouped by difficulty and company level.</p>
+
+  <div class="hdiv">Startup / 1-2 years experience</div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">What is React? How is it different from a framework?</div>
+      <div class="tc-d">Library, not framework. Only handles View layer. No built-in router, HTTP, DI. You compose your own stack.</div>
+      <div class="tc-t"><span class="tag gr">Easy</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">What is the Virtual DOM?</div>
+      <div class="tc-d">JS object tree, diffed against previous version, minimal real DOM updates applied. 10x faster than naive DOM manipulation.</div>
+      <div class="tc-t"><span class="tag gr">Easy</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">What are hooks? Why were they introduced?</div>
+      <div class="tc-d">Functions to use state + side effects in function components. Replaced class components. Better code reuse, simpler testing.</div>
+      <div class="tc-t"><span class="tag gr">Easy</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">useState vs useReducer?</div>
+      <div class="tc-d">useState for simple independent state. useReducer when state transitions are complex, multiple sub-values update together.</div>
+      <div class="tc-t"><span class="tag gr">Easy-Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">What is prop drilling?</div>
+      <div class="tc-d">Passing props through intermediate components that don't use them. Fix: Context API, Zustand, or component composition.</div>
+      <div class="tc-t"><span class="tag gr">Easy</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--gr)">
+      <div class="tc-n">Controlled vs Uncontrolled components?</div>
+      <div class="tc-d">Controlled: React state drives input value (onChange + value). Uncontrolled: DOM drives itself, read via ref. Controlled is preferred.</div>
+      <div class="tc-t"><span class="tag gr">Easy</span></div>
+    </div>
+  </div>
+
+  <div class="hdiv">Mid Level / 2-4 years — Swiggy, Razorpay, Meesho</div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">How does useEffect cleanup work?</div>
+      <div class="tc-d">Return a function from useEffect — runs before next effect execution or component unmount. Use to cancel fetch, clear timers, remove listeners.</div>
+      <div class="tc-t"><span class="tag or">Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">What causes unnecessary re-renders?</div>
+      <div class="tc-d">New object/array reference in props, inline functions, parent re-render. Fix: useMemo, useCallback, React.memo, state colocation.</div>
+      <div class="tc-t"><span class="tag or">Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">What is React.memo? When NOT to use it?</div>
+      <div class="tc-d">Skips re-render if props shallowly equal. Don't use: when props change often, when component is cheap, when it makes code complex.</div>
+      <div class="tc-t"><span class="tag or">Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">Explain the key prop and why index is bad</div>
+      <div class="tc-d">Keys help reconciler match old/new list items. Array index as key → wrong components reused on insert/delete/reorder → UI bugs.</div>
+      <div class="tc-t"><span class="tag or">Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">Context API vs Redux vs Zustand?</div>
+      <div class="tc-d">Context: low-frequency global state (theme, auth). Redux: large apps needing predictable state + devtools. Zustand: simple global state without boilerplate.</div>
+      <div class="tc-t"><span class="tag or">Mid</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--or)">
+      <div class="tc-n">How to implement debounce in React?</div>
+      <div class="tc-d">Custom useDebounce hook with useEffect + setTimeout. Clear timer in cleanup. Call API only 300ms after user stops typing.</div>
+      <div class="tc-t"><span class="tag or">Mid — coding round</span></div>
+    </div>
+  </div>
+
+  <div class="hdiv">Senior / 4+ years — FAANG, Flipkart, PhonePe, Google</div>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Explain React Fiber and Concurrent Mode</div>
+      <div class="tc-d">Fiber: incremental rendering — work split into units, can pause/resume/prioritize. Concurrent: multiple UI versions simultaneously, interrupts low-priority renders for high-priority (user input).</div>
+      <div class="tc-t"><span class="tag pk">Senior</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Code splitting strategy in large apps?</div>
+      <div class="tc-d">Route-based (always first), then component-based for heavy UI, then library-based (chart.js, monaco). Preload on hover. Analyze bundle first with bundle-analyzer.</div>
+      <div class="tc-t"><span class="tag pk">Senior</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">SSR vs SSG vs CSR — when to use each?</div>
+      <div class="tc-d">CSR: auth-only apps, admin. SSR: e-commerce (SEO + fresh data). SSG: blogs, docs (static + fast). ISR: SSG with periodic revalidation. Hybrid: different strategies per page.</div>
+      <div class="tc-t"><span class="tag pk">Senior</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">How do you improve LCP in a React app?</div>
+      <div class="tc-d">SSR/SSG, preload critical assets, lazy load below-fold content, optimize images (next/image), reduce JS blocking, code split, use CDN for static assets.</div>
+      <div class="tc-t"><span class="tag pk">Senior</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">What are React Server Components?</div>
+      <div class="tc-d">Components rendered on server only — zero client JS. Access DB directly. No useState, no useEffect. Client Components ('use client') still hydrate normally. RSC + Client Components coexist.</div>
+      <div class="tc-t"><span class="tag pk">Senior</span></div>
+    </div>
+    <div class="tc" style="--cat:var(--pk)">
+      <div class="tc-n">Design a scalable React app architecture</div>
+      <div class="tc-d">Feature-based folder structure. Colocation. Compound components for UI library. React Query for server state. Zustand for UI state. Lazy load routes. Error boundaries per section. Monorepo (Turborepo) for large teams.</div>
+      <div class="tc-t"><span class="tag pk">System design</span></div>
+    </div>
+  </div>
+
+  <div class="chk">
+    <div class="chk-l">🎯 React Interview Readiness Checklist</div>
+    <h3>You're ready when you can answer all of these without hesitation:</h3>
+    <ul class="chk-li">
+      <li>Explain Virtual DOM, reconciliation, and the key prop from scratch</li>
+      <li>Write a custom hook (useFetch, useDebounce, useLocalStorage) in a live coding round</li>
+      <li>Explain exactly when a component re-renders and how to prevent unnecessary ones</li>
+      <li>Describe code splitting strategy for a large e-commerce app</li>
+      <li>Explain SSR hydration — what it is, why it matters, what causes errors</li>
+      <li>Compare Context API, Redux Toolkit, and Zustand — when to use each</li>
+      <li>Explain what startTransition does and when you'd use it</li>
+      <li>Describe Core Web Vitals and how React choices affect each metric</li>
+      <li>Build a protected route with React Router v6</li>
+      <li>Explain React Server Components and how they differ from Client Components</li>
+      <li>Describe what polyfills are and how Babel + browserslist automate them</li>
+    </ul>
+  </div>
+</section>
+
+</div><!-- .ct -->
+<footer>⚛ React Zero to Interview Ready · All topics from <strong>startup to FAANG India 2025</strong> · Built with love for the Indian dev community</footer>
+</main>
+
+<script>
+// Progress
+const ms=document.getElementById('ms'),pf=document.getElementById('pf'),pn=document.getElementById('pn');
+ms.addEventListener('scroll',()=>{
+  const p=Math.min(ms.scrollTop/(ms.scrollHeight-ms.clientHeight)*100,100);
+  pf.style.width=p+'%'; pn.textContent=Math.round(p)+'%';
+  const links=document.querySelectorAll('.sb-a');
+  document.querySelectorAll('.sec').forEach((s,i)=>{
+    const t=s.getBoundingClientRect().top;
+    if(t<220&&t>-s.offsetHeight){links.forEach(l=>l.classList.remove('on'));if(links[i])links[i].classList.add('on')}
+  });
+});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+// ── React vs Plain JS viz ─────────────────────────────────
+const rvC=document.getElementById('reactVizC'),rvCtx=rvC.getContext('2d');
+function drawReactViz(){
+  rvC.width=rvC.parentElement.offsetWidth;rvC.height=180;
+  const w=rvC.width,h=rvC.height;
+  rvCtx.clearRect(0,0,w,h);
+  const hw=w/2-20;
+  // Plain JS side
+  rvCtx.fillStyle='rgba(248,113,113,0.08)';rvCtx.beginPath();rvCtx.roundRect(10,10,hw,h-20,10);rvCtx.fill();
+  rvCtx.strokeStyle='rgba(248,113,113,0.3)';rvCtx.lineWidth=1;rvCtx.stroke();
+  rvCtx.fillStyle='#f87171';rvCtx.font='bold 12px Plus Jakarta Sans';rvCtx.textAlign='center';rvCtx.fillText('jQuery / Vanilla JS',10+hw/2,34);
+  ['document.querySelector("#app")', 'el.innerHTML = "..."','el.classList.add("...")', 'fetch().then(data => {', '  el.innerHTML = data.name', '})'].forEach((l,i)=>{
+    rvCtx.fillStyle='rgba(248,113,113,0.6)';rvCtx.font='10px JetBrains Mono';rvCtx.fillText(l,10+hw/2,54+i*17);
+  });
+  rvCtx.fillStyle='rgba(248,113,113,0.4)';rvCtx.font='10px Plus Jakarta Sans';rvCtx.fillText('Imperative — you manage HOW',10+hw/2,h-14);
+  // React side
+  const rx=w/2+10;
+  rvCtx.fillStyle='rgba(97,218,251,0.08)';rvCtx.beginPath();rvCtx.roundRect(rx,10,hw,h-20,10);rvCtx.fill();
+  rvCtx.strokeStyle='rgba(97,218,251,0.3)';rvCtx.lineWidth=1;rvCtx.stroke();
+  rvCtx.fillStyle='#61dafb';rvCtx.font='bold 12px Plus Jakarta Sans';rvCtx.fillText('React',rx+hw/2,34);
+  ['function App() {','  const [name] = useFetch()',  '  return (',  '    <div>{name}</div>','  )','}'  ].forEach((l,i)=>{
+    rvCtx.fillStyle='rgba(97,218,251,0.7)';rvCtx.font='10px JetBrains Mono';rvCtx.fillText(l,rx+hw/2,54+i*17);
+  });
+  rvCtx.fillStyle='rgba(97,218,251,0.4)';rvCtx.font='10px Plus Jakarta Sans';rvCtx.fillText('Declarative — describe WHAT',rx+hw/2,h-14);
+  // vs
+  rvCtx.fillStyle='rgba(255,255,255,0.2)';rvCtx.font='bold 14px Space Mono';rvCtx.fillText('vs',w/2,h/2+5);
+  rvCtx.textAlign='left';
+}
+setTimeout(drawReactViz,100);window.addEventListener('resize',drawReactViz);
+
+// ── VDOM animation ────────────────────────────────────────
+const vC=document.getElementById('vdomC'),vCtx=vC.getContext('2d');
+let vAnim=0,vTimer=null;
+function resetVDOM(){clearInterval(vTimer);vTimer=null;vAnim=0;drawVDOM()}
+function animVDOM(){if(vTimer)return;vTimer=setInterval(()=>{vAnim=Math.min(vAnim+0.02,1);drawVDOM();if(vAnim>=1){clearInterval(vTimer);vTimer=null}},40)}
+function drawVDOM(){
+  vC.width=vC.parentElement.offsetWidth;vC.height=220;
+  const w=vC.width,h=vC.height;
+  vCtx.clearRect(0,0,w,h);
+  const cols=['#61dafb','#f59e0b','#4ade80'];
+  const boxes=[
+    {x:w*.05,y:20,w:w*.27,h:h-50,label:'Previous VDOM',color:'rgba(97,218,251,0.1)',bc:'rgba(97,218,251,0.3)',items:['<div>','  <h1>Title</h1>','  <p>Old text</p>','</div>']},
+    {x:w*.38,y:20,w:w*.27,h:h-50,label:'New VDOM',color:'rgba(245,158,11,0.1)',bc:'rgba(245,158,11,0.3)',items:['<div>','  <h1>Title</h1>','  <p class="new">New!</p>','</div>']},
+    {x:w*.71,y:20,w:w*.26,h:h-50,label:'Real DOM Patch',color:'rgba(74,222,128,0.1)',bc:`rgba(74,222,128,${vAnim*.5})`,items:['','','Update <p>only','']},
+  ];
+  boxes.forEach((b,bi)=>{
+    vCtx.fillStyle=b.color;vCtx.beginPath();vCtx.roundRect(b.x,b.y,b.w,b.h,9);vCtx.fill();
+    vCtx.strokeStyle=b.bc;vCtx.lineWidth=1.5;vCtx.stroke();
+    vCtx.fillStyle=bi===2?`rgba(74,222,128,${.7+vAnim*.3})`:[cols[0],'rgba(245,158,11,.8)'][bi]||cols[0];
+    vCtx.font='bold 11px Plus Jakarta Sans';vCtx.textAlign='center';vCtx.fillText(b.label,b.x+b.w/2,b.y+18);
+    b.items.forEach((item,i)=>{
+      const isChanged=bi===1&&i===2;const isPatch=bi===2&&i===2;
+      vCtx.fillStyle=isChanged?'#fb923c':isPatch?`rgba(74,222,128,${vAnim})`:'rgba(255,255,255,0.35)';
+      vCtx.font=`${isChanged||isPatch?'bold ':''} 10px JetBrains Mono`;vCtx.fillText(item,b.x+b.w/2,b.y+38+i*18);
+    });
+  });
+  // Diff arrow
+  if(vAnim>0.2){
+    const p=(vAnim-.2)/.8;
+    vCtx.strokeStyle=`rgba(245,158,11,${p*.6})`;vCtx.lineWidth=2;vCtx.setLineDash([4,3]);
+    vCtx.beginPath();vCtx.moveTo(boxes[1].x+boxes[1].w,h/2);vCtx.lineTo(boxes[2].x,h/2);vCtx.stroke();
+    vCtx.setLineDash([]);
+    vCtx.fillStyle=`rgba(245,158,11,${p*.7})`;vCtx.font='9px JetBrains Mono';vCtx.textAlign='center';
+    vCtx.fillText('diff →',boxes[1].x+boxes[1].w+20,h/2-6);
+  }
+  vCtx.textAlign='left';
+}
+setTimeout(drawVDOM,100);window.addEventListener('resize',()=>{vAnim=0;drawVDOM()});
+
+// ── Re-render decision tree ───────────────────────────────
+const rC=document.getElementById('rerenderC'),rCtx=rC.getContext('2d');
+function drawRerender(){
+  rC.width=rC.parentElement.offsetWidth;rC.height=220;
+  const w=rC.width,h=rC.height;
+  rCtx.clearRect(0,0,w,h);
+  const nodes=[
+    {x:w/2,y:22,label:'State/Props Changed?',w:170,col:'#a78bfa'},
+    {x:w/2*.55,y:80,label:'React.memo?',w:100,col:'#60a5fa'},
+    {x:w*.78,y:80,label:'Re-render',w:90,col:'#4ade80'},
+    {x:w*.25,y:140,label:'Props same?',w:100,col:'#60a5fa'},
+    {x:w*.55,y:140,label:'Re-render',w:90,col:'#4ade80'},
+    {x:w*.15,y:200,label:'Skip ✓',w:70,col:'#4ade80'},
+    {x:w*.36,y:200,label:'Re-render',w:90,col:'#f87171'},
+  ];
+  const edges=[[0,1,false,'No'],[0,2,true,'Yes'],[1,3,false,'Yes'],[1,4,true,'No memo/fails'],[3,5,false,'Yes'],[3,6,true,'Changed']];
+  edges.forEach(([from,to,isRight,label])=>{
+    const fn=nodes[from],tn=nodes[to];
+    rCtx.strokeStyle='rgba(255,255,255,0.15)';rCtx.lineWidth=1.5;
+    rCtx.beginPath();rCtx.moveTo(fn.x,fn.y+12);rCtx.lineTo(tn.x,tn.y-12);rCtx.stroke();
+    rCtx.fillStyle='rgba(255,255,255,0.3)';rCtx.font='9px JetBrains Mono';rCtx.textAlign='center';
+    rCtx.fillText(label,(fn.x+tn.x)/2+10,(fn.y+tn.y)/2);
+  });
+  nodes.forEach(n=>{
+    rCtx.fillStyle=n.col+'22';rCtx.beginPath();rCtx.roundRect(n.x-n.w/2,n.y-12,n.w,24,7);rCtx.fill();
+    rCtx.strokeStyle=n.col+'77';rCtx.lineWidth=1.2;rCtx.stroke();
+    rCtx.fillStyle=n.col;rCtx.font='bold 10px Plus Jakarta Sans';rCtx.textAlign='center';rCtx.fillText(n.label,n.x,n.y+4);
+  });
+  rCtx.textAlign='left';
+}
+setTimeout(drawRerender,100);window.addEventListener('resize',drawRerender);
+
+// ── Code splitting viz ────────────────────────────────────
+const sC=document.getElementById('splitC'),sCtx=sC.getContext('2d');
+function drawSplit(){
+  sC.width=sC.parentElement.offsetWidth;sC.height=200;
+  const w=sC.width,h=sC.height;
+  sCtx.clearRect(0,0,w,h);
+  const hw=w/2-30;
+  // Without splitting
+  sCtx.fillStyle='rgba(248,113,113,0.1)';sCtx.beginPath();sCtx.roundRect(10,30,hw,h-60,9);sCtx.fill();
+  sCtx.strokeStyle='rgba(248,113,113,0.3)';sCtx.lineWidth=1;sCtx.stroke();
+  sCtx.fillStyle='#f87171';sCtx.font='bold 11px Plus Jakarta Sans';sCtx.textAlign='center';sCtx.fillText('Without Splitting',10+hw/2,22);
+  const bigBundle={x:20,y:45,w:hw-20,h:h-95,label:'main.bundle.js\n2.4 MB'};
+  sCtx.fillStyle='rgba(248,113,113,0.3)';sCtx.beginPath();sCtx.roundRect(bigBundle.x,bigBundle.y,bigBundle.w,bigBundle.h,6);sCtx.fill();
+  sCtx.fillStyle='rgba(248,113,113,0.7)';sCtx.font='bold 13px JetBrains Mono';sCtx.textAlign='center';sCtx.fillText('2.4 MB',bigBundle.x+bigBundle.w/2,bigBundle.y+bigBundle.h/2-5);
+  sCtx.font='10px Plus Jakarta Sans';sCtx.fillText('downloaded on every page',bigBundle.x+bigBundle.w/2,bigBundle.y+bigBundle.h/2+15);
+  sCtx.fillStyle='rgba(248,113,113,0.5)';sCtx.font='10px JetBrains Mono';sCtx.fillText('⏱ ~8s mobile',bigBundle.x+bigBundle.w/2,h-30);
+  // With splitting
+  const rx=w/2+20;
+  sCtx.fillStyle='rgba(74,222,128,0.08)';sCtx.beginPath();sCtx.roundRect(rx,30,hw,h-60,9);sCtx.fill();
+  sCtx.strokeStyle='rgba(74,222,128,0.3)';sCtx.lineWidth=1;sCtx.stroke();
+  sCtx.fillStyle='#4ade80';sCtx.font='bold 11px Plus Jakarta Sans';sCtx.fillText('With Code Splitting',rx+hw/2,22);
+  const chunks=[{label:'main.js 280KB',col:'#4ade80',h:36},{label:'home.js 45KB',col:'#60a5fa',h:24},{label:'dashboard.js 180KB',col:'#a78bfa',h:28},{label:'settings.js 60KB',col:'#fb923c',h:22}];
+  let cy=45;
+  chunks.forEach(ck=>{
+    sCtx.fillStyle=ck.col+'22';sCtx.beginPath();sCtx.roundRect(rx+8,cy,hw-16,ck.h,5);sCtx.fill();
+    sCtx.strokeStyle=ck.col+'55';sCtx.lineWidth=1;sCtx.stroke();
+    sCtx.fillStyle=ck.col;sCtx.font='10px JetBrains Mono';sCtx.fillText(ck.label,rx+16,cy+ck.h/2+4);
+    cy+=ck.h+6;
+  });
+  sCtx.fillStyle='rgba(74,222,128,0.6)';sCtx.font='10px JetBrains Mono';sCtx.fillText('⚡ ~1.2s mobile (main only)',rx+hw/2,h-30);
+  sCtx.textAlign='left';
+}
+setTimeout(drawSplit,100);window.addEventListener('resize',drawSplit);
+
+// ── Web vitals viz ────────────────────────────────────────
+const wC=document.getElementById('webvitalsC'),wCtx=wC.getContext('2d');
+function drawWebVitals(){
+  wC.width=wC.parentElement.offsetWidth;wC.height=200;
+  const w=wC.width,h=wC.height;
+  wCtx.clearRect(0,0,w,h);
+  const metrics=[
+    {name:'LCP',full:'Largest Contentful Paint',good:'< 2.5s',val:0.72,col:'#61dafb'},
+    {name:'INP',full:'Interaction to Next Paint',good:'< 200ms',val:0.58,col:'#a78bfa'},
+    {name:'CLS',full:'Cumulative Layout Shift',good:'< 0.1',val:0.85,col:'#4ade80'},
+    {name:'FCP',full:'First Contentful Paint',good:'< 1.8s',val:0.65,col:'#fb923c'},
+  ];
+  const bw=(w-40)/metrics.length;
+  metrics.forEach((m,i)=>{
+    const bx=20+i*bw, bh=80, by=h-100;
+    // Background bar
+    wCtx.fillStyle='rgba(255,255,255,0.05)';wCtx.beginPath();wCtx.roundRect(bx+8,by,bw-16,bh,5);wCtx.fill();
+    // Fill bar
+    const fillH=bh*m.val;
+    const grd=wCtx.createLinearGradient(0,by+bh-fillH,0,by+bh);
+    grd.addColorStop(0,m.col+'dd');grd.addColorStop(1,m.col+'44');
+    wCtx.fillStyle=grd;wCtx.beginPath();wCtx.roundRect(bx+8,by+bh-fillH,bw-16,fillH,5);wCtx.fill();
+    // Name
+    wCtx.fillStyle=m.col;wCtx.font='bold 13px Space Mono';wCtx.textAlign='center';wCtx.fillText(m.name,bx+bw/2,by-12);
+    wCtx.fillStyle='rgba(255,255,255,0.3)';wCtx.font='9px Plus Jakarta Sans';wCtx.fillText(m.good,bx+bw/2,by-1);
+    // Desc
+    const words=m.full.split(' ');
+    wCtx.fillStyle='rgba(255,255,255,0.35)';wCtx.font='9px Plus Jakarta Sans';
+    words.slice(0,2).forEach((word,wi)=>wCtx.fillText(word,bx+bw/2,h-20+wi*11));
+  });
+  wCtx.textAlign='left';
+}
+setTimeout(drawWebVitals,100);window.addEventListener('resize',drawWebVitals);
+</script>
+</body>
+</html>

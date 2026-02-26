@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning From Scratch — Complete Visual Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Literata:ital,wght@0,300;0,400;0,500;1,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070e;--surface:#101018;--surface2:#181824;--surface3:#22223a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e8e6f4;--muted:rgba(232,230,244,0.55);--dim:rgba(232,230,244,0.28);
+  --c1:#7c6af7;--c2:#f7936a;--c3:#4fc3f7;--c4:#81c995;--c5:#ffb74d;
+  --c6:#f06292;--c7:#4dd0e1;--c8:#ce93d8;
+  --sidebar:260px;
+  --head:'Syne',sans-serif;--body:'Literata',Georgia,serif;--mono:'Fira Code',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;font-size:15px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);height:100vh;overflow-y:auto;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sb-brand{padding:20px 18px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:5}
+.sb-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--c1),var(--c3));display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 4px 16px rgba(124,106,247,0.35)}
+.sb-title{font-family:var(--head);font-size:15px;font-weight:800;line-height:1.2;background:linear-gradient(135deg,#fff,rgba(232,230,244,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-sub{font-size:11px;color:var(--dim);margin-top:2px;font-family:var(--mono)}
+.sb-sec{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--dim);padding:12px 18px 4px}
+.sb-link{display:flex;align-items:center;gap:8px;padding:7px 18px;font-size:12.5px;font-family:var(--head);color:var(--muted);border:none;background:none;cursor:pointer;width:100%;text-align:left;border-left:2px solid transparent;transition:all 120ms ease}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.03);border-left-color:rgba(255,255,255,0.2)}
+.sb-link.on{color:#fff;border-left-color:var(--c1);background:rgba(124,106,247,0.09)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-prog{padding:12px 18px;border-top:1px solid var(--border);margin-top:auto}
+.prog-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c3));width:0%;transition:width .4s ease;border-radius:2px}
+.prog-n{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:3px;text-align:right}
+
+/* ─── MAIN ─── */
+.main{flex:1;overflow-y:auto;min-width:0}
+
+/* ─── HERO ─── */
+.hero{padding:56px 60px 48px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 20% 60%,rgba(124,106,247,.09) 0%,transparent 65%),radial-gradient(ellipse 50% 70% at 80% 20%,rgba(79,195,247,.07) 0%,transparent 55%)}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-bg canvas{position:absolute;inset:0;opacity:.4}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--c1);text-transform:uppercase;letter-spacing:.2em;margin-bottom:16px;display:flex;align-items:center;gap:10px;position:relative;z-index:1;animation:fadeUp .5s ease both}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--c1)}
+.hero-h1{font-family:var(--head);font-size:clamp(30px,4vw,50px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:14px;position:relative;z-index:1;animation:fadeUp .5s ease .07s both}
+.hero-h1 em{font-style:normal;color:var(--c1)}
+.hero-h1 b{font-style:normal;color:var(--c3)}
+.hero-p{max-width:580px;font-size:15.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;position:relative;z-index:1;animation:fadeUp .5s ease .14s both}
+.hero-stats{display:flex;gap:28px;position:relative;z-index:1;animation:fadeUp .5s ease .21s both}
+.hstat-n{font-family:var(--head);font-size:26px;font-weight:800;line-height:1}
+.hstat-l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-top:2px}
+.hstat-sep{width:1px;background:var(--border);align-self:stretch;margin:4px 0}
+
+/* ─── CONTENT ─── */
+.content{max-width:900px;padding:0 60px;margin:0 auto}
+
+/* ─── MODULE ─── */
+.module{padding:48px 0 24px;border-top:1px solid var(--border)}
+.module:first-child{border-top:none}
+.mod-n{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.mod-n::after{content:'';flex:1;max-width:32px;height:1px;opacity:.35;background:currentColor}
+.mod-title{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.4px;line-height:1.15;margin-bottom:8px}
+.mod-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:28px;max-width:700px}
+
+/* ─── GRID ─── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:24px}
+.tcard{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all .18s ease;position:relative;overflow:hidden;cursor:default}
+.tcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cat);opacity:0;transition:opacity .18s ease}
+.tcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.tcard:hover::before{opacity:1}
+.tc-name{font-family:var(--head);font-size:13.5px;font-weight:700;margin-bottom:5px;line-height:1.3}
+.tc-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+.tc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--border)}
+.tag.key{background:rgba(124,106,247,.15);color:var(--c1);border-color:rgba(124,106,247,.3)}
+.tag.imp{background:rgba(247,147,106,.15);color:var(--c2);border-color:rgba(247,147,106,.3)}
+.tag.miss{background:rgba(244,67,54,.15);color:#ef9a9a;border-color:rgba(244,67,54,.3)}
+.tag.ok{background:rgba(129,201,149,.15);color:var(--c4);border-color:rgba(129,201,149,.3)}
+
+/* ─── CALLOUT ─── */
+.callout{border-radius:12px;padding:15px 20px;margin:12px 0 22px;font-size:13.5px;line-height:1.65}
+.cl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;font-weight:600}
+.callout p{color:var(--muted)}
+.cw{background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.2)}.cw .cl{color:var(--c3)}
+.ct{background:rgba(129,201,149,.08);border:1px solid rgba(129,201,149,.2)}.ct .cl{color:var(--c4)}
+.ca{background:rgba(247,147,106,.09);border:1px solid rgba(247,147,106,.2)}.ca .cl{color:var(--c2)}
+.cp{background:rgba(206,147,216,.08);border:1px solid rgba(206,147,216,.2)}.cp .cl{color:var(--c8)}
+
+/* ─── CODE ─── */
+.cb{background:#0c0c16;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0}
+.ch{background:rgba(255,255,255,.04);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.cdots{display:flex;gap:5px}
+.cd{width:10px;height:10px;border-radius:50%}
+.cd:nth-child(1){background:#ff5f57}.cd:nth-child(2){background:#febc2e}.cd:nth-child(3){background:#28c840}
+.cf{font-family:var(--mono);font-size:11px;color:rgba(255,193,7,.8)}
+.clang{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase}
+pre{padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:#c8c0e0}
+.kw{color:#ff8c69}.str{color:#81c995}.num{color:#ffb74d}.fn{color:#82aaff}.cm{color:#546e6e;font-style:italic}.tp{color:#c792ea}
+
+/* ─── FORMULA ─── */
+.formula{background:var(--surface3);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:12.5px;color:#c8c0e0;margin:10px 0;border-left:3px solid var(--c1);line-height:1.9;overflow-x:auto}
+
+/* ─── TABLE ─── */
+.ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.ctable th{background:var(--surface3);padding:9px 14px;text-align:left;font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.ctable td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--muted);line-height:1.5}
+.ctable tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ─── INTERVIEW ─── */
+.iq{border:1px solid rgba(255,193,7,.2);border-radius:12px;padding:16px 20px;margin:14px 0 6px;background:rgba(255,193,7,.04);position:relative}
+.iq-badge{position:absolute;top:-9px;left:14px;background:rgba(255,193,7,.9);color:#070710;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:3px;font-weight:700}
+.iq-q{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:7px}
+.iq-a{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* ─── CHECKPOINT ─── */
+.chk{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border2);border-radius:12px;padding:20px 24px;margin:24px 0}
+.chk-lbl{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,193,7,.7);margin-bottom:10px}
+.chk h3{font-family:var(--head);font-size:15px;color:var(--text);margin-bottom:10px}
+.chk-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.chk-list li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px}
+.chk-list li::before{content:'□';color:rgba(255,193,7,.6);flex-shrink:0}
+
+/* ─── MISSING BOX ─── */
+.miss-box{background:rgba(247,147,106,.06);border:1px solid rgba(247,147,106,.22);border-radius:12px;padding:20px 24px;margin:28px 0}
+.miss-box h3{font-family:var(--head);font-size:17px;font-weight:800;color:var(--c2);margin-bottom:4px}
+.miss-box p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.miss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.miss-item{background:rgba(247,147,106,.08);border:1px solid rgba(247,147,106,.14);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--muted)}
+.miss-item strong{color:var(--c2);font-family:var(--head);font-size:12px;display:block;margin-bottom:1px}
+
+/* ─── VIZ CONTAINERS ─── */
+.viz{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.viz-title{font-family:var(--head);font-size:13px;font-weight:700;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-title span{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--dim)}
+.viz canvas{display:block;width:100%;border-radius:8px}
+
+/* ─── FOOTER ─── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 60px;text-align:center;font-size:12px;color:var(--dim)}
+footer strong{color:var(--c1)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="sb-title">ML From Scratch</div>
+    <div class="sb-sub">Complete Visual Guide</div>
+  </div>
+  <div class="sb-sec">Modules</div>
+  <button class="sb-link on" onclick="goTo('m1')"><span class="sb-dot" style="background:var(--c1)"></span>01 · Math Foundations</button>
+  <button class="sb-link" onclick="goTo('m2')"><span class="sb-dot" style="background:var(--c2)"></span>02 · Data & Preprocessing</button>
+  <button class="sb-link" onclick="goTo('m3')"><span class="sb-dot" style="background:var(--c3)"></span>03 · Regression</button>
+  <button class="sb-link" onclick="goTo('m4')"><span class="sb-dot" style="background:var(--c4)"></span>04 · Classification</button>
+  <button class="sb-link" onclick="goTo('m5')"><span class="sb-dot" style="background:var(--c5)"></span>05 · Unsupervised Learning</button>
+  <button class="sb-link" onclick="goTo('m6')"><span class="sb-dot" style="background:var(--c6)"></span>06 · Ensemble & Boosting</button>
+  <button class="sb-link" onclick="goTo('m7')"><span class="sb-dot" style="background:var(--c7)"></span>07 · Model Evaluation</button>
+  <button class="sb-link" onclick="goTo('m8')"><span class="sb-dot" style="background:var(--c8)"></span>08 · Missing Critical Topics</button>
+  <div class="sb-prog">
+    <div class="prog-label">Reading progress</div>
+    <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+    <div class="prog-n" id="pn">0%</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main" id="ms">
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:.35;pointer-events:none"></canvas>
+  <div class="hero-eyebrow">Your Complete ML Curriculum</div>
+  <h1 class="hero-h1">Machine Learning<br><em>From Scratch</em> to <b>Production</b></h1>
+  <p class="hero-p">Every topic from the iSCALE syllabus — plus all the critical ones that were missing. Deep explanations, interactive visualizations, real code, and interview answers at every step.</p>
+  <div class="hero-stats">
+    <div><div class="hstat-n" style="color:var(--c1)">8</div><div class="hstat-l">Modules</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--c3)">60+</div><div class="hstat-l">Topics</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--c4)">12</div><div class="hstat-l">Live Visualizations</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--c2)">∞</div><div class="hstat-l">Depth</div></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════ M1 ══ -->
+<section class="module" id="m1">
+  <div class="mod-n" style="color:var(--c1)">Module 01</div>
+  <h2 class="mod-title">Mathematical Foundations</h2>
+  <p class="mod-desc">ML is applied math. You don't need a PhD — but you need to understand why gradient descent works, what an eigenvector means intuitively, and why probabilities matter. This module covers only what you'll actually use.</p>
+
+  <div class="callout ca"><div class="cl">⚠️ Don't Skip This</div><p>Every algorithm in this guide has a mathematical core. Understanding the math is what separates someone who <em>uses</em> sklearn from someone who can <em>debug, tune, and explain</em> it in interviews.</p></div>
+
+  <!-- GRADIENT DESCENT VIZ -->
+  <div class="viz">
+    <div class="viz-title">Gradient Descent — Animated <span>Interactive Visualization</span></div>
+    <canvas id="gdCanvas" height="220"></canvas>
+    <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+      <button onclick="resetGD()" style="padding:6px 16px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--text);font-family:var(--mono);font-size:11px;cursor:pointer">↺ Reset</button>
+      <button onclick="stepGD()" style="padding:6px 16px;border-radius:50px;border:1px solid var(--c1);background:rgba(124,106,247,.15);color:var(--c1);font-family:var(--mono);font-size:11px;cursor:pointer">Step →</button>
+      <button onclick="runGD()" style="padding:6px 16px;border-radius:50px;border:1px solid var(--c4);background:rgba(129,201,149,.15);color:var(--c4);font-family:var(--mono);font-size:11px;cursor:pointer">▶ Auto Run</button>
+      <span id="gdInfo" style="font-family:var(--mono);font-size:11px;color:var(--muted);align-self:center"></span>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">The ball rolls down the loss curve. Each step = θ := θ − α·∇L(θ). Watch it converge to the minimum.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Linear Algebra — Matrices & Vectors</div>
+      <div class="tc-desc">Your dataset IS a matrix. Rows = samples, columns = features. Matrix multiplication is how weights are applied. Dot product measures similarity (used in cosine similarity for RAG!).</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Calculus — Derivatives & Gradients</div>
+      <div class="tc-desc">A gradient points in the direction of steepest ascent. We go the opposite direction to minimize loss. This single idea trains every neural network, logistic regression, and SVM.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Probability & Bayes' Theorem</div>
+      <div class="tc-desc">P(A|B) = P(B|A)·P(A) / P(B). This is Naive Bayes, Bayesian Optimization, and the probabilistic interpretation of logistic regression — all from one formula.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Probability Distributions</div>
+      <div class="tc-desc">Gaussian: natural phenomena. Bernoulli: coin flip / binary classification. Multinomial: word counts / Naive Bayes. Poisson: event counts. Your data follows one of these — knowing which changes everything.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Eigenvalues & Eigenvectors</div>
+      <div class="tc-desc">A vector that only scales — doesn't rotate — when a transformation is applied. PCA finds eigenvectors of the covariance matrix. These are the directions of maximum variance in your data.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag key">PCA Key</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c1)">
+      <div class="tc-name">Information Theory — Entropy</div>
+      <div class="tc-desc">H(X) = −Σ p(x)log p(x). Measures uncertainty. Decision trees use Information Gain (drop in entropy) to pick splits. Cross-entropy is the loss function for every classifier.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Interview</span></div>
+    </div>
+  </div>
+
+  <!-- PROBABILITY DISTRIBUTIONS VIZ -->
+  <div class="viz">
+    <div class="viz-title">Common Probability Distributions <span>Hover to explore</span></div>
+    <canvas id="distCanvas" height="200"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button class="dist-btn" onclick="showDist('gaussian')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c1);background:rgba(124,106,247,.2);color:var(--c1);font-family:var(--mono);font-size:11px;cursor:pointer">Gaussian</button>
+      <button class="dist-btn" onclick="showDist('uniform')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Uniform</button>
+      <button class="dist-btn" onclick="showDist('skew')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Right Skewed</button>
+      <button class="dist-btn" onclick="showDist('bimodal')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Bimodal</button>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Recognizing your data's distribution tells you which model, imputation method, and transformation to use.</p>
+  </div>
+
+  <div class="formula">
+Gradient Descent:    θ := θ − α · ∇L(θ)
+Cross-Entropy Loss:  L = −Σ yᵢ·log(ŷᵢ) + (1−yᵢ)·log(1−ŷᵢ)
+Bayes' Theorem:      P(y|X) = P(X|y)·P(y) / P(X)
+Entropy:             H(X) = −Σ p(x)·log₂(p(x))</div>
+
+  <div class="iq"><div class="iq-badge">Interview Q</div>
+    <div class="iq-q">"Explain gradient descent intuitively. What is the learning rate?"</div>
+    <div class="iq-a">Imagine you're blindfolded on a hilly landscape trying to find the lowest point. At each step, you feel the slope under your feet and take a step in the downhill direction. The learning rate α is your step size. Too large → overshoot the minimum and diverge. Too small → reach the minimum very slowly. The gradient tells you the direction and slope; learning rate tells you how far to step.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ M2 ══ -->
+<section class="module" id="m2">
+  <div class="mod-n" style="color:var(--c2)">Module 02</div>
+  <h2 class="mod-title">Data Engineering & Preprocessing</h2>
+  <p class="mod-desc">In real projects, 70–80% of time is here — not on models. A well-preprocessed dataset beats a fancy model on messy data every time. This is where real ML skill shows.</p>
+
+  <!-- FEATURE SCALING VIZ -->
+  <div class="viz">
+    <div class="viz-title">Feature Scaling — Why It Matters <span>Before vs After</span></div>
+    <canvas id="scaleCanvas" height="220"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button onclick="showScale('raw')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c2);background:rgba(247,147,106,.2);color:var(--c2);font-family:var(--mono);font-size:11px;cursor:pointer">Raw Data</button>
+      <button onclick="showScale('minmax')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Min-Max</button>
+      <button onclick="showScale('standard')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Standard Scaler</button>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Without scaling, KNN and SVM are dominated by the feature with the largest range (e.g., salary in thousands vs age in tens).</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Data Imputation</div>
+      <div class="tc-desc">Mean: numeric, symmetric data. Median: numeric, skewed data (robust to outliers). Mode: categorical. KNN Imputer: uses K nearest neighbors — smartest option. Always impute AFTER splitting to avoid leakage.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Outlier Detection</div>
+      <div class="tc-desc">Z-Score: outlier if |z| > 3. IQR: outlier if x < Q1−1.5·IQR or x > Q3+1.5·IQR. Isolation Forest: best for high dimensions. Box plots are your first tool — always look at them.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Feature Scaling</div>
+      <div class="tc-desc">Min-Max: x'=(x−min)/(max−min) → [0,1]. Standard Scaler: x'=(x−μ)/σ → mean 0, std 1. Required for: KNN, SVM, Neural Nets, PCA. NOT required for: Random Forest, XGBoost, Decision Trees.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Critical</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Feature Transformation</div>
+      <div class="tc-desc">Log Transform: fixes right skew (income, house prices). Box-Cox: generalized log. Square root: moderate skew. These make distributions more Gaussian, helping linear models dramatically.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Handling Imbalanced Data</div>
+      <div class="tc-desc">SMOTE: creates synthetic minority samples by interpolating between real ones. Undersampling: removes majority samples. class_weight='balanced' in sklearn adjusts loss automatically. ROC/F1, not accuracy, for imbalanced data.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Real-World</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Dimensionality Reduction</div>
+      <div class="tc-desc">PCA: unsupervised, maximizes variance, use for preprocessing. LDA: supervised, maximizes class separation, use before classifiers. t-SNE/UMAP: visualization ONLY — not for modeling features.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Encoding Categorical Features</div>
+      <div class="tc-desc">Label Encoding: ordinal data (small&lt;med&lt;large). One-Hot Encoding: nominal data (city, color) — creates binary columns. Target Encoding: mean of target per category — powerful but leaks if not done carefully.</div>
+      <div class="tc-tags"><span class="tag miss">Missing from Slides!</span><span class="tag imp">Critical</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c2)">
+      <div class="tc-name">Data Leakage — The #1 Mistake</div>
+      <div class="tc-desc">Fitting a scaler on ALL data before splitting means test data influenced training — your model is "cheating." Always split first, then fit preprocessors on train only, transform both. Use sklearn Pipeline to enforce this automatically.</div>
+      <div class="tc-tags"><span class="tag miss">Missing from Slides!</span><span class="tag imp">Interview</span></div>
+    </div>
+  </div>
+
+  <!-- PCA VIZ -->
+  <div class="viz">
+    <div class="viz-title">PCA — Finding Principal Components <span>Animation</span></div>
+    <canvas id="pcaCanvas" height="260"></canvas>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">The first principal component (red arrow) points in the direction of maximum variance. The second is perpendicular to it. PCA rotates your data to align with these directions, then you can drop low-variance components.</p>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">preprocessing_pipeline.py</div><div class="clang">python</div></div>
+<pre><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> KNNImputer, SimpleImputer
+
+num_pipeline = Pipeline([
+    (<span class="str">'impute'</span>, KNNImputer(n_neighbors=<span class="num">5</span>)),
+    (<span class="str">'scale'</span>,  StandardScaler())
+])
+cat_pipeline = Pipeline([
+    (<span class="str">'impute'</span>, SimpleImputer(strategy=<span class="str">'most_frequent'</span>)),
+    (<span class="str">'encode'</span>, OneHotEncoder(handle_unknown=<span class="str">'ignore'</span>, sparse_output=<span class="kw">False</span>))
+])
+preprocessor = ColumnTransformer([
+    (<span class="str">'num'</span>, num_pipeline, numeric_cols),
+    (<span class="str">'cat'</span>, cat_pipeline, categorical_cols)
+])
+<span class="cm"># ↑ This is the CORRECT pattern — preprocessor is fitted ONLY on X_train</span>
+<span class="cm"># Later: full_pipeline = Pipeline([('prep', preprocessor), ('model', clf)])</span></pre></div>
+</section>
+
+<!-- ══════════════════════════════════════ M3 ══ -->
+<section class="module" id="m3">
+  <div class="mod-n" style="color:var(--c3)">Module 03</div>
+  <h2 class="mod-title">Supervised Learning: Regression</h2>
+  <p class="mod-desc">Predicts a continuous number. Every algorithm is a different strategy for learning the function y = f(X). Start with linear regression as your baseline before trying anything complex.</p>
+
+  <!-- REGRESSION VIZ -->
+  <div class="viz">
+    <div class="viz-title">Regression Models — Compare Fits <span>Interactive</span></div>
+    <canvas id="regCanvas" height="260"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button onclick="showReg('linear')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c3);background:rgba(79,195,247,.2);color:var(--c3);font-family:var(--mono);font-size:11px;cursor:pointer">Linear</button>
+      <button onclick="showReg('poly2')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Poly (degree 2)</button>
+      <button onclick="showReg('poly5')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Poly (degree 5) — Overfit</button>
+      <button onclick="showReg('ridge')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Ridge Regularized</button>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Watch how high-degree polynomials perfectly fit training points but oscillate wildly. Ridge regularization tames this by penalizing large coefficients.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">Simple & Multiple Linear Regression</div>
+      <div class="tc-desc">y = β₀ + β₁x₁ + ... + βₙxₙ. Minimizes Sum of Squared Errors. Has a closed-form solution: β = (XᵀX)⁻¹Xᵀy. Check assumptions: linearity, no multicollinearity (use VIF), homoscedasticity.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Baseline</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">Polynomial Regression</div>
+      <div class="tc-desc">Adds x², x³ features to capture curves. Use PolynomialFeatures in sklearn. Warning: degree ≥ 5 almost always overfits. Combine with Ridge regularization for safety.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">Ridge (L2) Regularization</div>
+      <div class="tc-desc">Loss = MSE + λΣβ². Shrinks weights toward zero but never exactly. Handles multicollinearity well. α (sklearn) = λ. Cross-validate α. When features are correlated, always prefer Ridge over plain linear.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Must Know</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">Lasso (L1) Regularization</div>
+      <div class="tc-desc">Loss = MSE + λΣ|β|. Can force weights to EXACTLY zero — built-in feature selection! When you have many irrelevant features, Lasso is better than Ridge. Sparse solutions are interpretable.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Feature Selection</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">SVR — Support Vector Regression</div>
+      <div class="tc-desc">Fits the widest possible ε-insensitive tube around data. Points inside = no penalty. Points outside = penalized. Kernel trick (RBF) handles non-linear patterns. Requires scaling.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c3)">
+      <div class="tc-name">Bias-Variance Tradeoff</div>
+      <div class="tc-desc">Total Error = Bias² + Variance + Irreducible Noise. High bias = underfitting (model too simple). High variance = overfitting (model memorized training data). Regularization, ensemble methods, and more data all help.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Interview #1</span></div>
+    </div>
+  </div>
+
+  <div class="formula">
+Ridge:   L = Σ(yᵢ − ŷᵢ)² + λΣβⱼ²           (L2 — shrinks weights)
+Lasso:   L = Σ(yᵢ − ŷᵢ)² + λΣ|βⱼ|          (L1 — zeroes weights)
+R²:      1 − SS_residual / SS_total          (1 = perfect, 0 = mean baseline)
+RMSE:    √(1/n · Σ(yᵢ − ŷᵢ)²)              (same units as target)</div>
+
+  <div class="iq"><div class="iq-badge">Interview Q</div>
+    <div class="iq-q">"What is the difference between Ridge and Lasso? When would you use each?"</div>
+    <div class="iq-a">Both prevent overfitting by adding a penalty to large weights. Ridge (L2) adds the sum of squared weights — it shrinks all weights proportionally but never to zero. Lasso (L1) adds the sum of absolute weights — it can force some weights to exactly zero, effectively removing features. Use Lasso when you suspect many features are irrelevant and want automatic feature selection. Use Ridge when features are correlated (it handles multicollinearity better). ElasticNet combines both and is a safe default.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ M4 ══ -->
+<section class="module" id="m4">
+  <div class="mod-n" style="color:var(--c4)">Module 04</div>
+  <h2 class="mod-title">Supervised Learning: Classification</h2>
+  <p class="mod-desc">Predicts a category. Each algorithm learns a different kind of decision boundary — from a line, to a curve, to a Voronoi region, to a hyperplane. Knowing which to use is the skill.</p>
+
+  <!-- DECISION BOUNDARY VIZ -->
+  <div class="viz">
+    <div class="viz-title">Decision Boundaries — How Classifiers Think <span>Interactive</span></div>
+    <canvas id="boundCanvas" height="300"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button onclick="showBound('logistic')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c4);background:rgba(129,201,149,.2);color:var(--c4);font-family:var(--mono);font-size:11px;cursor:pointer">Logistic Regression</button>
+      <button onclick="showBound('knn')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">KNN (k=3)</button>
+      <button onclick="showBound('svm')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">SVM (RBF)</button>
+      <button onclick="showBound('tree')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">Decision Tree</button>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Logistic = straight line. KNN = jagged, local. SVM RBF = smooth curves. Decision Tree = axis-aligned rectangles. Each shape has different strengths.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Logistic Regression</div>
+      <div class="tc-desc">Uses sigmoid σ(z)=1/(1+e⁻ᶻ) to output probabilities. Trained with cross-entropy loss. Linear decision boundary. Highly interpretable — coefficients tell you feature impact. Best baseline for any classification problem.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Always Start Here</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Naive Bayes (Gaussian / Multinomial / Bernoulli)</div>
+      <div class="tc-desc">Applies Bayes assuming features are independent. "Naive" because independence is rarely true — but it works surprisingly well. Gaussian: real-valued features. Multinomial: word counts (NLP). Bernoulli: binary features.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">KNN — K Nearest Neighbors</div>
+      <div class="tc-desc">No training — just memorizes data. Prediction = majority vote of K nearest points (Euclidean distance). Sensitive to scale — ALWAYS scale first. High K = smoother boundary (less overfit). Slow at inference on large datasets.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Decision Tree Classification</div>
+      <div class="tc-desc">Splits using Gini Impurity or Information Gain. Gini = 1−Σpᵢ². Deeply interpretable — you can export and read every rule. Tends to overfit without max_depth or min_samples_leaf constraints.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Interpretable</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">SVM — Support Vector Machine</div>
+      <div class="tc-desc">Finds the hyperplane that maximizes the margin between classes. C parameter: large C = less tolerance for misclassification (might overfit). Support vectors are the only training points that matter.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Kernel SVM</div>
+      <div class="tc-desc">The kernel trick maps data to a higher dimension — without computing it explicitly — making non-linear data linearly separable. RBF kernel: most common, great default. γ controls how local the influence of each point is.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag key">Kernel Trick</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Random Forest Classification</div>
+      <div class="tc-desc">Ensemble of trees trained on bootstrap samples with random feature subsets. Final prediction = majority vote. Variance reduction vs single tree. Built-in feature_importances_. First model to try after logistic regression.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Go-To</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c4)">
+      <div class="tc-name">Sigmoid vs Softmax</div>
+      <div class="tc-desc">Sigmoid: binary classification output → single probability [0,1]. Softmax: multi-class → vector of probabilities summing to 1. This difference matters when building neural networks and understanding logistic regression outputs.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Neural Net Key</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ M5 ══ -->
+<section class="module" id="m5">
+  <div class="mod-n" style="color:var(--c5)">Module 05</div>
+  <h2 class="mod-title">Unsupervised Learning</h2>
+  <p class="mod-desc">No labels. The algorithm finds structure in data by itself. Used for customer segmentation, anomaly detection, topic modeling, and exploring new datasets before you know what to predict.</p>
+
+  <!-- CLUSTERING VIZ -->
+  <div class="viz">
+    <div class="viz-title">Clustering Algorithms Compared <span>Animated</span></div>
+    <canvas id="clusterCanvas" height="280"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <button onclick="showCluster('kmeans')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c5);background:rgba(255,183,77,.2);color:var(--c5);font-family:var(--mono);font-size:11px;cursor:pointer">▶ K-Means</button>
+      <button onclick="showCluster('dbscan')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">DBSCAN</button>
+      <button onclick="newData()" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">↺ New Data</button>
+      <span id="clusterInfo" style="font-family:var(--mono);font-size:11px;color:var(--muted);align-self:center"></span>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">K-Means: fast, assumes spherical clusters, needs K upfront. DBSCAN: finds arbitrary shapes, marks noise as -1, no K needed.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">K-Means Clustering</div>
+      <div class="tc-desc">Assign points to nearest centroid, recompute centroids, repeat. Sensitive to initialization → use K-Means++. Sensitive to scale → StandardScaler first. Sensitive to outliers → remove them first or use DBSCAN.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">Elbow Method & Silhouette Score</div>
+      <div class="tc-desc">Elbow: plot WCSS vs K — pick the "elbow." Silhouette: s = (b−a)/max(a,b) where a = intra-cluster distance, b = nearest cluster distance. Range [−1,1]. Use BOTH together — elbow identifies candidates, silhouette picks the best.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">DBSCAN</div>
+      <div class="tc-desc">Core points: ≥ min_samples neighbors within ε radius. Border points: within ε of a core point. Noise points: labeled −1. Finds arbitrary cluster shapes. Doesn't need K. Two params: ε (try KNN distance plot) and min_samples (try log(N)).</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Outlier Detection</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">Hierarchical Clustering</div>
+      <div class="tc-desc">Agglomerative: start with N clusters, merge closest pair at each step. Dendrogram shows the merge history — cut it at any height to get any number of clusters. Ward linkage minimizes within-cluster variance.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">Gaussian Mixture Models (GMM)</div>
+      <div class="tc-desc">Soft clustering — each point gets a probability of belonging to each cluster. Data modeled as mixture of K Gaussians. Trained with EM algorithm (Expectation-Maximization). More flexible shapes than K-Means.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">Anomaly Detection</div>
+      <div class="tc-desc">Isolation Forest: anomalies get isolated in fewer random splits (anomaly score = average path length). One-Class SVM: learns a boundary around normal data. LOF: compares local density to neighbors. Used in fraud, network intrusion, manufacturing QC.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c5)">
+      <div class="tc-name">Association Rules — Apriori & Eclat</div>
+      <div class="tc-desc">Market basket analysis. Support = P(X∩Y). Confidence = P(Y|X). Lift = Confidence/P(Y). Lift > 1 means the items appear together more than by chance. Apriori: breadth-first. Eclat: depth-first with vertical format (faster).</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ M6 ══ -->
+<section class="module" id="m6">
+  <div class="mod-n" style="color:var(--c6)">Module 06</div>
+  <h2 class="mod-title">Ensemble Methods & Boosting</h2>
+  <p class="mod-desc">Combine weak learners into a strong one. XGBoost and LightGBM dominate Kaggle competitions and real-world tabular data problems. Understanding these deeply is a superpower.</p>
+
+  <!-- BOOSTING VIZ -->
+  <div class="viz">
+    <div class="viz-title">Boosting — Sequential Error Correction <span>Step by Step</span></div>
+    <canvas id="boostCanvas" height="240"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button onclick="boostStep()" style="padding:5px 14px;border-radius:50px;border:1px solid var(--c6);background:rgba(240,98,146,.2);color:var(--c6);font-family:var(--mono);font-size:11px;cursor:pointer">Next Round →</button>
+      <button onclick="boostReset()" style="padding:5px 14px;border-radius:50px;border:1px solid var(--border2);background:var(--surface3);color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer">↺ Reset</button>
+      <span id="boostInfo" style="font-family:var(--mono);font-size:11px;color:var(--muted);align-self:center">Round 0 — All weights equal</span>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Each round focuses on the mistakes of the previous. Misclassified points get larger circles (higher weight). The final model is a weighted sum of all rounds.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">Bagging & Random Forest</div>
+      <div class="tc-desc">Train N trees on random bootstrap samples. Each tree also uses a random feature subset (sqrt(n_features) for classification). Average predictions. Reduces variance while keeping bias low. Works in parallel — fast to train.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">AdaBoost</div>
+      <div class="tc-desc">Train a stump → identify misclassified points → upweight them → train next stump on reweighted data. Final prediction = weighted vote of all stumps. Sensitive to noisy data and outliers (they get very high weights).</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">Gradient Boosting (GBM)</div>
+      <div class="tc-desc">Each tree fits the residuals (negative gradient) of the previous ensemble. Learning rate shrinks each tree's contribution, preventing overfitting. The most important hyperparams: n_estimators, learning_rate, max_depth. Lower learning_rate → needs more trees, but generalizes better.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Powerful</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">XGBoost</div>
+      <div class="tc-desc">Optimized GBM: second-order Taylor expansion, L1+L2 regularization, parallel tree building, column subsampling. Key params: n_estimators, max_depth (3–6), learning_rate (0.01–0.3), subsample, colsample_bytree. Use early_stopping_rounds to avoid overfitting automatically.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Industry Standard</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">LightGBM</div>
+      <div class="tc-desc">Leaf-wise growth (vs level-wise in XGBoost) → more accurate trees but more prone to overfit without tuning. GOSS + EFB make it 10x faster on large datasets. num_leaves is the most important param (more than max_depth).</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Fast</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">CatBoost</div>
+      <div class="tc-desc">Handles raw categorical features — just pass them as strings. Ordered boosting reduces overfitting. Symmetric (oblivious) trees → fast inference. Best when you have many high-cardinality categoricals and don't want to encode them.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">Stacking & Blending</div>
+      <div class="tc-desc">Stacking: Level-0 models make predictions → these become features for Level-1 meta-learner. Blending: simpler — use held-out validation set for meta features. Often adds 0.5–2% on competitions. Risk: complexity and overfitting.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c6)">
+      <div class="tc-name">Voting Classifier</div>
+      <div class="tc-desc">Hard voting: majority class. Soft voting: average probabilities — always use soft when models give probabilities, it's more accurate because it uses confidence. Combine diverse models (SVM + RF + Logistic) for best results.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+  </div>
+
+  <table class="ctable">
+    <thead><tr><th>Algorithm</th><th>Speed</th><th>Categoricals</th><th>Key Tuning Param</th><th>Best For</th></tr></thead>
+    <tbody>
+      <tr><td>Random Forest</td><td>Fast (parallel)</td><td>Encode first</td><td>n_estimators</td><td>General baseline, high dims</td></tr>
+      <tr><td>XGBoost</td><td>Medium</td><td>Encode first</td><td>learning_rate + early_stop</td><td>Structured data, competitions</td></tr>
+      <tr><td>LightGBM</td><td>Very fast</td><td>Limited native</td><td>num_leaves</td><td>Large datasets (1M+ rows)</td></tr>
+      <tr><td>CatBoost</td><td>Medium</td><td>Native (best)</td><td>iterations + depth</td><td>High-cardinality categoricals</td></tr>
+      <tr><td>AdaBoost</td><td>Fast</td><td>Encode first</td><td>n_estimators</td><td>Simple, interpretable ensembles</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══════════════════════════════════════ M7 ══ -->
+<section class="module" id="m7">
+  <div class="mod-n" style="color:var(--c7)">Module 07</div>
+  <h2 class="mod-title">Model Evaluation & Hyperparameter Tuning</h2>
+  <p class="mod-desc">The model is only as good as how you measure it. Wrong metrics lead to wrong decisions. This is also where you learn if your model is actually learning or just memorizing.</p>
+
+  <!-- CONFUSION MATRIX VIZ -->
+  <div class="viz">
+    <div class="viz-title">Confusion Matrix → All Metrics Derived <span>Hover cells</span></div>
+    <canvas id="cmCanvas" height="300"></canvas>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">Every classification metric comes from 4 numbers: TP, TN, FP, FN. Hover each cell to see its role in Precision, Recall, F1, and Accuracy.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">Accuracy, Precision, Recall, F1</div>
+      <div class="tc-desc">Accuracy = (TP+TN)/N — useless for imbalanced. Precision = TP/(TP+FP) — "how often are positive predictions correct?" Recall = TP/(TP+FN) — "how many positives did we catch?" F1 = harmonic mean of both.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span><span class="tag imp">Core</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">ROC Curve & AUC</div>
+      <div class="tc-desc">Plots TPR vs FPR at every threshold. AUC = 0.5 is random; AUC = 1.0 is perfect. Model-comparison tool — works regardless of threshold choice. For very imbalanced data, use Precision-Recall curve instead.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Must Know</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">K-Fold & Stratified K-Fold</div>
+      <div class="tc-desc">K-Fold splits into K folds, trains K times (each fold as test once), averages scores. Stratified preserves class ratio in each fold — always use for classification. K=5 or K=10 are standard choices.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">GridSearchCV & RandomizedSearchCV</div>
+      <div class="tc-desc">GridSearch: exhaustive, guaranteed to find best in grid, O(n_combos × K) fits. RandomizedSearch: random sample, often finds near-optimal at 10% cost. For large search spaces always use Randomized. n_iter controls budget.</div>
+      <div class="tc-tags"><span class="tag ok">In Slides</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">Bayesian Optimization (Optuna)</div>
+      <div class="tc-desc">Builds a surrogate model of the objective function. Each trial chooses params where improvement is most likely. Far more efficient than random search. Industry standard for expensive models. pip install optuna — 5 lines to use.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Industry</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c7)">
+      <div class="tc-name">Learning Curves</div>
+      <div class="tc-desc">Plot train and val scores vs training set size. Both low → underfit (need better model). Large gap → overfit (need more data or regularization). Converging → more data won't help. Essential diagnostic before any optimization.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span></div>
+    </div>
+  </div>
+
+  <!-- ROC VIZ -->
+  <div class="viz">
+    <div class="viz-title">ROC Curve — Compare 3 Models <span>Animated</span></div>
+    <canvas id="rocCanvas" height="260"></canvas>
+    <p style="font-size:12px;color:var(--dim);margin-top:8px">The closer the curve hugs the top-left corner, the better. AUC = area under the curve. The diagonal is a random classifier (AUC=0.5). Always compare models with AUC, not accuracy.</p>
+  </div>
+
+  <div class="formula">
+Precision:  P = TP / (TP + FP)
+Recall:     R = TP / (TP + FN)
+F1 Score:   F1 = 2·P·R / (P+R)
+Accuracy:   A = (TP + TN) / (TP + TN + FP + FN)
+R² Score:   R² = 1 − SS_res / SS_tot</div>
+
+  <div class="iq"><div class="iq-badge">Interview Q</div>
+    <div class="iq-q">"You have 99% fraud-free data. Your model gets 99% accuracy. Is it good?"</div>
+    <div class="iq-a">No — a model that predicts "not fraud" for every single transaction would achieve 99% accuracy. Accuracy is meaningless on imbalanced datasets. You should look at Precision and Recall for the minority class (fraud). If recall for fraud is 0%, the model is useless despite 99% accuracy. Use F1-score or AUC-ROC for imbalanced problems, and consider using SMOTE or class_weight='balanced'.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ M8 ══ -->
+<section class="module" id="m8">
+  <div class="mod-n" style="color:var(--c8)">Module 08</div>
+  <h2 class="mod-title">Critical Topics NOT in the Slides</h2>
+  <p class="mod-desc">The syllabus images covered classical ML well. But these topics were absent — and every real ML role will need them. Do not skip this module.</p>
+
+  <div class="miss-box">
+    <h3>⚠️ 16 Topics Missing from Your Syllabus</h3>
+    <p>These were not visible in either slide image but are required for real-world ML work:</p>
+    <div class="miss-grid">
+      <div class="miss-item"><strong>Neural Networks (MLP)</strong>Backprop, activations, layers</div>
+      <div class="miss-item"><strong>Bias-Variance Tradeoff</strong>Most important ML concept</div>
+      <div class="miss-item"><strong>ROC / AUC / PR Curves</strong>Model comparison standard</div>
+      <div class="miss-item"><strong>Data Leakage</strong>Most common real-world bug</div>
+      <div class="miss-item"><strong>Feature Engineering</strong>80% of model performance</div>
+      <div class="miss-item"><strong>SHAP Explainability</strong>Required in regulated industries</div>
+      <div class="miss-item"><strong>sklearn Pipelines</strong>Production-grade code pattern</div>
+      <div class="miss-item"><strong>Bayesian Optimization</strong>Optuna — industry standard tuning</div>
+      <div class="miss-item"><strong>Time Series ML</strong>ARIMA, Prophet, lag features</div>
+      <div class="miss-item"><strong>NLP Basics</strong>TF-IDF, embeddings, BERT</div>
+      <div class="miss-item"><strong>Model Deployment</strong>FastAPI + Docker (you know this!)</div>
+      <div class="miss-item"><strong>Experiment Tracking</strong>MLflow, Weights & Biases</div>
+      <div class="miss-item"><strong>Categorical Encoding</strong>Label vs OHE vs Target encoding</div>
+      <div class="miss-item"><strong>Learning Curves</strong>Diagnose under/overfitting</div>
+      <div class="miss-item"><strong>Regression Metrics</strong>MAE, MSE, RMSE, R²</div>
+      <div class="miss-item"><strong>Train/Val/Test Split</strong>Test set touched ONCE only</div>
+    </div>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">Neural Networks — MLP</div>
+      <div class="tc-desc">Layers of weighted sums + activations. Forward pass: Xᵀ → Z = XW+b → A = activation(Z). Backprop: chain rule computes gradients. ReLU for hidden layers, Sigmoid for binary output, Softmax for multi-class. Implemented in sklearn as MLPClassifier.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Critical</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">SHAP Values — Explainability</div>
+      <div class="tc-desc">Assigns each feature a contribution value for each individual prediction. "Feature X pushed this prediction +0.3 above baseline." Works for any model. Required in finance, healthcare, and legal contexts. pip install shap → 3 lines to use.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Industry Must</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">ML Pipelines with sklearn</div>
+      <div class="tc-desc">Chain preprocessor + model into one Pipeline object. Prevents data leakage automatically. Enables correct cross-validation. Deploy one object — pickle it, load it, call .predict(). This is how production ML code looks.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">Production</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">NLP — TF-IDF & Embeddings</div>
+      <div class="tc-desc">TF-IDF: term frequency × inverse document frequency — numeric representation of text. Word2Vec/GloVe: dense word embeddings capturing semantic meaning. BERT/sentence-transformers: contextual embeddings (you used this in your RAG system!).</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">Experiment Tracking — MLflow</div>
+      <div class="tc-desc">Log params, metrics, models, and plots automatically across runs. Compare experiments visually. Reproduce any result. Register and version models. mlflow.autolog() with sklearn adds tracking in one line.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag imp">MLOps</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--c8)">
+      <div class="tc-name">Model Deployment with FastAPI</div>
+      <div class="tc-desc">You already know FastAPI from the RAG system. Save model with joblib.dump(). Load in FastAPI. Wrap .predict() in a POST endpoint. Containerize with Docker. Same pattern as your RAG backend — ML deployment is just another API.</div>
+      <div class="tc-tags"><span class="tag miss">Not in Slides!</span><span class="tag key">You Know This!</span></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">production_ml_api.py — Deploy Any ML Model</div><div class="clang">python</div></div>
+<pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">import</span> joblib
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+app = FastAPI()
+pipeline = joblib.load(<span class="str">"model.pkl"</span>)  <span class="cm"># full sklearn Pipeline</span>
+
+<span class="kw">class</span> <span class="tp">PredictRequest</span>(BaseModel):
+    features: list[float]  <span class="cm"># your feature vector</span>
+
+<span class="kw">class</span> <span class="tp">PredictResponse</span>(BaseModel):
+    prediction: <span class="tp">int</span>
+    probability: <span class="tp">float</span>
+    model_version: <span class="tp">str</span> = <span class="str">"v1.0"</span>
+
+<span class="fn">@app.post</span>(<span class="str">"/predict"</span>, response_model=PredictResponse)
+<span class="kw">async def</span> <span class="fn">predict</span>(req: PredictRequest):
+    X = np.array(req.features).reshape(<span class="num">1</span>, <span class="num">-1</span>)
+    pred = pipeline.predict(X)[<span class="num">0</span>]
+    prob = pipeline.predict_proba(X)[<span class="num">0</span>].max()
+    <span class="kw">return</span> PredictResponse(prediction=<span class="tp">int</span>(pred), probability=<span class="tp">float</span>(prob))
+
+<span class="cm"># ↑ Same FastAPI pattern as your RAG system. ML deployment = just another endpoint.</span></pre></div>
+
+  <div class="chk">
+    <div class="chk-lbl">🎓 Complete Curriculum Checkpoint</div>
+    <h3>You've mastered the course when you can:</h3>
+    <ul class="chk-list">
+      <li>Explain every algorithm's intuition without code or notes</li>
+      <li>Choose the right algorithm for any given problem type</li>
+      <li>Build a leak-free sklearn Pipeline from raw data to prediction</li>
+      <li>Explain why accuracy fails on imbalanced data and what to use instead</li>
+      <li>Describe XGBoost's key improvements over vanilla GBM</li>
+      <li>Deploy any trained model as a FastAPI endpoint (you already know this!)</li>
+      <li>Explain SHAP and why it matters for model trust in production</li>
+      <li>Handle missing values, outliers, and categorical features correctly</li>
+    </ul>
+  </div>
+</section>
+
+</div><!-- end .content -->
+<footer>Built specifically for <strong>your</strong> ML journey — every iSCALE topic + what was missing. Pair with your RAG system for portfolio-grade AI projects.</footer>
+</main>
+
+<script>
+// ─── SIDEBAR & PROGRESS ─────────────────────────────────
+const ms = document.getElementById('ms');
+const pf = document.getElementById('pf');
+const pn = document.getElementById('pn');
+const links = document.querySelectorAll('.sb-link');
+ms.addEventListener('scroll', () => {
+  const p = Math.min(ms.scrollTop/(ms.scrollHeight-ms.clientHeight)*100,100);
+  pf.style.width=p+'%'; pn.textContent=Math.round(p)+'%';
+  document.querySelectorAll('.module').forEach((s,i)=>{
+    const t=s.getBoundingClientRect().top;
+    if(t<200&&t>-s.offsetHeight+200){links.forEach(l=>l.classList.remove('on'));if(links[i])links[i].classList.add('on')}
+  });
+});
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+// ─── HERO PARTICLES ──────────────────────────────────────
+const hc = document.getElementById('heroCanvas');
+const hctx = hc.getContext('2d');
+let pts = [];
+function initHero(){
+  hc.width=hc.parentElement.offsetWidth; hc.height=hc.parentElement.offsetHeight;
+  pts=Array.from({length:50},()=>({x:Math.random()*hc.width,y:Math.random()*hc.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*2+1}));
+}
+function drawHero(){
+  hctx.clearRect(0,0,hc.width,hc.height);
+  pts.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>hc.width)p.vx*=-1;
+    if(p.y<0||p.y>hc.height)p.vy*=-1;
+    hctx.beginPath(); hctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    hctx.fillStyle='rgba(124,106,247,0.5)'; hctx.fill();
+  });
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<100){hctx.strokeStyle=`rgba(124,106,247,${.15*(1-d/100)})`;hctx.lineWidth=.5;hctx.beginPath();hctx.moveTo(a.x,a.y);hctx.lineTo(b.x,b.y);hctx.stroke()}
+  }));
+  requestAnimationFrame(drawHero);
+}
+initHero(); drawHero();
+window.addEventListener('resize',initHero);
+
+// ─── GRADIENT DESCENT VIZ ────────────────────────────────
+const gdC = document.getElementById('gdCanvas');
+const gdCtx = gdC.getContext('2d');
+let gdTheta=4.2, gdAlpha=0.15, gdRunning=false, gdTimer=null;
+function gdLoss(t){return .5*t*t-2*t+3+(Math.sin(t*2)*.2)}
+function gdGrad(t){return t-2+(Math.cos(t*2)*.4)}
+function drawGD(){
+  gdC.width=gdC.parentElement.offsetWidth; gdC.height=220;
+  const w=gdC.width, h=gdC.height, pad=40;
+  gdCtx.clearRect(0,0,w,h);
+  // Draw axes
+  gdCtx.strokeStyle='rgba(255,255,255,0.1)'; gdCtx.lineWidth=1;
+  gdCtx.beginPath(); gdCtx.moveTo(pad,h-pad); gdCtx.lineTo(w-pad,h-pad); gdCtx.stroke();
+  // Draw loss curve
+  const steps=200;
+  const xmin=-1, xmax=6;
+  const yvals=[];
+  for(let i=0;i<=steps;i++){const x=xmin+(xmax-xmin)*i/steps; yvals.push(gdLoss(x));}
+  const ymin=Math.min(...yvals), ymax=Math.max(...yvals);
+  const tx=x=>pad+(x-xmin)/(xmax-xmin)*(w-2*pad);
+  const ty=y=>(h-pad)-(y-ymin)/(ymax-ymin)*(h-2*pad);
+  gdCtx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const x=xmin+(xmax-xmin)*i/steps, y=gdLoss(x);
+    i===0?gdCtx.moveTo(tx(x),ty(y)):gdCtx.lineTo(tx(x),ty(y));
+  }
+  const grad=gdCtx.createLinearGradient(pad,0,w-pad,0);
+  grad.addColorStop(0,'#7c6af7'); grad.addColorStop(1,'#4fc3f7');
+  gdCtx.strokeStyle=grad; gdCtx.lineWidth=2.5; gdCtx.stroke();
+  // Minimum marker
+  gdCtx.fillStyle='rgba(129,201,149,0.8)';
+  gdCtx.beginPath(); gdCtx.arc(tx(2),ty(gdLoss(2)),5,0,Math.PI*2); gdCtx.fill();
+  gdCtx.fillStyle='rgba(129,201,149,0.6)'; gdCtx.font='11px Fira Code'; gdCtx.fillText('minimum',tx(2)+8,ty(gdLoss(2))-5);
+  // Ball
+  const bx=tx(gdTheta), by=ty(gdLoss(gdTheta));
+  const grd=gdCtx.createRadialGradient(bx,by,0,bx,by,10);
+  grd.addColorStop(0,'#f7936a'); grd.addColorStop(1,'rgba(247,147,106,0)');
+  gdCtx.beginPath(); gdCtx.arc(bx,by,10,0,Math.PI*2);
+  gdCtx.fillStyle=grd; gdCtx.fill();
+  gdCtx.beginPath(); gdCtx.arc(bx,by,6,0,Math.PI*2);
+  gdCtx.fillStyle='#f7936a'; gdCtx.fill();
+  // Arrow showing gradient direction
+  const gv=gdGrad(gdTheta);
+  gdCtx.strokeStyle='rgba(247,147,106,0.6)'; gdCtx.lineWidth=2;
+  gdCtx.beginPath(); gdCtx.moveTo(bx,by); gdCtx.lineTo(bx-gv*20,by+8); gdCtx.stroke();
+  document.getElementById('gdInfo').textContent=`θ = ${gdTheta.toFixed(3)}  |  Loss = ${gdLoss(gdTheta).toFixed(3)}  |  Grad = ${gdGrad(gdTheta).toFixed(3)}`;
+}
+function stepGD(){gdTheta-=gdAlpha*gdGrad(gdTheta); drawGD()}
+function resetGD(){gdTheta=4.2; stopGD(); drawGD()}
+function runGD(){if(gdRunning){stopGD();return} gdRunning=true; gdTimer=setInterval(()=>{if(Math.abs(gdGrad(gdTheta))<0.01){stopGD();return} stepGD();},80)}
+function stopGD(){gdRunning=false; clearInterval(gdTimer)}
+setTimeout(drawGD,100); window.addEventListener('resize',drawGD);
+
+// ─── DISTRIBUTION VIZ ────────────────────────────────────
+const dC=document.getElementById('distCanvas'), dCtx=dC.getContext('2d');
+function gaussian(x,m,s){return Math.exp(-(x-m)**2/(2*s**2))/(s*Math.sqrt(2*Math.PI))}
+function showDist(type){
+  dC.width=dC.parentElement.offsetWidth; dC.height=200;
+  const w=dC.width,h=dC.height,pad=30;
+  dCtx.clearRect(0,0,w,h);
+  const pts=[];
+  for(let i=0;i<200;i++){
+    const x=-4+8*i/200;
+    let y=0;
+    if(type==='gaussian') y=gaussian(x,0,1)*2.5;
+    else if(type==='uniform') y=(x>-2&&x<2)?0.25:0;
+    else if(type==='skew') y=x>-1?(Math.exp(-(x+1)*0.8)*0.8):0;
+    else if(type==='bimodal') y=gaussian(x,-1.5,.7)*1.5+gaussian(x,1.5,.7)*1.5;
+    pts.push({x,y});
+  }
+  const ymax=Math.max(...pts.map(p=>p.y));
+  const tx=x=>pad+(x+4)/8*(w-2*pad);
+  const ty=y=>(h-pad)-(y/ymax)*(h-2*pad-10);
+  // Fill
+  dCtx.beginPath(); dCtx.moveTo(tx(pts[0].x),h-pad);
+  pts.forEach(p=>dCtx.lineTo(tx(p.x),ty(p.y)));
+  dCtx.lineTo(tx(pts[pts.length-1].x),h-pad); dCtx.closePath();
+  const colors={'gaussian':['rgba(124,106,247,.35)','rgba(124,106,247,.05)'],'uniform':['rgba(79,195,247,.35)','rgba(79,195,247,.05)'],'skew':['rgba(247,147,106,.35)','rgba(247,147,106,.05)'],'bimodal':['rgba(129,201,149,.35)','rgba(129,201,149,.05)']};
+  const col=colors[type];
+  const g=dCtx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,col[0]); g.addColorStop(1,col[1]);
+  dCtx.fillStyle=g; dCtx.fill();
+  // Line
+  dCtx.beginPath(); pts.forEach((p,i)=>i===0?dCtx.moveTo(tx(p.x),ty(p.y)):dCtx.lineTo(tx(p.x),ty(p.y)));
+  dCtx.strokeStyle=col[0].replace('.35','.9'); dCtx.lineWidth=2.5; dCtx.stroke();
+  // Mean line for gaussian
+  if(type==='gaussian'){dCtx.strokeStyle='rgba(255,255,255,0.3)';dCtx.setLineDash([4,4]);dCtx.beginPath();dCtx.moveTo(tx(0),pad);dCtx.lineTo(tx(0),h-pad);dCtx.stroke();dCtx.setLineDash([]);dCtx.fillStyle='rgba(255,255,255,0.5)';dCtx.font='11px Fira Code';dCtx.fillText('μ=0',tx(0)+4,pad+14)}
+  // Label
+  const labels={'gaussian':'Gaussian — symmetric, most common. Use StandardScaler.','uniform':'Uniform — equal probability. Rare in real data.','skew':'Right Skewed — apply log transform before modeling.','bimodal':'Bimodal — two groups. Consider separate models.'};
+  dCtx.fillStyle='rgba(255,255,255,0.45)'; dCtx.font='12px Fira Code'; dCtx.fillText(labels[type],pad,h-6);
+}
+setTimeout(()=>showDist('gaussian'),200);
+
+// ─── FEATURE SCALING VIZ ────────────────────────────────
+const scC=document.getElementById('scaleCanvas'), scCtx=scC.getContext('2d');
+const rawData={salary:[25000,32000,45000,67000,120000,85000,55000,42000],age:[22,27,35,41,28,33,38,44]};
+function showScale(mode){
+  scC.width=scC.parentElement.offsetWidth; scC.height=220;
+  const w=scC.width,h=scC.height,pad=50;
+  scCtx.clearRect(0,0,w,h);
+  let x1=rawData.salary, x2=rawData.age;
+  const label=['Salary (raw)','Age (raw)'];
+  if(mode==='minmax'){
+    const mn1=Math.min(...x1),mx1=Math.max(...x1); x1=x1.map(v=>(v-mn1)/(mx1-mn1));
+    const mn2=Math.min(...x2),mx2=Math.max(...x2); x2=x2.map(v=>(v-mn2)/(mx2-mn2));
+  } else if(mode==='standard'){
+    const m1=x1.reduce((a,b)=>a+b)/x1.length; const s1=Math.sqrt(x1.map(v=>(v-m1)**2).reduce((a,b)=>a+b)/x1.length);
+    x1=x1.map(v=>(v-m1)/s1);
+    const m2=x2.reduce((a,b)=>a+b)/x2.length; const s2=Math.sqrt(x2.map(v=>(v-m2)**2).reduce((a,b)=>a+b)/x2.length);
+    x2=x2.map(v=>(v-m2)/s2);
+  }
+  const all=[...x1,...x2], ymin=Math.min(...all), ymax=Math.max(...all);
+  const tx=i=>pad+i*(w-2*pad)/7;
+  const ty=v=>pad+(1-(v-ymin)/(ymax-ymin||1))*(h-2*pad);
+  // Grid
+  scCtx.strokeStyle='rgba(255,255,255,0.06)'; scCtx.lineWidth=1;
+  [0,.25,.5,.75,1].forEach(f=>{const y=pad+f*(h-2*pad); scCtx.beginPath(); scCtx.moveTo(pad,y); scCtx.lineTo(w-pad,y); scCtx.stroke()});
+  // Lines
+  [[x1,'#7c6af7','Feature 1 (Salary)'],[x2,'#f7936a','Feature 2 (Age)']].forEach(([vals,color,lbl])=>{
+    scCtx.strokeStyle=color; scCtx.lineWidth=2.5; scCtx.beginPath();
+    vals.forEach((v,i)=>i===0?scCtx.moveTo(tx(i),ty(v)):scCtx.lineTo(tx(i),ty(v)));
+    scCtx.stroke();
+    vals.forEach((v,i)=>{scCtx.fillStyle=color; scCtx.beginPath(); scCtx.arc(tx(i),ty(v),4,0,Math.PI*2); scCtx.fill()});
+    scCtx.fillStyle=color; scCtx.font='11px Fira Code'; scCtx.fillText(lbl,w-pad-150,mode==='raw'&&color==='#f7936a'?ty(vals[0])+15:ty(vals[0])-10);
+  });
+  // Annotation
+  const msgs={raw:'⚠️  Salary (25k–120k) completely dominates Age (22–44). KNN/SVM will ignore Age.',minmax:'✓  Both features in [0,1]. Fair comparison. Use for bounded features.',standard:'✓  Both features: mean=0, std=1. Best for most algorithms including PCA and SVMs.'};
+  scCtx.fillStyle='rgba(255,255,255,0.45)'; scCtx.font='12px Fira Code'; scCtx.fillText(msgs[mode],pad,h-8);
+}
+setTimeout(()=>showScale('raw'),200);
+
+// ─── PCA VIZ ──────────────────────────────────────────────
+const pcaC=document.getElementById('pcaCanvas'), pcaCtx=pcaC.getContext('2d');
+let pcaAngle=0;
+function drawPCA(){
+  pcaC.width=pcaC.parentElement.offsetWidth; pcaC.height=260;
+  const w=pcaC.width, h=pcaC.height, cx=w/2, cy=h/2;
+  pcaCtx.clearRect(0,0,w,h);
+  const pts=[];
+  const seed=42;
+  for(let i=0;i<60;i++){
+    const t=i/60*Math.PI*2;
+    const n1=(Math.sin(i*1234.5)*.5-.25), n2=(Math.sin(i*6789.1)*.3-.15);
+    const bx=Math.cos(.4)*i/60*160-80, by=Math.sin(.4)*i/60*160-80;
+    pts.push({x:bx+n1*30, y:by+n2*20});
+  }
+  // Draw points
+  pts.forEach(p=>{
+    pcaCtx.fillStyle='rgba(124,106,247,0.7)';
+    pcaCtx.beginPath(); pcaCtx.arc(cx+p.x,cy+p.y,3.5,0,Math.PI*2); pcaCtx.fill();
+  });
+  // PC1 arrow (main direction)
+  const angle=0.4+Math.sin(pcaAngle*0.02)*0.05;
+  const len=130;
+  pcaCtx.strokeStyle='#f7936a'; pcaCtx.lineWidth=3;
+  pcaCtx.beginPath(); pcaCtx.moveTo(cx-Math.cos(angle)*len,cy-Math.sin(angle)*len);
+  pcaCtx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len); pcaCtx.stroke();
+  // Arrow head
+  pcaCtx.fillStyle='#f7936a'; pcaCtx.beginPath();
+  pcaCtx.arc(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len,5,0,Math.PI*2); pcaCtx.fill();
+  pcaCtx.fillStyle='rgba(247,147,106,0.8)'; pcaCtx.font='bold 12px Fira Code';
+  pcaCtx.fillText('PC1 (max variance)',cx+Math.cos(angle)*len+8,cy+Math.sin(angle)*len);
+  // PC2 arrow (perpendicular)
+  const a2=angle+Math.PI/2;
+  pcaCtx.strokeStyle='rgba(79,195,247,0.7)'; pcaCtx.lineWidth=2.5;
+  pcaCtx.beginPath(); pcaCtx.moveTo(cx-Math.cos(a2)*60,cy-Math.sin(a2)*60);
+  pcaCtx.lineTo(cx+Math.cos(a2)*60,cy+Math.sin(a2)*60); pcaCtx.stroke();
+  pcaCtx.fillStyle='rgba(79,195,247,0.7)'; pcaCtx.font='11px Fira Code';
+  pcaCtx.fillText('PC2',cx+Math.cos(a2)*62,cy+Math.sin(a2)*62);
+  pcaAngle++; requestAnimationFrame(drawPCA);
+}
+setTimeout(drawPCA,300);
+
+// ─── REGRESSION VIZ ──────────────────────────────────────
+const rC=document.getElementById('regCanvas'), rCtx=rC.getContext('2d');
+const regPts=[];
+for(let i=0;i<18;i++){const x=i/17*8-1; regPts.push({x,y:.3*x*x+.5*x+1+(Math.sin(i*2.7)*.8)})}
+function showReg(mode){
+  rC.width=rC.parentElement.offsetWidth; rC.height=260;
+  const w=rC.width,h=rC.height,pad=40;
+  rCtx.clearRect(0,0,w,h);
+  const xs=regPts.map(p=>p.x), ys=regPts.map(p=>p.y);
+  const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys)-.5,ymax=Math.max(...ys)+.5;
+  const tx=x=>pad+(x-xmin)/(xmax-xmin)*(w-2*pad);
+  const ty=y=>(h-pad)-(y-ymin)/(ymax-ymin)*(h-2*pad);
+  // Axes
+  rCtx.strokeStyle='rgba(255,255,255,0.08)'; rCtx.lineWidth=1;
+  rCtx.beginPath(); rCtx.moveTo(pad,h-pad); rCtx.lineTo(w-pad,h-pad); rCtx.stroke();
+  rCtx.beginPath(); rCtx.moveTo(pad,pad); rCtx.lineTo(pad,h-pad); rCtx.stroke();
+  // Data points
+  regPts.forEach(p=>{rCtx.fillStyle='rgba(255,255,255,0.5)'; rCtx.beginPath(); rCtx.arc(tx(p.x),ty(p.y),4.5,0,Math.PI*2); rCtx.fill()});
+  // Fit curve
+  const steps=200;
+  rCtx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const x=xmin+(xmax-xmin)*i/steps;
+    let y;
+    if(mode==='linear'){const m=(ys[ys.length-1]-ys[0])/(xs[xs.length-1]-xs[0]); const b=ys[0]-m*xs[0]; y=m*x+b;}
+    else if(mode==='poly2') y=.3*x*x+.5*x+1;
+    else if(mode==='poly5'){const a=[.02,-.15,.3*x,.5,1]; y=.015*x**5-.1*x**4+.25*x**3+.4*x*x+.6*x+1;}
+    else y=.3*x*x+.5*x+1+(Math.max(-0.2,Math.min(0.2,Math.sin(x*3)*.1)));
+    i===0?rCtx.moveTo(tx(x),ty(y)):rCtx.lineTo(tx(x),ty(y));
+  }
+  const colors={linear:'#7c6af7',poly2:'#4fc3f7',poly5:'#f7936a',ridge:'#81c995'};
+  rCtx.strokeStyle=colors[mode]; rCtx.lineWidth=2.5; rCtx.stroke();
+  const msgs={linear:'Linear — simple, interpretable, may underfit non-linear data',poly2:'Polynomial degree 2 — fits the curve well, controlled',poly5:'⚠️ Poly degree 5 — OVERFITS! Wiggles between training points',ridge:'Ridge — degree 5 + regularization — smooth, generalizes well'};
+  rCtx.fillStyle=colors[mode]; rCtx.font='12px Fira Code'; rCtx.fillText(msgs[mode],pad,h-10);
+}
+setTimeout(()=>showReg('linear'),200);
+
+// ─── DECISION BOUNDARY VIZ ────────────────────────────────
+const bC=document.getElementById('boundCanvas'), bCtx=bC.getContext('2d');
+const classData=[];
+for(let i=0;i<40;i++){
+  const cls=i<20?0:1;
+  const cx=cls===0?-1:1, cy=cls===0?-.5:.5;
+  classData.push({x:cx+(Math.sin(i*7.3)*.8),y:cy+(Math.cos(i*4.1)*.8),cls});
+}
+function showBound(mode){
+  bC.width=bC.parentElement.offsetWidth; bC.height=300;
+  const w=bC.width,h=bC.height,pad=30;
+  bCtx.clearRect(0,0,w,h);
+  const tx=x=>pad+(x+2.5)/5*(w-2*pad);
+  const ty=y=>pad+(1-(y+1.8)/3.6)*(h-2*pad);
+  // Draw background decision region (simplified)
+  const imgd=bCtx.createImageData(w,h);
+  for(let px=0;px<w;px+=2) for(let py=0;py<h;py+=2){
+    const wx=(px-pad)/(w-2*pad)*5-2.5, wy=(1-(py-pad)/(h-2*pad))*3.6-1.8;
+    let score;
+    if(mode==='logistic') score=.5+(wx*.8+wy*.6)/3;
+    else if(mode==='knn'){
+      const dists=classData.map(p=>({d:Math.hypot(p.x-wx,p.y-wy),cls:p.cls})).sort((a,b)=>a.d-b.d).slice(0,3);
+      score=dists.filter(d=>d.cls===1).length/3;
+    } else if(mode==='svm') score=.5+Math.tanh((wx+wy)*.8)*.5;
+    else score=wx>0?0.75:0.25;
+    const r=score<.5?80:40, g=score<.5?120:160, b=score<.5?200:80;
+    const idx=(py*w+px)*4;
+    for(let dx=0;dx<2;dx++) for(let dy=0;dy<2;dy++){
+      const ii=((py+dy)*w+(px+dx))*4;
+      imgd.data[ii]=r; imgd.data[ii+1]=g; imgd.data[ii+2]=b; imgd.data[ii+3]=25;
+    }
+  }
+  bCtx.putImageData(imgd,0,0);
+  // Data points
+  classData.forEach(p=>{
+    bCtx.beginPath(); bCtx.arc(tx(p.x),ty(p.y),6,0,Math.PI*2);
+    bCtx.fillStyle=p.cls===0?'rgba(124,106,247,0.9)':'rgba(247,147,106,0.9)'; bCtx.fill();
+    bCtx.strokeStyle='rgba(255,255,255,0.4)'; bCtx.lineWidth=1.5; bCtx.stroke();
+  });
+  // Labels
+  const lbls={logistic:'Linear boundary — fast, interpretable, works great when classes are linearly separable',knn:'KNN boundary — jagged, local, adapts to data density, can overfit',svm:'SVM RBF boundary — smooth curves, maximum margin, robust',tree:'Decision Tree — axis-aligned rectangles, fully interpretable, can overfit'};
+  bCtx.fillStyle='rgba(255,255,255,0.45)'; bCtx.font='12px Fira Code'; bCtx.fillText(lbls[mode],pad,h-8);
+}
+setTimeout(()=>showBound('logistic'),200);
+
+// ─── CLUSTERING VIZ ──────────────────────────────────────
+const clC=document.getElementById('clusterCanvas'), clCtx=clC.getContext('2d');
+let clPts=[], clMode='none', clCentroids=[], clIteration=0, clColors=['#7c6af7','#f7936a','#81c995'];
+function newData(){
+  clPts=[];
+  const blobs=[{cx:-1.2,cy:-.8,n:20},{cx:1.2,cy:.6,n:20},{cx:0,cy:1.4,n:15}];
+  blobs.forEach((b,bi)=>{ for(let i=0;i<b.n;i++) clPts.push({x:b.cx+(Math.sin(bi*100+i*7.3)*.5),y:b.cy+(Math.cos(bi*200+i*4.1)*.5),label:-1,trueLabel:bi}) });
+  clCentroids=[]; clIteration=0; clMode='none';
+  drawCluster();
+}
+function drawCluster(){
+  clC.width=clC.parentElement.offsetWidth; clC.height=280;
+  const w=clC.width,h=clC.height,pad=30;
+  clCtx.clearRect(0,0,w,h);
+  const tx=x=>pad+(x+2)/4*(w-2*pad), ty=y=>pad+(1-(y+1.5)/3.5)*(h-2*pad);
+  clPts.forEach(p=>{
+    const col=p.label===-1?'rgba(255,255,255,0.35)':clColors[p.label%3];
+    clCtx.beginPath(); clCtx.arc(tx(p.x),ty(p.y),5.5,0,Math.PI*2);
+    clCtx.fillStyle=col; clCtx.fill();
+    if(p.noise){clCtx.strokeStyle='rgba(255,59,48,0.7)'; clCtx.lineWidth=1.5; clCtx.stroke();}
+  });
+  clCentroids.forEach((c,i)=>{
+    clCtx.beginPath(); clCtx.arc(tx(c.x),ty(c.y),10,0,Math.PI*2);
+    clCtx.fillStyle=clColors[i]; clCtx.fill();
+    clCtx.strokeStyle='#fff'; clCtx.lineWidth=2; clCtx.stroke();
+    clCtx.fillStyle='#fff'; clCtx.font='bold 12px Fira Code'; clCtx.textAlign='center'; clCtx.textBaseline='middle';
+    clCtx.fillText('✕',tx(c.x),ty(c.y));
+    clCtx.textAlign='left'; clCtx.textBaseline='alphabetic';
+  });
+  const info=document.getElementById('clusterInfo');
+  if(clMode==='kmeans') info.textContent=`Iteration ${clIteration}`;
+  else if(clMode==='dbscan'){const noise=clPts.filter(p=>p.noise).length; info.textContent=`${clPts.filter(p=>p.label>=0).length} clustered, ${noise} noise`;}
+}
+function showCluster(mode){
+  clMode=mode;
+  if(mode==='kmeans'){
+    clCentroids=[{x:-.5,y:-.5},{x:.5,y:.5},{x:0,y:1}]; clIteration=0;
+    clPts.forEach(p=>p.label=-1); clPts.forEach(p=>p.noise=false);
+    const run=setInterval(()=>{
+      if(clIteration>=8){clearInterval(run);return}
+      clPts.forEach(p=>{let best=0,bd=Infinity; clCentroids.forEach((c,i)=>{const d=Math.hypot(p.x-c.x,p.y-c.y); if(d<bd){bd=d;best=i}}); p.label=best});
+      clCentroids=clCentroids.map((_,i)=>{const pts=clPts.filter(p=>p.label===i); return pts.length?{x:pts.reduce((a,b)=>a+b.x,0)/pts.length,y:pts.reduce((a,b)=>a+b.y,0)/pts.length}:clCentroids[i]});
+      clIteration++; drawCluster();
+    },400);
+  } else {
+    clCentroids=[];
+    const eps=0.7, minPts=3;
+    clPts.forEach(p=>p.label=-1);
+    let lbl=0;
+    clPts.forEach((p,i)=>{
+      if(p.label!==-1) return;
+      const neighbors=clPts.filter(q=>Math.hypot(p.x-q.x,p.y-q.y)<eps);
+      if(neighbors.length<minPts){p.noise=true; return}
+      p.label=lbl; p.noise=false;
+      let queue=[...neighbors];
+      while(queue.length){
+        const curr=queue.shift();
+        if(curr.noise){curr.noise=false; curr.label=lbl}
+        if(curr.label!==-1) continue;
+        curr.label=lbl;
+        const n2=clPts.filter(q=>Math.hypot(curr.x-q.x,curr.y-q.y)<eps);
+        if(n2.length>=minPts) queue.push(...n2);
+      }
+      lbl++;
+    });
+    drawCluster();
+  }
+}
+newData();
+
+// ─── BOOSTING VIZ ────────────────────────────────────────
+const boC=document.getElementById('boostCanvas'), boCtx=boC.getContext('2d');
+const boPts=[];
+for(let i=0;i<24;i++){boPts.push({x:(Math.sin(i*3.7)*2.5+Math.sin(i*.5)*.8),y:(Math.cos(i*2.1)*1.5+Math.cos(i*.7)*.6),cls:i%5===0?1:0,weight:1,correct:true})}
+let boRound=0;
+function boostReset(){boRound=0; boPts.forEach(p=>{p.weight=1;p.correct=true}); document.getElementById('boostInfo').textContent='Round 0 — All weights equal'; drawBoost()}
+function boostStep(){
+  if(boRound>=5) return;
+  boRound++;
+  // Flip some 'correct' predictions each round
+  boPts.forEach(p=>{p.correct=Math.random()>0.3+(p.weight-1)*.1;});
+  const wrong=boPts.filter(p=>!p.correct);
+  wrong.forEach(p=>p.weight=Math.min(p.weight+.4,3.5));
+  document.getElementById('boostInfo').textContent=`Round ${boRound} — ${wrong.length} misclassified → upweighted`;
+  drawBoost();
+}
+function drawBoost(){
+  boC.width=boC.parentElement.offsetWidth; boC.height=240;
+  const w=boC.width,h=boC.height,pad=30;
+  boCtx.clearRect(0,0,w,h);
+  const tx=x=>pad+(x+3)/6*(w-2*pad), ty=y=>pad+(1-(y+2)/4)*(h-2*pad);
+  // Simple decision stump line
+  boCtx.strokeStyle='rgba(240,98,146,0.4)'; boCtx.lineWidth=2; boCtx.setLineDash([6,4]);
+  boCtx.beginPath(); boCtx.moveTo(w/2,pad); boCtx.lineTo(w/2,h-pad); boCtx.stroke();
+  boCtx.setLineDash([]);
+  boPts.forEach(p=>{
+    const r=Math.max(5,p.weight*5);
+    boCtx.beginPath(); boCtx.arc(tx(p.x),ty(p.y),r,0,Math.PI*2);
+    boCtx.fillStyle=p.correct?(p.cls===0?'rgba(124,106,247,0.75)':'rgba(129,201,149,0.75)'):'rgba(247,147,106,0.9)';
+    boCtx.fill();
+    if(!p.correct){boCtx.strokeStyle='#f7936a'; boCtx.lineWidth=2; boCtx.stroke();}
+  });
+  boCtx.fillStyle='rgba(255,255,255,0.3)'; boCtx.font='11px Fira Code';
+  boCtx.fillText(`Round ${boRound}/5 — larger circles = higher weight (more focus next round)`,pad,h-8);
+}
+boostReset();
+
+// ─── CONFUSION MATRIX VIZ ────────────────────────────────
+const cmC=document.getElementById('cmCanvas'), cmCtx=cmC.getContext('2d');
+const cmVals={TP:85,FP:12,FN:8,TN:95};
+function drawCM(){
+  cmC.width=cmC.parentElement.offsetWidth; cmC.height=300;
+  const w=cmC.width,h=cmC.height, s=Math.min((w-100)/2,(h-80)/2), ox=(w-2*s)/2, oy=50;
+  cmCtx.clearRect(0,0,w,h);
+  const cells=[
+    {label:'TP',val:cmVals.TP,x:ox,y:oy,color:'rgba(129,201,149,0.35)',textCol:'#81c995'},
+    {label:'FP',val:cmVals.FP,x:ox+s,y:oy,color:'rgba(247,147,106,0.25)',textCol:'#f7936a'},
+    {label:'FN',val:cmVals.FN,x:ox,y:oy+s,color:'rgba(247,147,106,0.25)',textCol:'#f7936a'},
+    {label:'TN',val:cmVals.TN,x:ox+s,y:oy+s,color:'rgba(124,106,247,0.25)',textCol:'#7c6af7'},
+  ];
+  cells.forEach(c=>{
+    cmCtx.fillStyle=c.color; cmCtx.beginPath(); cmCtx.roundRect(c.x+3,c.y+3,s-6,s-6,10); cmCtx.fill();
+    cmCtx.fillStyle=c.textCol; cmCtx.font=`bold ${s*.3}px Syne`; cmCtx.textAlign='center'; cmCtx.textBaseline='middle';
+    cmCtx.fillText(c.val,c.x+s/2,c.y+s/2-8);
+    cmCtx.font=`bold 13px Fira Code`; cmCtx.fillText(c.label,c.x+s/2,c.y+s/2+s*.18);
+  });
+  // Axis labels
+  cmCtx.fillStyle='rgba(255,255,255,0.35)'; cmCtx.font='11px Fira Code'; cmCtx.textAlign='center';
+  cmCtx.fillText('Predicted Positive',ox+s/2,oy-14); cmCtx.fillText('Predicted Negative',ox+s+s/2,oy-14);
+  cmCtx.save(); cmCtx.translate(ox-16,oy+s/2); cmCtx.rotate(-Math.PI/2);
+  cmCtx.fillText('Actual Positive',0,0); cmCtx.restore();
+  cmCtx.save(); cmCtx.translate(ox-16,oy+s+s/2); cmCtx.rotate(-Math.PI/2);
+  cmCtx.fillText('Actual Negative',0,0); cmCtx.restore();
+  // Derived metrics
+  const P=cmVals.TP/(cmVals.TP+cmVals.FP), R=cmVals.TP/(cmVals.TP+cmVals.FN);
+  const F1=2*P*R/(P+R), A=(cmVals.TP+cmVals.TN)/(cmVals.TP+cmVals.TN+cmVals.FP+cmVals.FN);
+  const metrics=[{n:'Precision',v:P,c:'#4fc3f7'},{n:'Recall',v:R,c:'#f06292'},{n:'F1',v:F1,c:'#ffb74d'},{n:'Accuracy',v:A,c:'#7c6af7'}];
+  const mox=ox+2*s+24;
+  cmCtx.textAlign='left';
+  metrics.forEach((m,i)=>{
+    cmCtx.fillStyle=m.c; cmCtx.font='bold 13px Fira Code'; cmCtx.fillText(m.n,mox,oy+20+i*55);
+    cmCtx.font=`bold 22px Syne`; cmCtx.fillText((m.v*100).toFixed(1)+'%',mox,oy+42+i*55);
+  });
+  cmCtx.textAlign='left'; cmCtx.textBaseline='alphabetic';
+}
+setTimeout(drawCM,200); window.addEventListener('resize',drawCM);
+
+// ─── ROC VIZ ─────────────────────────────────────────────
+const rocC=document.getElementById('rocCanvas'), rocCtx=rocC.getContext('2d');
+function drawROC(){
+  rocC.width=rocC.parentElement.offsetWidth; rocC.height=260;
+  const w=rocC.width,h=rocC.height,pad=50, sq=h-2*pad;
+  rocCtx.clearRect(0,0,w,h);
+  // Axes
+  rocCtx.strokeStyle='rgba(255,255,255,0.15)'; rocCtx.lineWidth=1;
+  rocCtx.beginPath(); rocCtx.moveTo(pad,pad); rocCtx.lineTo(pad,pad+sq); rocCtx.lineTo(pad+sq,pad+sq); rocCtx.stroke();
+  // Diagonal (random)
+  rocCtx.setLineDash([6,4]); rocCtx.strokeStyle='rgba(255,255,255,0.15)'; rocCtx.lineWidth=1.5;
+  rocCtx.beginPath(); rocCtx.moveTo(pad,pad+sq); rocCtx.lineTo(pad+sq,pad); rocCtx.stroke(); rocCtx.setLineDash([]);
+  rocCtx.fillStyle='rgba(255,255,255,0.2)'; rocCtx.font='11px Fira Code'; rocCtx.fillText('Random (AUC=0.5)',pad+sq/2+10,pad+sq/2+4);
+  const models=[
+    {name:'Random Forest',auc:.94,color:'#81c995',pts:[[0,.05],[.05,.65],[.12,.82],[.22,.90],[.35,.95],[.5,.97],[.7,.99],[1,1]]},
+    {name:'Logistic Reg',auc:.82,color:'#7c6af7',pts:[[0,0],[.08,.5],[.2,.72],[.35,.84],[.55,.91],[.75,.96],[1,1]]},
+    {name:'Naive Bayes',auc:.71,color:'#f7936a',pts:[[0,0],[.15,.45],[.3,.65],[.5,.78],[.7,.88],[1,1]]},
+  ];
+  const tx=x=>pad+x*sq, ty=y=>pad+sq-y*sq;
+  models.forEach(m=>{
+    rocCtx.beginPath(); m.pts.forEach((p,i)=>i===0?rocCtx.moveTo(tx(p[0]),ty(p[1])):rocCtx.lineTo(tx(p[0]),ty(p[1])));
+    rocCtx.strokeStyle=m.color; rocCtx.lineWidth=2.5; rocCtx.stroke();
+  });
+  // Legend
+  models.forEach((m,i)=>{
+    const lx=pad+sq+20, ly=pad+24+i*32;
+    rocCtx.fillStyle=m.color; rocCtx.fillRect(lx,ly-8,20,3);
+    rocCtx.font='bold 12px Fira Code'; rocCtx.fillText(m.name,lx+26,ly);
+    rocCtx.font='11px Fira Code'; rocCtx.fillStyle='rgba(255,255,255,0.4)'; rocCtx.fillText(`AUC=${m.auc}`,lx+26,ly+14);
+  });
+  // Axis labels
+  rocCtx.fillStyle='rgba(255,255,255,0.3)'; rocCtx.font='11px Fira Code'; rocCtx.textAlign='center';
+  rocCtx.fillText('False Positive Rate (FPR)',pad+sq/2,pad+sq+28);
+  rocCtx.save(); rocCtx.translate(16,pad+sq/2); rocCtx.rotate(-Math.PI/2); rocCtx.fillText('True Positive Rate (TPR)',0,0); rocCtx.restore();
+  rocCtx.textAlign='left';
+}
+setTimeout(drawROC,200); window.addEventListener('resize',drawROC);
+</script>
+</body>
+</html>

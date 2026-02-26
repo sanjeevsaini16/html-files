@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build MCP From Scratch — Complete Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f5;
+  --paper: #ffffff;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-text: rgba(255,255,255,0.7);
+  --sidebar-active: #ffffff;
+  --accent: #6c47ff;
+  --accent2: #00d4aa;
+  --accent3: #ff6b35;
+  --accent4: #ffd60a;
+  --text: #1a1a2e;
+  --text-muted: #6b6b8a;
+  --text-light: #9999b3;
+  --border: #e8e4dc;
+  --border2: #d4cfc7;
+  --surface: #f2efe9;
+  --surface2: #ede9e1;
+  --code-bg: #1a1a2e;
+  --code-text: #c8c0e8;
+  --shadow: 0 2px 12px rgba(26,26,46,0.06), 0 1px 3px rgba(26,26,46,0.04);
+  --shadow-md: 0 6px 24px rgba(26,26,46,0.1);
+  --sidebar-w: 256px;
+  --font-head: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
+body { font-family:var(--font-body); background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; font-size:15px; }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.12); border-radius:3px; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w);
+  height:100vh; overflow-y:auto;
+  background:var(--sidebar-bg);
+  display:flex; flex-direction:column;
+  position:relative; flex-shrink:0;
+}
+
+.sidebar-logo {
+  padding:22px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  position:sticky; top:0; background:var(--sidebar-bg); z-index:5;
+}
+
+.logo-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:linear-gradient(135deg,rgba(108,71,255,0.3),rgba(0,212,170,0.2));
+  border:1px solid rgba(108,71,255,0.4);
+  border-radius:6px; padding:4px 10px;
+  font-family:var(--font-mono); font-size:9px; color:rgba(108,71,255,0.9);
+  text-transform:uppercase; letter-spacing:0.12em; margin-bottom:10px;
+}
+
+.logo-title {
+  font-family:var(--font-head); font-size:18px; color:#fff; line-height:1.2; margin-bottom:3px;
+}
+.logo-sub { font-size:11px; color:rgba(255,255,255,0.35); font-family:var(--font-mono); }
+
+.nav-group { padding:10px 0; }
+.nav-group-label {
+  font-family:var(--font-mono); font-size:9px; text-transform:uppercase;
+  letter-spacing:0.18em; color:rgba(255,255,255,0.25);
+  padding:10px 20px 5px;
+}
+
+.nav-link {
+  display:flex; align-items:center; gap:9px;
+  padding:8px 20px; font-size:13px; font-weight:400;
+  color:var(--sidebar-text); text-decoration:none;
+  border:none; background:none; width:100%; text-align:left;
+  cursor:pointer; border-left:2px solid transparent;
+  transition:all 130ms ease; font-family:var(--font-body);
+}
+.nav-link:hover { color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.04); }
+.nav-link.active { color:#fff; border-left-color:var(--accent); background:rgba(108,71,255,0.12); }
+.nav-icon { font-size:13px; width:16px; text-align:center; flex-shrink:0; }
+
+.sidebar-footer {
+  padding:16px 20px; border-top:1px solid rgba(255,255,255,0.07);
+  margin-top:auto;
+}
+.sf-label { font-family:var(--font-mono); font-size:9px; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.progress-bar { height:2px; background:rgba(255,255,255,0.08); border-radius:1px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.4s ease; width:0%; }
+.progress-pct { font-family:var(--font-mono); font-size:9px; color:rgba(255,255,255,0.2); text-align:right; margin-top:4px; }
+
+/* ─── MAIN ─── */
+.main { flex:1; overflow-y:auto; background:var(--bg); }
+
+/* ─── HERO ─── */
+.hero {
+  background:var(--sidebar-bg);
+  padding:52px 60px 44px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 70% 80% at 20% 50%,rgba(108,71,255,0.15) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 60% at 80% 30%,rgba(0,212,170,0.1) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero::after {
+  content:'MCP'; position:absolute; right:-10px; bottom:-40px;
+  font-family:var(--font-head); font-size:220px; font-weight:400;
+  color:rgba(255,255,255,0.025); line-height:1; pointer-events:none; user-select:none;
+}
+
+.hero-tag {
+  font-family:var(--font-mono); font-size:10px; color:var(--accent2);
+  text-transform:uppercase; letter-spacing:0.18em;
+  margin-bottom:16px; display:flex; align-items:center; gap:8px;
+  animation:fadeUp 350ms ease both;
+}
+.hero-tag::before { content:''; width:20px; height:1px; background:var(--accent2); }
+
+.hero-title {
+  font-family:var(--font-head); font-size:clamp(32px,4vw,54px);
+  color:#fff; line-height:1.1; letter-spacing:-0.5px;
+  margin-bottom:14px; max-width:650px;
+  animation:fadeUp 350ms ease both; animation-delay:60ms;
+}
+.hero-title em { font-style:italic; color:var(--accent2); }
+
+.hero-desc {
+  max-width:560px; font-size:15px; line-height:1.75;
+  color:rgba(255,255,255,0.55); margin-bottom:28px;
+  animation:fadeUp 350ms ease both; animation-delay:110ms;
+}
+
+.hero-row { display:flex; gap:12px; flex-wrap:wrap; animation:fadeUp 350ms ease both; animation-delay:160ms; }
+.hero-pill {
+  padding:7px 16px; border-radius:50px;
+  border:1px solid rgba(255,255,255,0.12);
+  font-size:12px; color:rgba(255,255,255,0.5);
+  font-family:var(--font-mono); background:rgba(255,255,255,0.04);
+}
+
+.hero-stats {
+  display:flex; gap:28px; margin-top:32px;
+  padding-top:28px; border-top:1px solid rgba(255,255,255,0.07);
+  animation:fadeUp 350ms ease both; animation-delay:200ms;
+}
+.hs-num { font-family:var(--font-head); font-size:26px; color:#fff; line-height:1; }
+.hs-label { font-size:10px; color:rgba(255,255,255,0.3); margin-top:2px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.06em; }
+
+/* ─── CONTENT ─── */
+.content { max-width:840px; padding:0 60px; margin:0 auto; }
+
+/* ─── CHAPTERS ─── */
+.chapter {
+  padding:48px 0 28px;
+  border-top:1px solid var(--border);
+  animation:fadeUp 300ms ease both;
+}
+.chapter:first-child { border-top:none; }
+
+.ch-number {
+  font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+  letter-spacing:0.2em; color:var(--text-light);
+  display:flex; align-items:center; gap:8px; margin-bottom:8px;
+}
+
+.ch-title {
+  font-family:var(--font-head); font-size:28px; letter-spacing:-0.3px;
+  line-height:1.2; margin-bottom:8px; color:var(--text);
+}
+
+.ch-desc {
+  font-size:15px; line-height:1.75; color:var(--text-muted);
+  margin-bottom:22px; max-width:680px;
+}
+
+/* ─── CALLOUTS ─── */
+.callout {
+  border-radius:10px; padding:14px 18px; margin:14px 0 20px;
+  font-size:13.5px; line-height:1.65;
+}
+.callout-label { font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:0.15em; margin-bottom:4px; font-weight:600; }
+.callout-why { background:#f0f9ff; border:1px solid #bae6fd; }
+.callout-why .callout-label { color:#0284c7; }
+.callout-why p { color:#075985; }
+.callout-tip { background:#f0fdf4; border:1px solid #bbf7d0; }
+.callout-tip .callout-label { color:#16a34a; }
+.callout-tip p { color:#166534; }
+.callout-warn { background:#fff7ed; border:1px solid #fed7aa; }
+.callout-warn .callout-label { color:#ea580c; }
+.callout-warn p { color:#9a3412; }
+.callout-purple { background:#faf5ff; border:1px solid #e9d5ff; }
+.callout-purple .callout-label { color:#7c3aed; }
+.callout-purple p { color:#4c1d95; }
+
+/* ─── CODE BLOCKS ─── */
+.code-block {
+  background:var(--code-bg); border-radius:12px;
+  overflow:hidden; margin:16px 0; box-shadow:var(--shadow-md);
+}
+.code-header {
+  background:rgba(255,255,255,0.04); padding:8px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.code-dots { display:flex; gap:5px; }
+.code-dot { width:10px; height:10px; border-radius:50%; }
+.code-dot:nth-child(1) { background:#ff5f57; }
+.code-dot:nth-child(2) { background:#febc2e; }
+.code-dot:nth-child(3) { background:#28c840; }
+.code-file { font-family:var(--font-mono); font-size:11px; color:rgba(255,193,7,0.8); }
+.code-lang { font-family:var(--font-mono); font-size:10px; color:rgba(255,255,255,0.25); text-transform:uppercase; }
+pre { padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.8; color:var(--code-text); }
+.kw { color:#ff79c6; } .str { color:#a8ff78; } .num { color:#ffb86c; }
+.fn { color:#82aaff; } .cm { color:#546e7a; font-style:italic; }
+.tp { color:#f1c40f; } .op { color:#00d4aa; }
+
+/* ─── CONCEPT BOXES ─── */
+.concept-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin:16px 0 22px; }
+.concept-card {
+  background:var(--paper); border:1px solid var(--border);
+  border-radius:10px; padding:16px 18px;
+  transition:all 180ms ease; position:relative; overflow:hidden;
+}
+.concept-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--cc-color, var(--accent));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 200ms ease;
+}
+.concept-card:hover { border-color:var(--border2); box-shadow:var(--shadow); transform:translateY(-1px); }
+.concept-card:hover::before { transform:scaleX(1); }
+.cc-icon { font-size:20px; margin-bottom:8px; }
+.cc-title { font-weight:600; font-size:13.5px; margin-bottom:5px; color:var(--text); }
+.cc-desc { font-size:12.5px; color:var(--text-muted); line-height:1.6; }
+
+/* ─── STEP FLOW ─── */
+.step-flow { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.step-item { display:flex; gap:16px; padding:12px 0; }
+.step-num {
+  width:28px; height:28px; border-radius:8px; flex-shrink:0;
+  background:var(--accent); color:#fff;
+  font-family:var(--font-mono); font-size:11px; font-weight:500;
+  display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.step-body { flex:1; }
+.step-title { font-weight:600; font-size:14px; color:var(--text); margin-bottom:3px; }
+.step-desc { font-size:13px; color:var(--text-muted); line-height:1.6; }
+.step-connector { width:1px; height:8px; background:var(--border2); margin-left:14px; }
+
+/* ─── COMPARISON TABLE ─── */
+.compare { width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; border-radius:10px; overflow:hidden; box-shadow:var(--shadow); }
+.compare th { background:var(--surface2); padding:10px 14px; text-align:left; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); border-bottom:2px solid var(--border); }
+.compare td { padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-muted); line-height:1.5; background:var(--paper); }
+.compare tr:hover td { background:var(--surface); }
+.compare tr:last-child td { border-bottom:none; }
+
+/* ─── FILE TREE ─── */
+.file-tree {
+  background:var(--code-bg); border-radius:10px; padding:16px 20px;
+  font-family:var(--font-mono); font-size:12px; color:var(--code-text);
+  margin:14px 0; line-height:2;
+}
+.ft-dir { color:#82aaff; }
+.ft-file { color:#a8ff78; }
+.ft-comment { color:#546e7a; }
+
+/* ─── INTERVIEW CARD ─── */
+.interview {
+  border:1px solid #fde68a; border-radius:10px;
+  padding:16px 20px; margin:14px 0; background:#fffbeb; position:relative;
+}
+.int-badge {
+  position:absolute; top:-9px; left:14px;
+  background:#f59e0b; color:#fff;
+  font-family:var(--font-mono); font-size:9px; text-transform:uppercase;
+  letter-spacing:0.1em; padding:2px 9px; border-radius:4px; font-weight:700;
+}
+.int-q { font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:7px; }
+.int-a { font-size:13px; color:var(--text-muted); line-height:1.7; }
+
+/* ─── CHECKPOINT ─── */
+.checkpoint {
+  background:linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  border:1px solid var(--border2); border-radius:12px; padding:20px 24px; margin:24px 0;
+}
+.cp-label { font-family:var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:0.15em; color:var(--accent); margin-bottom:8px; }
+.checkpoint h3 { font-weight:600; font-size:15px; margin-bottom:10px; }
+.check-list { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.check-list li { font-size:13px; color:var(--text-muted); display:flex; align-items:flex-start; gap:8px; }
+.check-list li::before { content:'☐'; color:var(--accent); flex-shrink:0; font-size:14px; }
+
+/* ─── ARCH DIAGRAM ─── */
+.arch-diagram {
+  background:var(--code-bg); border-radius:12px; padding:20px 24px;
+  font-family:var(--font-mono); font-size:12px; color:var(--code-text);
+  line-height:1.9; margin:14px 0; overflow-x:auto;
+}
+.arch-title { color:rgba(255,255,255,0.4); font-size:10px; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.15em; }
+.arch-host { color:#82aaff; }
+.arch-server { color:#a8ff78; }
+.arch-tool { color:#ffb86c; }
+.arch-arrow { color:rgba(255,255,255,0.2); }
+.arch-label { color:#00d4aa; }
+
+/* ─── BADGE ─── */
+.badge { display:inline-flex; align-items:center; padding:2px 9px; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:500; }
+.badge-purple { background:#f3e8ff; color:#7c3aed; }
+.badge-green { background:#dcfce7; color:#16a34a; }
+.badge-blue { background:#dbeafe; color:#1d4ed8; }
+.badge-orange { background:#ffedd5; color:#ea580c; }
+
+/* ─── FOOTER ─── */
+.guide-footer { background:var(--sidebar-bg); padding:28px 60px; text-align:center; font-size:12px; color:rgba(255,255,255,0.25); margin-top:20px; }
+.guide-footer strong { color:var(--accent2); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">
+      <span>◆</span> Complete Guide
+    </div>
+    <div class="logo-title">Building MCP<br>From Scratch</div>
+    <div class="logo-sub">Model Context Protocol</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Foundation</div>
+    <button class="nav-link active" onclick="goTo('ch1')"><span class="nav-icon">◎</span>What is MCP?</button>
+    <button class="nav-link" onclick="goTo('ch2')"><span class="nav-icon">⬡</span>Architecture Deep Dive</button>
+    <button class="nav-link" onclick="goTo('ch3')"><span class="nav-icon">⚙</span>Setup & First Server</button>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Core Primitives</div>
+    <button class="nav-link" onclick="goTo('ch4')"><span class="nav-icon">🔧</span>Tools — Functions AI Can Call</button>
+    <button class="nav-link" onclick="goTo('ch5')"><span class="nav-icon">📄</span>Resources — Data Sources</button>
+    <button class="nav-link" onclick="goTo('ch6')"><span class="nav-icon">💬</span>Prompts — Reusable Templates</button>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Building</div>
+    <button class="nav-link" onclick="goTo('ch7')"><span class="nav-icon">🗄</span>Real MCP Server (Files + DB)</button>
+    <button class="nav-link" onclick="goTo('ch8')"><span class="nav-icon">🔌</span>Connecting to Claude Desktop</button>
+    <button class="nav-link" onclick="goTo('ch9')"><span class="nav-icon">🚀</span>Production & Deployment</button>
+    <button class="nav-link" onclick="goTo('ch10')"><span class="nav-icon">★</span>MCP + RAG Combined</button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sf-label">Reading progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pf"></div></div>
+    <div class="progress-pct" id="pp">0%</div>
+  </div>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main class="main" id="mainEl">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Your MCP Curriculum</div>
+    <h1 class="hero-title">Build an <em>MCP Server</em><br>From Scratch</h1>
+    <p class="hero-desc">Model Context Protocol — the open standard that lets AI models like Claude talk to your tools, files, databases, and APIs. You already built a RAG system. Now give it superpowers.</p>
+    <div class="hero-row">
+      <div class="hero-pill">Python SDK</div>
+      <div class="hero-pill">Tools / Resources / Prompts</div>
+      <div class="hero-pill">Claude Desktop</div>
+      <div class="hero-pill">File System Server</div>
+      <div class="hero-pill">Database Server</div>
+      <div class="hero-pill">MCP + RAG</div>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hs-num">10</div><div class="hs-label">Chapters</div></div>
+      <div><div class="hs-num">3</div><div class="hs-label">Primitives</div></div>
+      <div><div class="hs-num">100%</div><div class="hs-label">From Scratch</div></div>
+      <div><div class="hs-num">∞</div><div class="hs-label">Use Cases</div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 1: WHAT IS MCP -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch1">
+      <div class="ch-number">Chapter 01</div>
+      <h2 class="ch-title">What is MCP — and Why Does It Matter?</h2>
+      <p class="ch-desc">Model Context Protocol (MCP) is an open standard created by Anthropic in November 2024. It defines a universal way for AI models to connect to external tools, data sources, and services. Think of it as <strong>USB-C for AI</strong> — one standard connector for everything.</p>
+
+      <div class="callout callout-purple">
+        <div class="callout-label">💡 The Big Insight</div>
+        <p>Before MCP, every AI integration was custom. Want Claude to read files? Write custom code. Connect to a database? More custom code. Search the web? Even more. MCP is the single standard that replaces all of that. You build an MCP Server once, and any MCP-compatible AI (Claude, GPT-4, etc.) can use it immediately.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card" style="--cc-color:#6c47ff">
+          <div class="cc-icon">🤖</div>
+          <div class="cc-title">MCP Host</div>
+          <div class="cc-desc">The AI application that USES your tools. Examples: Claude Desktop, Claude.ai, Cursor IDE, your custom chatbot built with the API.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#00d4aa">
+          <div class="cc-icon">🔌</div>
+          <div class="cc-title">MCP Client</div>
+          <div class="cc-desc">Sits inside the host. Manages the connection to MCP servers, sends requests, receives results. Usually invisible — the SDK handles it.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#ff6b35">
+          <div class="cc-icon">⚙️</div>
+          <div class="cc-title">MCP Server</div>
+          <div class="cc-desc">The program YOU build. Exposes tools (functions), resources (data), and prompts (templates) that the AI can use. Can be local or remote.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#ffd60a">
+          <div class="cc-icon">📡</div>
+          <div class="cc-title">Transport Layer</div>
+          <div class="cc-desc">How host ↔ server communicate. Stdio: local process via stdin/stdout. HTTP+SSE: remote server over the network. Both use JSON-RPC 2.0.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-why">
+        <div class="callout-label">🆚 MCP vs Function Calling — What's the Difference?</div>
+        <p><strong>Function Calling</strong> (OpenAI/Claude's tool_use): Tools are defined per-request, in-process. You define them in your API call. Works great for simple use cases but doesn't scale — you have to maintain tool definitions in every application.<br><br>
+        <strong>MCP</strong>: Tools live in a separate server process. Any application can discover and use them automatically. Build the server once, use it everywhere. Anthropic calls it "moving from N×M integrations to N+M."</p>
+      </div>
+
+      <table class="compare">
+        <thead><tr><th>Aspect</th><th>Traditional Integration</th><th>MCP</th></tr></thead>
+        <tbody>
+          <tr><td>Setup per app</td><td>Custom code each time</td><td>One server, reuse everywhere</td></tr>
+          <tr><td>Discovery</td><td>Hardcoded tool definitions</td><td>Auto-discovery at runtime</td></tr>
+          <tr><td>Portability</td><td>Tied to one AI provider</td><td>Works with any MCP client</td></tr>
+          <tr><td>State</td><td>Stateless per request</td><td>Server maintains state</td></tr>
+          <tr><td>Security</td><td>Credentials in app code</td><td>Credentials in isolated server</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 2: ARCHITECTURE -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch2">
+      <div class="ch-number">Chapter 02</div>
+      <h2 class="ch-title">Architecture Deep Dive</h2>
+      <p class="ch-desc">Understanding how MCP works under the hood is essential — not just for debugging, but because it helps you design better servers. Every interaction follows the same lifecycle.</p>
+
+      <div class="arch-diagram">
+        <div class="arch-title">MCP Architecture — Full Flow</div>
+        <pre>
+<span class="arch-host">  Claude Desktop / Your App (MCP Host)</span>
+  ┌─────────────────────────────────────────────┐
+  │  <span class="arch-label">MCP Client</span>  ←── manages connection lifecycle   │
+  │       │                                     │
+  │   <span class="arch-label">Claude API</span>  ←── sends tool results back to LLM│
+  └────────┼────────────────────────────────────┘
+           │  JSON-RPC 2.0
+           │  (stdio OR HTTP/SSE)
+  ─────────┼─────────────────────────────────────
+           │
+  ┌────────▼────────────────────────────────────┐
+  │       <span class="arch-server">YOUR MCP SERVER</span> (Python / TypeScript)  │
+  │                                             │
+  │  ┌─────────────┐  ┌──────────┐  ┌────────┐ │
+  │  │ <span class="arch-tool">🔧 Tools</span>    │  │<span class="arch-tool">📄 Resrcs</span> │  │<span class="arch-tool">💬 Prompts</span>│ │
+  │  │ (functions) │  │(data src)│  │(templ.)│ │
+  │  └──────┬──────┘  └────┬─────┘  └───┬────┘ │
+  │         └──────────────┴────────────┘      │
+  │                         │                  │
+  │              ┌──────────▼──────────┐        │
+  │              │  External Services  │        │
+  │              │  DB / Files / APIs  │        │
+  │              └────────────────────┘        │
+  └─────────────────────────────────────────────┘</pre>
+      </div>
+
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Initialize</div>
+            <div class="step-desc">Host starts your MCP server process. Server responds with its capabilities: list of tools, resources, and prompts it provides. This is the "handshake."</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Discover</div>
+            <div class="step-desc">Host calls tools/list, resources/list, prompts/list. Gets back JSON descriptions including name, description, and input schema. This is how Claude knows what tools exist.</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">User Sends Message</div>
+            <div class="step-desc">User types a query. Claude sees the message AND the tool definitions injected into its context. Claude decides whether to call a tool.</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Tool Call</div>
+            <div class="step-desc">Claude decides to call your_tool with specific arguments. The host sends tools/call to your server via JSON-RPC.</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Execute & Return</div>
+            <div class="step-desc">Your server runs the function, queries the database, reads the file, calls the API — whatever it does. Returns the result as text (or image, or structured data).</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <div class="step-title">Generate Answer</div>
+            <div class="step-desc">Claude receives the tool result. Now it has the real data it needed. It generates a natural language answer based on that data and returns it to the user.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-label">💡 JSON-RPC 2.0 — What You Need to Know</div>
+        <p>All MCP communication uses JSON-RPC 2.0 format. Every request has <code>{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{...}}</code>. You don't write this manually — the Python SDK handles it completely. But knowing it exists helps when you're debugging with logs.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 3: SETUP & FIRST SERVER -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch3">
+      <div class="ch-number">Chapter 03</div>
+      <h2 class="ch-title">Setup & Your First MCP Server</h2>
+      <p class="ch-desc">Let's build a real server from scratch. First, the project structure. Then the minimal server. Then we'll make Claude use it.</p>
+
+      <div class="file-tree">
+        <div class="ft-comment"># Your MCP project structure</div>
+        <div><span class="ft-dir">mcp-server/</span></div>
+        <div>├── <span class="ft-dir">src/</span></div>
+        <div>│   ├── <span class="ft-file">server.py</span>          <span class="ft-comment"># ← Main server entry point</span></div>
+        <div>│   ├── <span class="ft-file">tools/</span></div>
+        <div>│   │   ├── <span class="ft-file">file_tools.py</span>    <span class="ft-comment"># ← File system operations</span></div>
+        <div>│   │   ├── <span class="ft-file">db_tools.py</span>      <span class="ft-comment"># ← Database queries</span></div>
+        <div>│   │   └── <span class="ft-file">web_tools.py</span>     <span class="ft-comment"># ← HTTP / API calls</span></div>
+        <div>│   ├── <span class="ft-file">resources/</span></div>
+        <div>│   │   └── <span class="ft-file">data_resources.py</span></div>
+        <div>│   └── <span class="ft-file">prompts/</span></div>
+        <div>│       └── <span class="ft-file">templates.py</span></div>
+        <div>├── <span class="ft-file">pyproject.toml</span>         <span class="ft-comment"># ← Dependencies (uv)</span></div>
+        <div>├── <span class="ft-file">claude_desktop_config.json</span> <span class="ft-comment"># ← Config snippet</span></div>
+        <div>└── <span class="ft-file">.env</span>                   <span class="ft-comment"># ← Secrets (never commit)</span></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">Terminal — Install MCP SDK</div>
+          <div class="code-lang">bash</div>
+        </div>
+        <pre><span class="cm"># Option A: using uv (recommended — much faster than pip)</span>
+pip install uv
+uv init mcp-server
+cd mcp-server
+uv add mcp httpx python-dotenv
+
+<span class="cm"># Option B: using pip (familiar)</span>
+mkdir mcp-server && cd mcp-server
+python -m venv venv
+source venv/bin/activate  <span class="cm"># Windows: venv\Scripts\activate</span>
+pip install mcp httpx python-dotenv</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/server.py — The Minimal MCP Server</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">from</span> mcp.server <span class="kw">import</span> Server
+<span class="kw">from</span> mcp.server.stdio <span class="kw">import</span> stdio_server
+<span class="kw">from</span> mcp.types <span class="kw">import</span> Tool, TextContent
+<span class="kw">import</span> asyncio
+
+<span class="cm">"""
+mcp.Server is the core class — it's the thing that:
+  1. Receives JSON-RPC messages from the host
+  2. Routes them to your registered handlers
+  3. Sends responses back
+
+Think of it like FastAPI's app = FastAPI() — it's the container.
+"""</span>
+
+<span class="cm"># Create the server with a name and version</span>
+app = Server(<span class="str">"my-first-server"</span>)
+
+<span class="cm"># ─── TOOL REGISTRATION ─────────────────────────────────────</span>
+<span class="cm"># @app.list_tools() is called when the host asks "what can you do?"</span>
+<span class="cm"># Returns a list of Tool objects with JSON Schema for inputs</span>
+<span class="op">@</span>app.list_tools()
+<span class="kw">async def</span> <span class="fn">list_tools</span>():
+    <span class="kw">return</span> [
+        Tool(
+            name=<span class="str">"greet"</span>,
+            description=<span class="str">"Say hello to someone by name. Use when user wants a greeting."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"name"</span>: {
+                        <span class="str">"type"</span>: <span class="str">"string"</span>,
+                        <span class="str">"description"</span>: <span class="str">"The person's name to greet"</span>
+                    }
+                },
+                <span class="str">"required"</span>: [<span class="str">"name"</span>]
+            }
+        )
+    ]
+
+<span class="cm"># ─── TOOL EXECUTION ─────────────────────────────────────────</span>
+<span class="cm"># @app.call_tool() is called when the AI actually wants to USE a tool</span>
+<span class="cm"># name = which tool, arguments = the JSON args the AI provided</span>
+<span class="op">@</span>app.call_tool()
+<span class="kw">async def</span> <span class="fn">call_tool</span>(name: <span class="tp">str</span>, arguments: <span class="tp">dict</span>):
+    <span class="kw">if</span> name == <span class="str">"greet"</span>:
+        person = arguments.get(<span class="str">"name"</span>, <span class="str">"friend"</span>)
+        <span class="kw">return</span> [TextContent(
+            type=<span class="str">"text"</span>,
+            text=<span class="str">f"Hello, {person}! This response came from your MCP server. 🎉"</span>
+        )]
+    <span class="kw">raise</span> <span class="tp">ValueError</span>(<span class="str">f"Unknown tool: {name}"</span>)
+
+<span class="cm"># ─── ENTRY POINT ────────────────────────────────────────────</span>
+<span class="cm"># stdio_server uses stdin/stdout for communication</span>
+<span class="cm"># This is how Claude Desktop talks to local MCP servers</span>
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> stdio_server() <span class="kw">as</span> (read_stream, write_stream):
+        <span class="kw">await</span> app.run(
+            read_stream, write_stream,
+            app.create_initialization_options()
+        )
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    asyncio.run(<span class="fn">main</span>())</pre>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-label">⚠️ Critical — Write Good Tool Descriptions</div>
+        <p>The <code>description</code> field is NOT documentation for humans — it's how Claude decides whether to call your tool. Write it like you're telling the AI when to use it: <em>"Use this tool when the user asks about files, documents, or wants to read/write to the filesystem."</em> Bad descriptions = Claude never calls your tool or calls it at wrong times.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 4: TOOLS -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch4">
+      <div class="ch-number">Chapter 04</div>
+      <h2 class="ch-title">Tools — Functions the AI Can Call</h2>
+      <p class="ch-desc">Tools are the most powerful MCP primitive. They let Claude execute code, query databases, call APIs, manipulate files — anything. A Tool is a function with a JSON Schema for its inputs. Let's build real, useful tools.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/tools/file_tools.py — Real File System Tools</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">import</span> os
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> mcp.types <span class="kw">import</span> Tool, TextContent
+<span class="kw">from</span> typing <span class="kw">import</span> Sequence
+
+<span class="cm"># Define allowed base directory — security: never allow paths outside this!</span>
+ALLOWED_DIR = Path.home() / <span class="str">"Documents"</span>
+
+<span class="kw">def</span> <span class="fn">get_file_tools</span>() -> Sequence[Tool]:
+    <span class="kw">return</span> [
+        Tool(
+            name=<span class="str">"read_file"</span>,
+            description=<span class="str">"Read the contents of a file. Use when user asks to open, read, or view a file."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"path"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"File path to read"</span>}
+                },
+                <span class="str">"required"</span>: [<span class="str">"path"</span>]
+            }
+        ),
+        Tool(
+            name=<span class="str">"write_file"</span>,
+            description=<span class="str">"Write or append content to a file. Use when user asks to save, create, or update a file."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"path"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>},
+                    <span class="str">"content"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"Content to write"</span>},
+                    <span class="str">"append"</span>: {<span class="str">"type"</span>: <span class="str">"boolean"</span>, <span class="str">"default"</span>: <span class="kw">False</span>}
+                },
+                <span class="str">"required"</span>: [<span class="str">"path"</span>, <span class="str">"content"</span>]
+            }
+        ),
+        Tool(
+            name=<span class="str">"list_directory"</span>,
+            description=<span class="str">"List files in a directory. Use when user asks what files exist, to browse folder contents."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"path"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"Directory path to list"</span>}
+                },
+                <span class="str">"required"</span>: [<span class="str">"path"</span>]
+            }
+        )
+    ]
+
+<span class="kw">async def</span> <span class="fn">execute_file_tool</span>(name: <span class="tp">str</span>, arguments: <span class="tp">dict</span>):
+    <span class="cm"># ─── Security: validate path is inside allowed directory ──</span>
+    raw_path = arguments.get(<span class="str">"path"</span>, <span class="str">""</span>)
+    target = (ALLOWED_DIR / raw_path).resolve()
+
+    <span class="kw">if</span> <span class="kw">not</span> str(target).startswith(str(ALLOWED_DIR)):
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">"Error: Access denied. Path outside allowed directory."</span>)]
+
+    <span class="kw">if</span> name == <span class="str">"read_file"</span>:
+        <span class="kw">if not</span> target.exists():
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">f"Error: File not found: {target}"</span>)]
+        content = target.read_text(encoding=<span class="str">"utf-8"</span>)
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">f"File: {target}\n\n{content}"</span>)]
+
+    <span class="kw">elif</span> name == <span class="str">"write_file"</span>:
+        mode = <span class="str">"a"</span> <span class="kw">if</span> arguments.get(<span class="str">"append"</span>) <span class="kw">else</span> <span class="str">"w"</span>
+        target.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+        target.write_text(arguments[<span class="str">"content"</span>], encoding=<span class="str">"utf-8"</span>)
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">f"✅ Written to {target}"</span>)]
+
+    <span class="kw">elif</span> name == <span class="str">"list_directory"</span>:
+        items = [<span class="str">f"{'📁' if p.is_dir() else '📄'} {p.name}"</span> <span class="kw">for</span> p <span class="kw">in</span> sorted(target.iterdir())]
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">"\n"</span>.join(items) <span class="kw">or</span> <span class="str">"Empty directory"</span>)]</pre>
+      </div>
+
+      <div class="interview">
+        <div class="int-badge">Interview Q</div>
+        <div class="int-q">"How does Claude decide which tool to call in MCP?"</div>
+        <div class="int-a">Claude sees tool descriptions injected into its system context at the start of the conversation. When you send a message, Claude uses its reasoning to decide: (1) does this query need external data? (2) which tool description best matches the intent? (3) what arguments to pass? The AI never calls a tool randomly — it constructs arguments from the user's message and tool schema. This is why description quality is critical: poor descriptions lead to wrong tool selection or no tool use.</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 5: RESOURCES -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch5">
+      <div class="ch-number">Chapter 05</div>
+      <h2 class="ch-title">Resources — Exposing Data Sources</h2>
+      <p class="ch-desc">Resources are like read-only data endpoints. Think of them as URLs that the AI can fetch. A file, a database record, a configuration value, a real-time metric. Unlike Tools (which DO things), Resources just expose data.</p>
+
+      <div class="callout callout-why">
+        <div class="callout-label">📌 Tools vs Resources — When to Use Each</div>
+        <p><strong>Tool:</strong> Has side effects, takes parameters, performs actions. Example: search_database(query="..."), send_email(to="..."), create_file(path="...").<br><br>
+        <strong>Resource:</strong> Static or semi-static data that can be fetched by URI. Example: the current config file, a static lookup table, the contents of a specific known document. Resources have URIs like <code>file:///config.json</code> or <code>db://users/schema</code>.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/resources/data_resources.py — Resources</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">from</span> mcp.types <span class="kw">import</span> Resource, TextResourceContents
+<span class="kw">import</span> json, os
+
+<span class="op">@</span>app.list_resources()
+<span class="kw">async def</span> <span class="fn">list_resources</span>():
+    <span class="cm">"""Returns all resources available to the AI."""</span>
+    <span class="kw">return</span> [
+        Resource(
+            uri=<span class="str">"config://app/settings"</span>,
+            name=<span class="str">"Application Settings"</span>,
+            description=<span class="str">"Current app configuration. Read this when user asks about settings."</span>,
+            mimeType=<span class="str">"application/json"</span>
+        ),
+        Resource(
+            uri=<span class="str">"db://schema/tables"</span>,
+            name=<span class="str">"Database Schema"</span>,
+            description=<span class="str">"List of all database tables and columns. Read before writing SQL queries."</span>,
+            mimeType=<span class="str">"text/plain"</span>
+        )
+    ]
+
+<span class="op">@</span>app.read_resource()
+<span class="kw">async def</span> <span class="fn">read_resource</span>(uri: <span class="tp">str</span>):
+    <span class="cm">"""Called when the AI wants to read a specific resource by URI."""</span>
+
+    <span class="kw">if</span> uri == <span class="str">"config://app/settings"</span>:
+        settings = {
+            <span class="str">"environment"</span>: os.getenv(<span class="str">"APP_ENV"</span>, <span class="str">"development"</span>),
+            <span class="str">"version"</span>: <span class="str">"1.0.0"</span>,
+            <span class="str">"features"</span>: [<span class="str">"rag"</span>, <span class="str">"mcp"</span>, <span class="str">"gemini"</span>]
+        }
+        <span class="kw">return</span> [TextResourceContents(
+            uri=uri,
+            mimeType=<span class="str">"application/json"</span>,
+            text=json.dumps(settings, indent=<span class="num">2</span>)
+        )]
+
+    <span class="kw">elif</span> uri == <span class="str">"db://schema/tables"</span>:
+        schema = <span class="str">"""Tables:
+  - users (id, email, name, created_at)
+  - documents (id, filename, content, chunks_count, uploaded_at)
+  - queries (id, user_id, query_text, response, timestamp)"""</span>
+        <span class="kw">return</span> [TextResourceContents(uri=uri, mimeType=<span class="str">"text/plain"</span>, text=schema)]
+
+    <span class="kw">raise</span> <span class="tp">ValueError</span>(<span class="str">f"Unknown resource: {uri}"</span>)</pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 6: PROMPTS -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch6">
+      <div class="ch-number">Chapter 06</div>
+      <h2 class="ch-title">Prompts — Reusable Prompt Templates</h2>
+      <p class="ch-desc">Prompts are server-defined templates that the host can invoke. Think of them as slash commands (/summarize, /analyze, /debug) that appear in the UI. They combine static instructions with dynamic arguments.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/prompts/templates.py — Prompt Templates</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">from</span> mcp.types <span class="kw">import</span> Prompt, PromptArgument, GetPromptResult, PromptMessage, TextContent
+
+<span class="op">@</span>app.list_prompts()
+<span class="kw">async def</span> <span class="fn">list_prompts</span>():
+    <span class="kw">return</span> [
+        Prompt(
+            name=<span class="str">"analyze_document"</span>,
+            description=<span class="str">"Deep analysis of a document: summary, key insights, action items"</span>,
+            arguments=[
+                PromptArgument(name=<span class="str">"document_name"</span>, description=<span class="str">"Name of the document"</span>, required=<span class="kw">True</span>),
+                PromptArgument(name=<span class="str">"focus"</span>, description=<span class="str">"Analysis focus: 'technical', 'business', 'legal'"</span>, required=<span class="kw">False</span>)
+            ]
+        ),
+        Prompt(
+            name=<span class="str">"debug_code"</span>,
+            description=<span class="str">"Analyze code for bugs, performance issues, and improvements"</span>,
+            arguments=[
+                PromptArgument(name=<span class="str">"language"</span>, description=<span class="str">"Programming language"</span>, required=<span class="kw">True</span>)
+            ]
+        )
+    ]
+
+<span class="op">@</span>app.get_prompt()
+<span class="kw">async def</span> <span class="fn">get_prompt</span>(name: <span class="tp">str</span>, arguments: <span class="tp">dict</span>):
+    <span class="kw">if</span> name == <span class="str">"analyze_document"</span>:
+        doc = arguments.get(<span class="str">"document_name"</span>)
+        focus = arguments.get(<span class="str">"focus"</span>, <span class="str">"general"</span>)
+        <span class="kw">return</span> GetPromptResult(
+            description=<span class="str">f"Analyze {doc}"</span>,
+            messages=[
+                PromptMessage(
+                    role=<span class="str">"user"</span>,
+                    content=TextContent(type=<span class="str">"text"</span>, text=<span class="str">f"""
+Please analyze '{doc}' with a {focus} focus. Provide:
+1. Executive Summary (3-4 sentences)
+2. Key Insights (5 bullet points)
+3. Action Items (prioritized list)
+4. Risks or Concerns
+Use the read_file tool to access the document first.
+"""</span>)
+                )
+            ]
+        )</pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 7: REAL SERVER -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch7">
+      <div class="ch-number">Chapter 07</div>
+      <h2 class="ch-title">Real MCP Server — Files + SQLite Database</h2>
+      <p class="ch-desc">Now let's put it all together into a production-grade server. This one gives Claude access to your file system AND a SQLite database. This is the kind of server you'd put in a portfolio.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/server.py — Complete Production Server</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">from</span> mcp.server <span class="kw">import</span> Server
+<span class="kw">from</span> mcp.server.stdio <span class="kw">import</span> stdio_server
+<span class="kw">from</span> mcp.types <span class="kw">import</span> Tool, TextContent, Resource, TextResourceContents
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">import</span> sqlite3, asyncio, json, os
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+
+app = Server(<span class="str">"personal-assistant-mcp"</span>)
+
+DB_PATH = Path(os.getenv(<span class="str">"DB_PATH"</span>, <span class="str">"data/assistant.db"</span>))
+FILES_DIR = Path(os.getenv(<span class="str">"FILES_DIR"</span>, str(Path.home() / <span class="str">"Documents"</span>)))
+
+<span class="cm"># ─── Database helper ─────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">run_query</span>(sql: <span class="tp">str</span>, params=()) -> <span class="tp">str</span>:
+    <span class="cm">"""Run a SQL query safely. Returns results as formatted string."""</span>
+    <span class="kw">with</span> sqlite3.connect(DB_PATH) <span class="kw">as</span> conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.execute(sql, params)
+        <span class="kw">if</span> sql.strip().upper().startswith(<span class="str">'SELECT'</span>):
+            rows = [<span class="tp">dict</span>(r) <span class="kw">for</span> r <span class="kw">in</span> cursor.fetchall()]
+            <span class="kw">return</span> json.dumps(rows, indent=<span class="num">2</span>, default=<span class="tp">str</span>)
+        conn.commit()
+        <span class="kw">return</span> <span class="str">f"Query OK. Rows affected: {cursor.rowcount}"</span>
+
+<span class="cm"># ─── TOOLS ───────────────────────────────────────────────</span>
+<span class="op">@</span>app.list_tools()
+<span class="kw">async def</span> <span class="fn">list_tools</span>():
+    <span class="kw">return</span> [
+        Tool(name=<span class="str">"read_file"</span>,
+             description=<span class="str">"Read a file's contents. Use when user wants to open or view a document."</span>,
+             inputSchema={<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"path"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>}},<span class="str">"required"</span>:[<span class="str">"path"</span>]}),
+
+        Tool(name=<span class="str">"query_database"</span>,
+             description=<span class="str">"Run a SQL SELECT query on the local database. Use for data retrieval questions."</span>,
+             inputSchema={<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"sql"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>,<span class="str">"description"</span>:<span class="str">"SQL SELECT query"</span>}},<span class="str">"required"</span>:[<span class="str">"sql"</span>]}),
+
+        Tool(name=<span class="str">"search_files"</span>,
+             description=<span class="str">"Search for files by name or extension. Use when user asks to find files."</span>,
+             inputSchema={<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"pattern"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>,<span class="str">"description"</span>:<span class="str">"Search pattern like *.pdf or report*"</span>}},<span class="str">"required"</span>:[<span class="str">"pattern"</span>]}),
+
+        Tool(name=<span class="str">"get_current_time"</span>,
+             description=<span class="str">"Get current date and time. Use for any time-sensitive queries."</span>,
+             inputSchema={<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{}}),
+    ]
+
+<span class="op">@</span>app.call_tool()
+<span class="kw">async def</span> <span class="fn">call_tool</span>(name: <span class="tp">str</span>, arguments: <span class="tp">dict</span>):
+    <span class="kw">if</span> name == <span class="str">"read_file"</span>:
+        path = (FILES_DIR / arguments[<span class="str">"path"</span>]).resolve()
+        <span class="kw">if not</span> str(path).startswith(str(FILES_DIR)):
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">"Access denied"</span>)]
+        content = path.read_text(encoding=<span class="str">"utf-8"</span>, errors=<span class="str">"replace"</span>)
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=content[:10000])]  <span class="cm"># limit size</span>
+
+    <span class="kw">elif</span> name == <span class="str">"query_database"</span>:
+        sql = arguments[<span class="str">"sql"</span>]
+        <span class="kw">if not</span> sql.strip().upper().startswith(<span class="str">"SELECT"</span>):
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=<span class="str">"Only SELECT queries allowed for safety"</span>)]
+        result = <span class="fn">run_query</span>(sql)
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=result)]
+
+    <span class="kw">elif</span> name == <span class="str">"search_files"</span>:
+        pattern = arguments[<span class="str">"pattern"</span>]
+        matches = <span class="tp">list</span>(FILES_DIR.rglob(pattern))
+        result = <span class="str">"\n"</span>.join(<span class="tp">str</span>(p.relative_to(FILES_DIR)) <span class="kw">for</span> p <span class="kw">in</span> matches[:50])
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=result <span class="kw">or</span> <span class="str">"No files found"</span>)]
+
+    <span class="kw">elif</span> name == <span class="str">"get_current_time"</span>:
+        <span class="kw">from</span> datetime <span class="kw">import</span> datetime
+        <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=datetime.now().strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>))]
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> stdio_server() <span class="kw">as</span> (r, w):
+        <span class="kw">await</span> app.run(r, w, app.create_initialization_options())
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    asyncio.run(<span class="fn">main</span>())</pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 8: CONNECT TO CLAUDE DESKTOP -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch8">
+      <div class="ch-number">Chapter 08</div>
+      <h2 class="ch-title">Connecting to Claude Desktop</h2>
+      <p class="ch-desc">Claude Desktop has built-in MCP support. You just need to edit one JSON config file and restart the app. This is the fastest way to see your server working with a real AI.</p>
+
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Find the Config File</div>
+            <div class="step-desc">macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code><br>Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code></div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Add Your Server</div>
+            <div class="step-desc">Edit the config file to add your server. Shown below.</div>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Restart Claude Desktop</div>
+            <div class="step-desc">Fully quit and reopen. Look for the 🔌 icon in the bottom-left of the input box — that shows active MCP servers.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">claude_desktop_config.json</div>
+          <div class="code-lang">json</div>
+        </div>
+        <pre>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"personal-assistant"</span>: {
+      <span class="str">"command"</span>: <span class="str">"python"</span>,
+      <span class="str">"args"</span>: [<span class="str">"/absolute/path/to/mcp-server/src/server.py"</span>],
+      <span class="str">"env"</span>: {
+        <span class="str">"DB_PATH"</span>: <span class="str">"/absolute/path/to/data/assistant.db"</span>,
+        <span class="str">"FILES_DIR"</span>: <span class="str">"/Users/yourname/Documents"</span>
+      }
+    },
+
+    <span class="cm">// You can add multiple servers — each runs as a separate process</span>
+    <span class="str">"rag-system"</span>: {
+      <span class="str">"command"</span>: <span class="str">"python"</span>,
+      <span class="str">"args"</span>: [<span class="str">"/path/to/rag-mcp-server/server.py"</span>]
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-label">⚠️ Always Use Absolute Paths</div>
+        <p>Claude Desktop spawns your server as a subprocess. Relative paths will fail because the working directory is unknown. Always use full absolute paths in the config. Test by running <code>python /absolute/path/to/server.py</code> from a fresh terminal first.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 9: PRODUCTION & DEPLOYMENT -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch9">
+      <div class="ch-number">Chapter 09</div>
+      <h2 class="ch-title">Production, Security & Remote Servers</h2>
+      <p class="ch-desc">Stdio works great locally. But for remote deployment — like giving Claude access to your cloud database, or sharing your server with a team — you need HTTP transport.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card" style="--cc-color:#6c47ff">
+          <div class="cc-icon">🏠</div>
+          <div class="cc-title">Stdio Transport</div>
+          <div class="cc-desc">Local only. Fast, simple, zero network config. Perfect for personal tools and local files. What we've been building.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#00d4aa">
+          <div class="cc-icon">🌐</div>
+          <div class="cc-title">HTTP + SSE Transport</div>
+          <div class="cc-desc">Network transport using Server-Sent Events. Can be deployed to cloud. Multiple clients can connect. Requires authentication.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#ff6b35">
+          <div class="cc-icon">🔐</div>
+          <div class="cc-title">Authentication</div>
+          <div class="cc-desc">For remote servers: use API key in headers, or OAuth 2.0. Never expose an unauthenticated MCP server to the internet.</div>
+        </div>
+        <div class="concept-card" style="--cc-color:#ffd60a">
+          <div class="cc-icon">🐳</div>
+          <div class="cc-title">Docker Deploy</div>
+          <div class="cc-desc">Package server in a Docker container. Deploy to any cloud. Same Dockerfile pattern as your RAG system backend.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/server_http.py — Remote HTTP Server</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">from</span> mcp.server.sse <span class="kw">import</span> SseServerTransport
+<span class="kw">from</span> starlette.applications <span class="kw">import</span> Starlette
+<span class="kw">from</span> starlette.routing <span class="kw">import</span> Route
+<span class="kw">import</span> uvicorn
+
+<span class="cm"># Same app = Server("...") as before</span>
+<span class="cm"># Just swap the transport layer</span>
+
+sse = SseServerTransport(<span class="str">"/messages/"</span>)
+
+<span class="kw">async def</span> <span class="fn">handle_sse</span>(request):
+    <span class="cm"># Optional: check API key for authentication</span>
+    api_key = request.headers.get(<span class="str">"x-api-key"</span>)
+    <span class="kw">if</span> api_key != os.getenv(<span class="str">"MCP_API_KEY"</span>):
+        <span class="kw">from</span> starlette.responses <span class="kw">import</span> Response
+        <span class="kw">return</span> Response(<span class="str">"Unauthorized"</span>, status_code=<span class="num">401</span>)
+
+    <span class="kw">async with</span> sse.connect_sse(request.scope, request.receive, request._send) <span class="kw">as</span> streams:
+        <span class="kw">await</span> app.run(streams[<span class="num">0</span>], streams[<span class="num">1</span>], app.create_initialization_options())
+
+starlette_app = Starlette(
+    routes=[
+        Route(<span class="str">"/sse"</span>, endpoint=handle_sse),
+        Route(<span class="str">"/messages/"</span>, endpoint=sse.handle_post_message, methods=[<span class="str">"POST"</span>])
+    ]
+)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    uvicorn.run(starlette_app, host=<span class="str">"0.0.0.0"</span>, port=<span class="num">8080</span>)</pre>
+      </div>
+
+      <div class="checkpoint">
+        <div class="cp-label">✅ Production Checklist</div>
+        <h3>Before sharing your MCP server with anyone:</h3>
+        <ul class="check-list">
+          <li>All file paths validated against allowed directory (path traversal protection)</li>
+          <li>Database: only SELECT queries allowed through tool (no DELETE/DROP)</li>
+          <li>API keys loaded from environment variables, not hardcoded</li>
+          <li>Tool descriptions are clear and specific (tested with Claude)</li>
+          <li>Error handling: all tool functions handle exceptions gracefully</li>
+          <li>Logging added so you can debug what Claude is calling and why</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- CHAPTER 10: MCP + RAG COMBINED -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="chapter" id="ch10">
+      <div class="ch-number">Chapter 10</div>
+      <h2 class="ch-title">MCP + RAG — The Ultimate Portfolio Project</h2>
+      <p class="ch-desc">You've built a RAG system. You've built an MCP server. Now combine them. Give Claude an MCP tool that queries your RAG backend. This is genuinely impressive — it means Claude can upload documents AND answer questions about them, all through natural conversation.</p>
+
+      <div class="callout callout-purple">
+        <div class="callout-label">🚀 What This Unlocks</div>
+        <p>Without MCP: User opens your Angular app → uploads doc → types question → gets answer.<br><br>
+        With MCP + RAG: User tells Claude Desktop "Please read this PDF and answer questions about it" → Claude uses your MCP upload_document tool → then uses query_rag tool to answer questions → all in a single conversation, no UI needed.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <div class="code-file">src/tools/rag_tools.py — MCP Tools for Your RAG System</div>
+          <div class="code-lang">python</div>
+        </div>
+        <pre><span class="kw">import</span> httpx
+<span class="kw">from</span> mcp.types <span class="kw">import</span> Tool, TextContent
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">import</span> os
+
+RAG_BASE_URL = os.getenv(<span class="str">"RAG_API_URL"</span>, <span class="str">"http://localhost:8000/api"</span>)
+
+<span class="kw">def</span> <span class="fn">get_rag_tools</span>():
+    <span class="kw">return</span> [
+        Tool(
+            name=<span class="str">"upload_to_rag"</span>,
+            description=<span class="str">"Upload a document to the RAG knowledge base. Use when user wants to index a file for Q&A."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"file_path"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"Absolute path to file to upload"</span>}
+                },
+                <span class="str">"required"</span>: [<span class="str">"file_path"</span>]
+            }
+        ),
+        Tool(
+            name=<span class="str">"query_rag"</span>,
+            description=<span class="str">"Ask a question against the indexed documents in the RAG system. Use when user asks about document contents."</span>,
+            inputSchema={
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"question"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>},
+                    <span class="str">"provider"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"enum"</span>: [<span class="str">"openai"</span>, <span class="str">"gemini"</span>, <span class="str">"puter"</span>], <span class="str">"default"</span>: <span class="str">"openai"</span>}
+                },
+                <span class="str">"required"</span>: [<span class="str">"question"</span>]
+            }
+        ),
+        Tool(
+            name=<span class="str">"list_rag_documents"</span>,
+            description=<span class="str">"List all documents currently indexed in the RAG system."</span>,
+            inputSchema={<span class="str">"type"</span>: <span class="str">"object"</span>, <span class="str">"properties"</span>: {}}
+        )
+    ]
+
+<span class="kw">async def</span> <span class="fn">execute_rag_tool</span>(name: <span class="tp">str</span>, arguments: <span class="tp">dict</span>):
+    <span class="kw">async with</span> httpx.AsyncClient(timeout=<span class="num">60.0</span>) <span class="kw">as</span> client:
+
+        <span class="kw">if</span> name == <span class="str">"upload_to_rag"</span>:
+            path = Path(arguments[<span class="str">"file_path"</span>])
+            <span class="kw">with</span> open(path, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+                response = <span class="kw">await</span> client.post(
+                    <span class="str">f"{RAG_BASE_URL}/upload"</span>,
+                    files={<span class="str">"file"</span>: (path.name, f, <span class="str">"application/octet-stream"</span>)}
+                )
+            data = response.json()
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=
+                <span class="str">f"✅ Uploaded '{data['filename']}' — {data['chunks_created']} chunks indexed"</span>)]
+
+        <span class="kw">elif</span> name == <span class="str">"query_rag"</span>:
+            response = <span class="kw">await</span> client.post(<span class="str">f"{RAG_BASE_URL}/query"</span>, json={
+                <span class="str">"query"</span>: arguments[<span class="str">"question"</span>],
+                <span class="str">"provider"</span>: arguments.get(<span class="str">"provider"</span>, <span class="str">"openai"</span>),
+                <span class="str">"top_k"</span>: <span class="num">5</span>
+            })
+            data = response.json()
+            sources = <span class="str">", "</span>.join(data.get(<span class="str">"sources"</span>, []))
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=
+                <span class="str">f"{data['answer']}\n\n📚 Sources: {sources}\n⏱ {data['processing_time_ms']:.0f}ms"</span>)]
+
+        <span class="kw">elif</span> name == <span class="str">"list_rag_documents"</span>:
+            response = <span class="kw">await</span> client.get(<span class="str">f"{RAG_BASE_URL}/stats"</span>)
+            data = response.json()
+            <span class="kw">return</span> [TextContent(type=<span class="str">"text"</span>, text=
+                <span class="str">f"📄 {data['total_documents']} documents, {data['total_chunks']} chunks indexed"</span>)]</pre>
+      </div>
+
+      <div class="interview">
+        <div class="int-badge">Interview Q</div>
+        <div class="int-q">"Walk me through an architecture where you combined MCP with a RAG system."</div>
+        <div class="int-a">I built an MCP server that acts as a bridge to a RAG backend. The server exposes three tools: upload_to_rag (sends documents to a FastAPI endpoint that chunks, embeds, and stores them in ChromaDB), query_rag (sends a question to the retrieval pipeline which finds relevant chunks and passes them to an LLM), and list_documents. Claude Desktop was configured to use this server via stdio transport. The result: a user can have a natural conversation with Claude — "Please read this report and summarize the financial risks" — and Claude automatically uploads the file and queries it without any explicit user interface. The MCP layer handled tool routing; the RAG layer handled knowledge retrieval; the LLM handled synthesis.</div>
+      </div>
+
+      <div class="checkpoint">
+        <div class="cp-label">🎓 Full MCP Curriculum Complete</div>
+        <h3>You're an MCP developer when you can:</h3>
+        <ul class="check-list">
+          <li>Explain MCP's three primitives (Tools, Resources, Prompts) and when to use each</li>
+          <li>Build a working server from scratch with Python SDK in under 30 minutes</li>
+          <li>Connect it to Claude Desktop and have it work correctly</li>
+          <li>Describe the JSON-RPC lifecycle from user message to tool result</li>
+          <li>Implement path security and SQL injection prevention in your tools</li>
+          <li>Deploy a remote MCP server with HTTP+SSE transport and authentication</li>
+          <li>Combine MCP with your RAG system to create a genuinely useful portfolio piece</li>
+        </ul>
+      </div>
+
+    </section>
+
+  </div><!-- end .content -->
+
+  <div class="guide-footer">
+    Your MCP journey: <strong>stdio → tools → resources → prompts → production → MCP+RAG</strong>
+  </div>
+
+</main>
+
+<script>
+  const mainEl = document.getElementById('mainEl');
+  const pf = document.getElementById('pf');
+  const pp = document.getElementById('pp');
+
+  mainEl.addEventListener('scroll', () => {
+    const p = Math.min(mainEl.scrollTop / (mainEl.scrollHeight - mainEl.clientHeight) * 100, 100);
+    pf.style.width = p + '%';
+    pp.textContent = Math.round(p) + '%';
+
+    const chapters = document.querySelectorAll('.chapter');
+    const navLinks = document.querySelectorAll('.nav-link');
+    chapters.forEach((ch, i) => {
+      const top = ch.getBoundingClientRect().top;
+      if (top < 160 && top > -ch.offsetHeight + 160) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        if (navLinks[i]) navLinks[i].classList.add('active');
+      }
+    });
+  });
+
+  function goTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+</body>
+</html>

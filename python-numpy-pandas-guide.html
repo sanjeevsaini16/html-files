@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python · NumPy · Pandas — Complete ML Foundation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;0,7..72,500;1,7..72,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090f;--s1:#101118;--s2:#181922;--s3:#22233a;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --tx:#eae8f6;--mt:rgba(234,232,246,.55);--dm:rgba(234,232,246,.28);
+  --py:#f7ca4a;--np:#5a9fd4;--pd:#e05c5c;--gn:#5ec484;--pu:#c084f0;--tl:#4dd0e1;
+  --sw:264px; --hf:'Syne',sans-serif; --bf:'Literata',Georgia,serif; --mf:'Fira Code',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--bf);background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex;font-size:15px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+
+/* SIDEBAR */
+.sb{width:var(--sw);min-width:var(--sw);height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.sb-brand{padding:20px 18px 14px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--s1);z-index:5}
+.sb-logo{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:20px;background:linear-gradient(135deg,rgba(247,202,74,.25),rgba(90,159,212,.25));border:1px solid rgba(247,202,74,.3)}
+.sb-title{font-family:var(--hf);font-size:16px;font-weight:800;line-height:1.2;background:linear-gradient(135deg,#fff,rgba(234,232,246,.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-sub{font-size:10.5px;color:var(--dm);margin-top:2px;font-family:var(--mf)}
+.sb-sec{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--dm);padding:13px 18px 4px}
+.sb-a{display:flex;align-items:center;gap:8px;padding:7px 18px;font-size:12.5px;font-family:var(--hf);color:var(--mt);border:none;background:none;cursor:pointer;width:100%;text-align:left;border-left:2px solid transparent;transition:all 120ms ease}
+.sb-a:hover{color:var(--tx);background:rgba(255,255,255,.03);border-left-color:rgba(255,255,255,.2)}
+.sb-a.on{color:#fff;border-left-color:var(--py);background:rgba(247,202,74,.08)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-prog{padding:12px 18px;border-top:1px solid var(--bd);margin-top:auto}
+.pl{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dm);margin-bottom:4px}
+.pb{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--py),var(--np));width:0%;transition:width .4s ease;border-radius:2px}
+.pn{font-family:var(--mf);font-size:9px;color:var(--dm);margin-top:3px;text-align:right}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;min-width:0}
+
+/* HERO */
+.hero{padding:52px 60px 44px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 70% 60% at 15% 55%,rgba(247,202,74,.08) 0%,transparent 65%),
+             radial-gradient(ellipse 50% 70% at 85% 25%,rgba(90,159,212,.07) 0%,transparent 60%)}
+.hero-ey{font-family:var(--mf);font-size:11px;color:var(--py);text-transform:uppercase;letter-spacing:.2em;margin-bottom:14px;display:flex;align-items:center;gap:10px;animation:fadeUp .5s ease both}
+.hero-ey::before{content:'';width:24px;height:1px;background:var(--py)}
+.hero-h1{font-family:var(--hf);font-size:clamp(28px,4vw,50px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:12px;animation:fadeUp .5s ease .07s both}
+.hero-h1 em{font-style:normal;color:var(--py)}
+.hero-h1 b{font-style:normal;color:var(--np)}
+.hero-h1 u{text-decoration:none;color:var(--pd)}
+.hero-p{max-width:600px;font-size:15px;color:var(--mt);line-height:1.75;margin-bottom:22px;animation:fadeUp .5s ease .14s both}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;animation:fadeUp .5s ease .21s both}
+.pill{padding:5px 14px;border-radius:50px;font-family:var(--mf);font-size:11px;border:1px solid var(--bd2);color:var(--mt);background:rgba(255,255,255,.04)}
+.pill.py{border-color:rgba(247,202,74,.4);color:var(--py);background:rgba(247,202,74,.08)}
+.pill.np{border-color:rgba(90,159,212,.4);color:var(--np);background:rgba(90,159,212,.08)}
+.pill.pd{border-color:rgba(224,92,92,.4);color:var(--pd);background:rgba(224,92,92,.08)}
+
+/* CONTENT */
+.ct{max-width:920px;padding:0 60px;margin:0 auto}
+
+/* SECTION */
+.sec{padding:46px 0 22px;border-top:1px solid var(--bd)}
+.sec:first-child{border-top:none}
+.sec-n{font-family:var(--mf);font-size:9.5px;text-transform:uppercase;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sec-n::after{content:'';flex:1;max-width:30px;height:1px;opacity:.3;background:currentColor}
+.sec-title{font-family:var(--hf);font-size:25px;font-weight:800;letter-spacing:-.4px;line-height:1.15;margin-bottom:8px}
+.sec-desc{font-size:15px;color:var(--mt);line-height:1.75;margin-bottom:24px;max-width:720px}
+
+/* GRID */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:22px}
+.tc{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;transition:all .18s ease;position:relative;overflow:hidden}
+.tc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cat,var(--py));opacity:0;transition:opacity .18s ease}
+.tc:hover{border-color:var(--bd2);transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.35)}
+.tc:hover::before{opacity:1}
+.tc-n{font-family:var(--hf);font-size:13.5px;font-weight:700;margin-bottom:5px;line-height:1.3}
+.tc-d{font-size:12.5px;color:var(--mt);line-height:1.6}
+.tc-t{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tg{display:grid}
+.tag{font-family:var(--mf);font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--dm);border:1px solid var(--bd)}
+.tag.y{background:rgba(247,202,74,.15);color:var(--py);border-color:rgba(247,202,74,.3)}
+.tag.b{background:rgba(90,159,212,.15);color:var(--np);border-color:rgba(90,159,212,.3)}
+.tag.r{background:rgba(224,92,92,.15);color:var(--pd);border-color:rgba(224,92,92,.3)}
+.tag.g{background:rgba(94,196,132,.15);color:var(--gn);border-color:rgba(94,196,132,.3)}
+
+/* CODE */
+.cb{background:#090c10;border:1px solid var(--bd2);border-radius:11px;overflow:hidden;margin:14px 0}
+.ch{background:rgba(255,255,255,.04);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.cdots{display:flex;gap:5px}
+.cd{width:10px;height:10px;border-radius:50%}
+.cd:nth-child(1){background:#ff5f57}.cd:nth-child(2){background:#febc2e}.cd:nth-child(3){background:#28c840}
+.cf{font-family:var(--mf);font-size:11px;color:rgba(255,210,80,.85)}
+.clg{font-family:var(--mf);font-size:10px;color:var(--dm);text-transform:uppercase}
+pre{padding:16px 18px;overflow-x:auto;font-family:var(--mf);font-size:12.5px;line-height:1.82;color:#cdc8f0;tab-size:4}
+.k{color:#ff8c69}.s{color:#a8d8a8}.n{color:#ffca80}.f{color:#82aaff}.c{color:#4e6070;font-style:italic}.t{color:#c08be8}.o{color:#89ddff}.at{color:#f07178}
+
+/* CALLOUT */
+.cl{border-radius:12px;padding:14px 20px;margin:12px 0 20px;font-size:13.5px;line-height:1.65}
+.cll{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;font-weight:600}
+.cl p{color:var(--mt)}
+.ci{background:rgba(247,202,74,.08);border:1px solid rgba(247,202,74,.22)}.ci .cll{color:var(--py)}
+.cn{background:rgba(90,159,212,.08);border:1px solid rgba(90,159,212,.22)}.cn .cll{color:var(--np)}
+.cg{background:rgba(94,196,132,.08);border:1px solid rgba(94,196,132,.22)}.cg .cll{color:var(--gn)}
+.cw{background:rgba(224,92,92,.09);border:1px solid rgba(224,92,92,.22)}.cw .cll{color:var(--pd)}
+
+/* INTERACTIVE */
+.viz{background:var(--s2);border:1px solid var(--bd);border-radius:14px;padding:22px;margin:18px 0;overflow:hidden}
+.viz-t{font-family:var(--hf);font-size:13px;font-weight:700;color:var(--mt);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.viz-t span{font-family:var(--mf);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--dm)}
+.viz canvas{display:block;width:100%;max-width:100%}
+
+/* REPL */
+.repl{background:#060810;border:1px solid var(--bd2);border-radius:11px;overflow:hidden;margin:14px 0}
+.repl-h{background:rgba(255,255,255,.04);padding:8px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
+.repl-dot{width:8px;height:8px;border-radius:50%;background:var(--gn);box-shadow:0 0 6px var(--gn);animation:pulse 2s infinite}
+.repl-label{font-family:var(--mf);font-size:10px;color:var(--gn);text-transform:uppercase;letter-spacing:.1em}
+.repl-body{padding:14px 18px;font-family:var(--mf);font-size:12.5px;line-height:1.8;color:#cdc8f0}
+.repl-in{color:var(--py)}
+.repl-out{color:var(--gn);margin-left:0}
+.repl-cmt{color:var(--dm);font-style:italic}
+
+/* CHEAT SHEET */
+.cs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin:14px 0}
+.cs-card{background:var(--s2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.cs-head{padding:9px 14px;font-family:var(--hf);font-size:12px;font-weight:700;border-bottom:1px solid var(--bd)}
+.cs-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 14px;border-bottom:1px solid rgba(255,255,255,.04);gap:12px}
+.cs-row:last-child{border-bottom:none}
+.cs-code{font-family:var(--mf);font-size:11px;color:#c8d8f0}
+.cs-desc{font-size:11px;color:var(--mt);text-align:right;flex-shrink:0;max-width:50%}
+
+/* TABLE */
+.ctab{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.ctab th{background:var(--s3);padding:9px 14px;text-align:left;font-family:var(--mf);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mt)}
+.ctab td{padding:9px 14px;border-bottom:1px solid var(--bd);vertical-align:top;color:var(--mt);line-height:1.5}
+.ctab tr:hover td{background:rgba(255,255,255,.02)}
+
+/* CHECKPOINT */
+.chk{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--bd2);border-radius:12px;padding:20px 24px;margin:24px 0}
+.chk-l{font-family:var(--mf);font-size:9.5px;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,210,80,.7);margin-bottom:10px}
+.chk h3{font-family:var(--hf);font-size:15px;color:var(--tx);margin-bottom:10px}
+.chk-li{list-style:none;display:flex;flex-direction:column;gap:5px}
+.chk-li li{font-size:13px;color:var(--mt);display:flex;align-items:flex-start;gap:8px}
+.chk-li li::before{content:'□';color:rgba(255,210,80,.6);flex-shrink:0}
+
+footer{background:var(--s1);border-top:1px solid var(--bd);padding:22px 60px;text-align:center;font-size:12px;color:var(--dm)}
+footer strong{color:var(--py)}
+
+/* QUIZ */
+.quiz{background:rgba(192,132,240,.06);border:1px solid rgba(192,132,240,.22);border-radius:12px;padding:18px 22px;margin:14px 0}
+.quiz-q{font-family:var(--hf);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{padding:9px 14px;border-radius:8px;border:1px solid var(--bd2);background:var(--s3);font-size:13px;color:var(--mt);cursor:pointer;transition:all .15s ease;text-align:left}
+.quiz-opt:hover{border-color:var(--pu);color:var(--tx)}
+.quiz-opt.correct{border-color:var(--gn);background:rgba(94,196,132,.15);color:var(--gn)}
+.quiz-opt.wrong{border-color:var(--pd);background:rgba(224,92,92,.1);color:var(--pd)}
+.quiz-fb{font-size:13px;color:var(--mt);margin-top:10px;display:none;line-height:1.6}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">🐍</div>
+    <div class="sb-title">Python · NumPy · Pandas</div>
+    <div class="sb-sub">ML Foundation · Complete Guide</div>
+  </div>
+  <div class="sb-sec">Python Basics</div>
+  <button class="sb-a on" onclick="go('p1')"><span class="sb-dot" style="background:var(--py)"></span>01 · Data Types & Variables</button>
+  <button class="sb-a" onclick="go('p2')"><span class="sb-dot" style="background:var(--py)"></span>02 · Control Flow & Loops</button>
+  <button class="sb-a" onclick="go('p3')"><span class="sb-dot" style="background:var(--py)"></span>03 · Functions & Scope</button>
+  <button class="sb-a" onclick="go('p4')"><span class="sb-dot" style="background:var(--py)"></span>04 · Lists, Dicts, Sets</button>
+  <button class="sb-a" onclick="go('p5')"><span class="sb-dot" style="background:var(--py)"></span>05 · OOP & Classes</button>
+  <button class="sb-a" onclick="go('p6')"><span class="sb-dot" style="background:var(--py)"></span>06 · Comprehensions & Lambdas</button>
+  <div class="sb-sec">NumPy</div>
+  <button class="sb-a" onclick="go('n1')"><span class="sb-dot" style="background:var(--np)"></span>07 · Arrays & Operations</button>
+  <button class="sb-a" onclick="go('n2')"><span class="sb-dot" style="background:var(--np)"></span>08 · Indexing & Broadcasting</button>
+  <button class="sb-a" onclick="go('n3')"><span class="sb-dot" style="background:var(--np)"></span>09 · Linear Algebra & Stats</button>
+  <div class="sb-sec">Pandas</div>
+  <button class="sb-a" onclick="go('d1')"><span class="sb-dot" style="background:var(--pd)"></span>10 · Series & DataFrame</button>
+  <button class="sb-a" onclick="go('d2')"><span class="sb-dot" style="background:var(--pd)"></span>11 · Filtering & Grouping</button>
+  <button class="sb-a" onclick="go('d3')"><span class="sb-dot" style="background:var(--pd)"></span>12 · Cleaning & Merging</button>
+  <button class="sb-a" onclick="go('d4')"><span class="sb-dot" style="background:var(--pd)"></span>13 · EDA & Visualization</button>
+  <div class="sb-prog">
+    <div class="pl">Reading progress</div>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+    <div class="pn" id="pn">0%</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main" id="ms">
+<div class="hero">
+  <div class="hero-ey">Your ML Foundation — Recap + Deep Dive</div>
+  <h1 class="hero-h1"><em>Python</em> · <b>NumPy</b> · <u>Pandas</u><br>Everything You Need for ML</h1>
+  <p class="hero-p">A comprehensive recap of Python fundamentals, then deep dives into NumPy (matrices, broadcasting, linear algebra) and Pandas (DataFrames, cleaning, EDA). Every concept you'll use daily in ML — with live examples and interactive exercises.</p>
+  <div class="hero-pills">
+    <div class="pill py">Python 3.11+</div>
+    <div class="pill np">NumPy 1.26</div>
+    <div class="pill pd">Pandas 2.x</div>
+    <div class="pill">13 Modules</div>
+    <div class="pill">Interactive Examples</div>
+    <div class="pill">ML Context Always</div>
+  </div>
+</div>
+
+<div class="ct">
+
+<!-- ══ P1: DATA TYPES ══ -->
+<section class="sec" id="p1">
+  <div class="sec-n" style="color:var(--py)">Module 01 · Python</div>
+  <h2 class="sec-title">Data Types & Variables</h2>
+  <p class="sec-desc">Python is dynamically typed — you don't declare types, Python infers them. But in ML you ALWAYS care about types because the wrong type (str vs float) breaks your entire pipeline silently.</p>
+
+  <div class="viz">
+    <div class="viz-t">Python Type Hierarchy <span>Interactive</span></div>
+    <canvas id="typeCanvas" height="180"></canvas>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">01_data_types.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── The 5 core types you use in ML ───────────────────────</span>
+x = <span class="n">42</span>          <span class="c"># int   — index, count, label (0 or 1)</span>
+y = <span class="n">3.14</span>        <span class="c"># float — price, probability, weight</span>
+b = <span class="k">True</span>         <span class="c"># bool  — is_fraud, has_feature (True=1, False=0)</span>
+s = <span class="s">"income"</span>    <span class="c"># str   — column name, category label</span>
+n = <span class="k">None</span>         <span class="c"># NoneType — missing value (like NaN before pandas)</span>
+
+<span class="c"># ─── Type checking and conversion ─────────────────────────</span>
+<span class="f">type</span>(x)           <span class="c"># → &lt;class 'int'&gt;</span>
+<span class="f">isinstance</span>(x, <span class="f">int</span>)  <span class="c"># → True  (use this, not type() == int)</span>
+
+<span class="f">float</span>(<span class="s">"3.14"</span>)    <span class="c"># → 3.14  (string to float — common when reading CSVs)</span>
+<span class="f">int</span>(<span class="n">3.9</span>)         <span class="c"># → 3    (truncates, does NOT round)</span>
+<span class="f">str</span>(<span class="n">42</span>)          <span class="c"># → "42"</span>
+<span class="f">bool</span>(<span class="n">0</span>)          <span class="c"># → False  (0, 0.0, "", [], None are all False)</span>
+
+<span class="c"># ─── ML gotcha: int division vs float division ─────────────</span>
+<span class="n">7</span> / <span class="n">2</span>     <span class="c"># → 3.5   (true division, always float)</span>
+<span class="n">7</span> // <span class="n">2</span>    <span class="c"># → 3     (floor division, int result)</span>
+<span class="n">7</span> % <span class="n">2</span>     <span class="c"># → 1     (modulo — remainder)</span>
+<span class="n">2</span> ** <span class="n">10</span>   <span class="c"># → 1024  (power — used for learning rate schedules)</span>
+
+<span class="c"># ─── F-strings — use these everywhere ─────────────────────</span>
+acc = <span class="n">0.9342</span>
+epochs = <span class="n">10</span>
+<span class="f">print</span>(<span class="s">f"Epoch {epochs}: accuracy = {acc:.2f}"</span>)
+<span class="c"># → Epoch 10: accuracy = 0.93</span>
+<span class="f">print</span>(<span class="s">f"Loss: {<span class="n">0.00234</span>:.4e}"</span>)  <span class="c"># → Loss: 2.3400e-03</span></pre></div>
+
+  <div class="quiz">
+    <div class="quiz-q">Quick Check: What does <code style="font-family:var(--mf);background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px">int(3.9)</code> return?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="answer(this,false,'It truncates, not rounds. int() just drops the decimal part.')">4 (rounds up)</button>
+      <button class="quiz-opt" onclick="answer(this,true,'Correct! int() truncates toward zero. 3.9 → 3. Use round() if you want rounding.')">3 (truncates)</button>
+      <button class="quiz-opt" onclick="answer(this,false,'int() works on floats just fine.')">TypeError</button>
+    </div>
+    <div class="quiz-fb"></div>
+  </div>
+</section>
+
+<!-- ══ P2: CONTROL FLOW ══ -->
+<section class="sec" id="p2">
+  <div class="sec-n" style="color:var(--py)">Module 02 · Python</div>
+  <h2 class="sec-title">Control Flow & Loops</h2>
+  <p class="sec-desc">Conditionals and loops are the skeleton of every ML preprocessing script, training loop, and evaluation pipeline. Master these completely — you'll write them thousands of times.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">02_control_flow.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── if / elif / else ─────────────────────────────────────</span>
+score = <span class="n">0.87</span>
+
+<span class="k">if</span> score >= <span class="n">0.9</span>:
+    <span class="f">print</span>(<span class="s">"Excellent model!"</span>)
+<span class="k">elif</span> score >= <span class="n">0.7</span>:
+    <span class="f">print</span>(<span class="s">"Good — consider tuning"</span>)
+<span class="k">else</span>:
+    <span class="f">print</span>(<span class="s">"Needs work"</span>)
+
+<span class="c"># ─── for loop — the workhorse ──────────────────────────────</span>
+losses = [<span class="n">0.9</span>, <span class="n">0.7</span>, <span class="n">0.5</span>, <span class="n">0.3</span>, <span class="n">0.15</span>]
+
+<span class="k">for</span> i, loss <span class="k">in</span> <span class="f">enumerate</span>(losses):       <span class="c"># enumerate gives (index, value)</span>
+    <span class="f">print</span>(<span class="s">f"Epoch {i+1}: loss={loss:.2f}"</span>)
+
+<span class="c"># ─── range() — for training epochs ────────────────────────</span>
+<span class="k">for</span> epoch <span class="k">in</span> <span class="f">range</span>(<span class="n">1</span>, <span class="n">101</span>):    <span class="c"># 1 to 100 inclusive</span>
+    <span class="k">pass</span>                         <span class="c"># pass = placeholder</span>
+
+<span class="c"># ─── while loop — for convergence checks ──────────────────</span>
+loss = <span class="n">1.0</span>
+threshold = <span class="n">0.01</span>
+steps = <span class="n">0</span>
+
+<span class="k">while</span> loss > threshold:
+    loss *= <span class="n">0.85</span>   <span class="c"># simulate loss decreasing</span>
+    steps += <span class="n">1</span>
+    <span class="k">if</span> steps > <span class="n">1000</span>:
+        <span class="f">print</span>(<span class="s">"Did not converge!"</span>)
+        <span class="k">break</span>        <span class="c"># break exits the loop</span>
+<span class="f">print</span>(<span class="s">f"Converged in {steps} steps"</span>)
+
+<span class="c"># ─── zip() — iterate two lists together ───────────────────</span>
+features = [<span class="s">"age"</span>, <span class="s">"income"</span>, <span class="s">"score"</span>]
+weights  = [<span class="n">0.3</span>, <span class="n">0.5</span>, <span class="n">0.2</span>]
+
+<span class="k">for</span> feat, w <span class="k">in</span> <span class="f">zip</span>(features, weights):
+    <span class="f">print</span>(<span class="s">f"{feat}: weight = {w}"</span>)</pre></div>
+
+  <!-- Training loss animation -->
+  <div class="viz">
+    <div class="viz-t">Simulated Training Loop — Loss Over Epochs <span>Live Animation</span></div>
+    <canvas id="lossCanvas" height="200"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button onclick="startLoss()" style="padding:5px 16px;border-radius:50px;border:1px solid var(--gn);background:rgba(94,196,132,.15);color:var(--gn);font-family:var(--mf);font-size:11px;cursor:pointer">▶ Start Training</button>
+      <button onclick="resetLoss()" style="padding:5px 16px;border-radius:50px;border:1px solid var(--bd2);background:var(--s3);color:var(--mt);font-family:var(--mf);font-size:11px;cursor:pointer">↺ Reset</button>
+      <span id="lossInfo" style="font-family:var(--mf);font-size:11px;color:var(--mt);align-self:center"></span>
+    </div>
+    <p style="font-size:12px;color:var(--dm);margin-top:8px">This is literally what a Python for loop over epochs looks like — each step calls backward(), optimizer.step(), and appends loss to a list exactly like the code above.</p>
+  </div>
+</section>
+
+<!-- ══ P3: FUNCTIONS ══ -->
+<section class="sec" id="p3">
+  <div class="sec-n" style="color:var(--py)">Module 03 · Python</div>
+  <h2 class="sec-title">Functions & Scope</h2>
+  <p class="sec-desc">In ML, functions are everywhere: preprocessing steps, loss functions, metric calculators, data loaders. Understanding scope, default arguments, and *args/**kwargs is essential.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">03_functions.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── Basic function ────────────────────────────────────────</span>
+<span class="k">def</span> <span class="f">accuracy</span>(y_true: <span class="t">list</span>, y_pred: <span class="t">list</span>) -> <span class="t">float</span>:
+    <span class="s">"""Calculate classification accuracy.
+    
+    Args:
+        y_true: actual labels
+        y_pred: predicted labels
+    Returns:
+        accuracy score between 0 and 1
+    """</span>
+    correct = <span class="f">sum</span>(t == p <span class="k">for</span> t, p <span class="k">in</span> <span class="f">zip</span>(y_true, y_pred))
+    <span class="k">return</span> correct / <span class="f">len</span>(y_true)
+
+<span class="c"># ─── Default arguments ─────────────────────────────────────</span>
+<span class="k">def</span> <span class="f">normalize</span>(x: <span class="t">float</span>, method: <span class="t">str</span> = <span class="s">"minmax"</span>, clip: <span class="t">bool</span> = <span class="k">False</span>) -> <span class="t">float</span>:
+    <span class="c"># Default args must come AFTER positional args</span>
+    <span class="k">pass</span>
+
+<span class="f">normalize</span>(<span class="n">5.0</span>)                     <span class="c"># uses defaults</span>
+<span class="f">normalize</span>(<span class="n">5.0</span>, method=<span class="s">"zscore"</span>)   <span class="c"># keyword arg</span>
+<span class="f">normalize</span>(<span class="n">5.0</span>, <span class="s">"zscore"</span>, <span class="k">True</span>)     <span class="c"># positional</span>
+
+<span class="c"># ─── *args and **kwargs ────────────────────────────────────</span>
+<span class="k">def</span> <span class="f">log_metrics</span>(*metrics, **extra_info):
+    <span class="c"># *args: any number of positional args → tuple</span>
+    <span class="c"># **kwargs: any keyword args → dict</span>
+    <span class="k">for</span> m <span class="k">in</span> metrics:
+        <span class="f">print</span>(<span class="s">f"metric: {m}"</span>)
+    <span class="k">for</span> k, v <span class="k">in</span> extra_info.<span class="f">items</span>():
+        <span class="f">print</span>(<span class="s">f"{k} = {v}"</span>)
+
+<span class="f">log_metrics</span>(<span class="n">0.92</span>, <span class="n">0.87</span>, epoch=<span class="n">10</span>, lr=<span class="n">0.001</span>)
+
+<span class="c"># ─── Returning multiple values (returns a tuple) ───────────</span>
+<span class="k">def</span> <span class="f">train_test_split_manual</span>(data, ratio=<span class="n">0.8</span>):
+    split = <span class="f">int</span>(<span class="f">len</span>(data) * ratio)
+    <span class="k">return</span> data[:split], data[split:]  <span class="c"># returns tuple</span>
+
+train, test = <span class="f">train_test_split_manual</span>([<span class="n">1</span>,<span class="n">2</span>,<span class="n">3</span>,<span class="n">4</span>,<span class="n">5</span>])
+<span class="c"># train=[1,2,3,4]  test=[5]</span></pre></div>
+</section>
+
+<!-- ══ P4: COLLECTIONS ══ -->
+<section class="sec" id="p4">
+  <div class="sec-n" style="color:var(--py)">Module 04 · Python</div>
+  <h2 class="sec-title">Lists, Dicts, Tuples & Sets</h2>
+  <p class="sec-desc">Lists store sequences of features. Dicts store hyperparameters and configs. Tuples store immutable shapes. Sets check membership. You use all four daily in ML.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">04_collections.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── LIST — ordered, mutable, allows duplicates ────────────</span>
+features = [<span class="s">"age"</span>, <span class="s">"income"</span>, <span class="s">"score"</span>, <span class="s">"age"</span>]
+features.<span class="f">append</span>(<span class="s">"city"</span>)       <span class="c"># add to end</span>
+features.<span class="f">remove</span>(<span class="s">"score"</span>)     <span class="c"># remove first occurrence</span>
+features.<span class="f">sort</span>()              <span class="c"># sort in place</span>
+features[<span class="n">0</span>]                  <span class="c"># → "age"  (first item)</span>
+features[<span class="n">-1</span>]                 <span class="c"># → last item</span>
+features[<span class="n">1</span>:<span class="n">3</span>]               <span class="c"># → ["income", "score"] (slicing)</span>
+<span class="f">len</span>(features)                <span class="c"># → count</span>
+
+<span class="c"># ─── DICT — key-value pairs, unordered, fast lookup ────────</span>
+hyperparams = {
+    <span class="s">"lr"</span>: <span class="n">0.001</span>,
+    <span class="s">"epochs"</span>: <span class="n">100</span>,
+    <span class="s">"batch_size"</span>: <span class="n">32</span>,
+    <span class="s">"optimizer"</span>: <span class="s">"adam"</span>
+}
+hyperparams[<span class="s">"lr"</span>]           <span class="c"># → 0.001</span>
+hyperparams.<span class="f">get</span>(<span class="s">"dropout"</span>, <span class="n">0.5</span>)  <span class="c"># → 0.5 (default if missing)</span>
+<span class="s">"epochs"</span> <span class="k">in</span> hyperparams     <span class="c"># → True (key lookup)</span>
+hyperparams.<span class="f">keys</span>()           <span class="c"># → dict_keys(["lr", "epochs"...])</span>
+hyperparams.<span class="f">values</span>()         <span class="c"># → dict_values([0.001, 100...])</span>
+hyperparams.<span class="f">items</span>()          <span class="c"># → for k,v in ...  ← use this!</span>
+
+<span class="c"># ─── TUPLE — immutable, used for shapes and coordinates ────</span>
+shape = (<span class="n">64</span>, <span class="n">3</span>, <span class="n">224</span>, <span class="n">224</span>)   <span class="c"># batch, channels, H, W (image tensor shape)</span>
+batch_size, channels, h, w = shape  <span class="c"># unpacking</span>
+
+<span class="c"># ─── SET — unique items, fast membership check ─────────────</span>
+seen_labels = {<span class="s">"cat"</span>, <span class="s">"dog"</span>, <span class="s">"bird"</span>}
+<span class="s">"cat"</span> <span class="k">in</span> seen_labels         <span class="c"># → True  (O(1) vs O(n) for list)</span>
+seen_labels.<span class="f">add</span>(<span class="s">"fish"</span>)     <span class="c"># add element</span>
+<span class="f">set</span>(features)               <span class="c"># remove duplicates from list</span></pre></div>
+
+  <div class="cs">
+    <div class="cs-card">
+      <div class="cs-head" style="color:var(--py)">List Slicing — Critical for ML</div>
+      <div class="cs-row"><div class="cs-code">a[2:5]</div><div class="cs-desc">index 2,3,4</div></div>
+      <div class="cs-row"><div class="cs-code">a[:3]</div><div class="cs-desc">first 3 elements</div></div>
+      <div class="cs-row"><div class="cs-code">a[-3:]</div><div class="cs-desc">last 3 elements</div></div>
+      <div class="cs-row"><div class="cs-code">a[::2]</div><div class="cs-desc">every other element</div></div>
+      <div class="cs-row"><div class="cs-code">a[::-1]</div><div class="cs-desc">reversed list</div></div>
+      <div class="cs-row"><div class="cs-code">a[1:8:2]</div><div class="cs-desc">start:stop:step</div></div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-head" style="color:var(--np)">Dict Patterns in ML</div>
+      <div class="cs-row"><div class="cs-code">d.get(k, default)</div><div class="cs-desc">safe lookup</div></div>
+      <div class="cs-row"><div class="cs-code">k in d</div><div class="cs-desc">key exists?</div></div>
+      <div class="cs-row"><div class="cs-code">{**d1, **d2}</div><div class="cs-desc">merge two dicts</div></div>
+      <div class="cs-row"><div class="cs-code">d.update({k:v})</div><div class="cs-desc">add/update key</div></div>
+      <div class="cs-row"><div class="cs-code">sorted(d, key=...)</div><div class="cs-desc">sort by value</div></div>
+      <div class="cs-row"><div class="cs-code">collections.Counter</div><div class="cs-desc">count occurrences</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ P5: OOP ══ -->
+<section class="sec" id="p5">
+  <div class="sec-n" style="color:var(--py)">Module 05 · Python</div>
+  <h2 class="sec-title">OOP & Classes</h2>
+  <p class="sec-desc">Every sklearn model is a class. Every PyTorch model is a class. Understanding __init__, methods, inheritance, and dunder methods makes you able to write custom models and transformers.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">05_oop.py — Custom sklearn-style transformer</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── The pattern ALL sklearn models follow ─────────────────</span>
+<span class="k">class</span> <span class="t">MinMaxScaler</span>:
+    <span class="s">"""Scales features to [0, 1] range."""</span>
+    
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="k">self</span>, feature_range=(<span class="n">0</span>, <span class="n">1</span>)):
+        <span class="k">self</span>.feature_range = feature_range
+        <span class="k">self</span>.min_ = <span class="k">None</span>     <span class="c"># underscore = "set by fit()"</span>
+        <span class="k">self</span>.max_ = <span class="k">None</span>
+    
+    <span class="k">def</span> <span class="f">fit</span>(<span class="k">self</span>, X):
+        <span class="s">"""Learn min and max from training data."""</span>
+        <span class="k">self</span>.min_ = <span class="f">min</span>(X)
+        <span class="k">self</span>.max_ = <span class="f">max</span>(X)
+        <span class="k">return self</span>           <span class="c"># return self enables chaining</span>
+    
+    <span class="k">def</span> <span class="f">transform</span>(<span class="k">self</span>, X):
+        <span class="s">"""Apply learned scaling to new data."""</span>
+        <span class="k">if self</span>.min_ <span class="k">is None</span>:
+            <span class="k">raise</span> <span class="t">RuntimeError</span>(<span class="s">"Call fit() before transform()"</span>)
+        <span class="k">return</span> [(x - <span class="k">self</span>.min_) / (<span class="k">self</span>.max_ - <span class="k">self</span>.min_) <span class="k">for</span> x <span class="k">in</span> X]
+    
+    <span class="k">def</span> <span class="f">fit_transform</span>(<span class="k">self</span>, X):
+        <span class="k">return self</span>.<span class="f">fit</span>(X).<span class="f">transform</span>(X)   <span class="c"># method chaining!</span>
+    
+    <span class="k">def</span> <span class="f">__repr__</span>(<span class="k">self</span>):
+        <span class="k">return</span> <span class="s">f"MinMaxScaler(feature_range={self.feature_range})"</span>
+
+<span class="c"># ─── Inheritance ───────────────────────────────────────────</span>
+<span class="k">class</span> <span class="t">ClippingScaler</span>(<span class="t">MinMaxScaler</span>):  <span class="c"># inherits from MinMaxScaler</span>
+    <span class="k">def</span> <span class="f">transform</span>(<span class="k">self</span>, X):            <span class="c"># override parent method</span>
+        scaled = <span class="f">super</span>().<span class="f">transform</span>(X)  <span class="c"># call parent's transform</span>
+        <span class="k">return</span> [<span class="f">max</span>(<span class="n">0</span>, <span class="f">min</span>(<span class="n">1</span>, v)) <span class="k">for</span> v <span class="k">in</span> scaled]  <span class="c"># then clip</span>
+
+scaler = <span class="t">MinMaxScaler</span>()
+scaler.<span class="f">fit_transform</span>([<span class="n">10</span>, <span class="n">20</span>, <span class="n">30</span>, <span class="n">40</span>])  <span class="c"># → [0.0, 0.33, 0.67, 1.0]</span></pre></div>
+</section>
+
+<!-- ══ P6: COMPREHENSIONS ══ -->
+<section class="sec" id="p6">
+  <div class="sec-n" style="color:var(--py)">Module 06 · Python</div>
+  <h2 class="sec-title">Comprehensions, Lambdas & Functional Tools</h2>
+  <p class="sec-desc">Comprehensions make data processing code dramatically shorter. Lambdas are for quick one-liner functions. map/filter/sorted are used constantly in feature engineering.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">06_comprehensions.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── List comprehension — the most used Python pattern ─────</span>
+squares = [x**<span class="n">2</span> <span class="k">for</span> x <span class="k">in</span> <span class="f">range</span>(<span class="n">10</span>)]
+<span class="c"># [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</span>
+
+<span class="c"># With filter condition:</span>
+pos_features = [x <span class="k">for</span> x <span class="k">in</span> values <span class="k">if</span> x > <span class="n">0</span>]
+
+<span class="c"># Transform and filter at once:</span>
+clean = [<span class="f">float</span>(x) <span class="k">for</span> x <span class="k">in</span> raw_data <span class="k">if</span> x <span class="k">is not None</span>]
+
+<span class="c"># ─── Dict comprehension ────────────────────────────────────</span>
+feature_names = [<span class="s">"age"</span>, <span class="s">"income"</span>, <span class="s">"score"</span>]
+feature_index = {name: i <span class="k">for</span> i, name <span class="k">in</span> <span class="f">enumerate</span>(feature_names)}
+<span class="c"># → {"age": 0, "income": 1, "score": 2}</span>
+
+<span class="c"># Invert a dictionary:</span>
+index_feature = {v: k <span class="k">for</span> k, v <span class="k">in</span> feature_index.<span class="f">items</span>()}
+
+<span class="c"># ─── Lambda — anonymous one-liner function ─────────────────</span>
+square = <span class="k">lambda</span> x: x**<span class="n">2</span>
+square(<span class="n">5</span>)    <span class="c"># → 25</span>
+
+<span class="c"># Most common use: as key= argument for sorting</span>
+models = [(<span class="s">"RF"</span>, <span class="n">0.92</span>), (<span class="s">"SVM"</span>, <span class="n">0.87</span>), (<span class="s">"LR"</span>, <span class="n">0.81</span>)]
+<span class="f">sorted</span>(models, key=<span class="k">lambda</span> x: x[<span class="n">1</span>], reverse=<span class="k">True</span>)
+<span class="c"># → [("RF", 0.92), ("SVM", 0.87), ("LR", 0.81)]</span>
+
+<span class="c"># ─── map() and filter() ────────────────────────────────────</span>
+doubled = <span class="f">list</span>(<span class="f">map</span>(<span class="k">lambda</span> x: x*<span class="n">2</span>, [<span class="n">1</span>,<span class="n">2</span>,<span class="n">3</span>]))   <span class="c"># [2, 4, 6]</span>
+positive = <span class="f">list</span>(<span class="f">filter</span>(<span class="k">lambda</span> x: x>0, [-1,2,-3,4]))  <span class="c"># [2, 4]</span>
+
+<span class="c"># ─── any() and all() — used in validation ──────────────────</span>
+<span class="f">any</span>([<span class="k">False</span>, <span class="k">True</span>, <span class="k">False</span>])  <span class="c"># → True (at least one True)</span>
+<span class="f">all</span>([<span class="k">True</span>, <span class="k">True</span>, <span class="k">True</span>])   <span class="c"># → True (all True)</span>
+<span class="f">any</span>(x > <span class="n">0.9</span> <span class="k">for</span> x <span class="k">in</span> scores)  <span class="c"># any score above 0.9?</span></pre></div>
+</section>
+
+<!-- ══ N1: NUMPY ARRAYS ══ -->
+<section class="sec" id="n1">
+  <div class="sec-n" style="color:var(--np)">Module 07 · NumPy</div>
+  <h2 class="sec-title">Arrays, Operations & Vectorization</h2>
+  <p class="sec-desc">NumPy is the numerical backbone of ML. A NumPy array is like a Python list — but 100x faster because operations happen in compiled C. Your ML dataset is an ndarray. Every sklearn model input is an ndarray.</p>
+
+  <div class="cl cn"><div class="cll">💡 The Core Idea — Vectorization</div><p>Never loop over array elements in Python. NumPy operates on entire arrays at once in compiled C code. Loop over 1M elements → slow. NumPy add → instant. This principle applies everywhere in ML.</p></div>
+
+  <!-- Array viz -->
+  <div class="viz">
+    <div class="viz-t">NumPy Array Shapes — Visualized <span>1D · 2D · 3D</span></div>
+    <canvas id="arrayCanvas" height="200"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button onclick="showArr('1d')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--np);background:rgba(90,159,212,.2);color:var(--np);font-family:var(--mf);font-size:11px;cursor:pointer">1D Vector</button>
+      <button onclick="showArr('2d')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--bd2);background:var(--s3);color:var(--mt);font-family:var(--mf);font-size:11px;cursor:pointer">2D Matrix</button>
+      <button onclick="showArr('3d')" style="padding:5px 14px;border-radius:50px;border:1px solid var(--bd2);background:var(--s3);color:var(--mt);font-family:var(--mf);font-size:11px;cursor:pointer">3D Tensor</button>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">07_numpy_arrays.py</div><div class="clg">python</div></div>
+<pre><span class="k">import</span> numpy <span class="k">as</span> np   <span class="c"># always aliased as np</span>
+
+<span class="c"># ─── Creating arrays ──────────────────────────────────────</span>
+a = np.<span class="f">array</span>([<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>, <span class="n">5</span>])           <span class="c"># from Python list</span>
+b = np.<span class="f">zeros</span>((<span class="n">5</span>, <span class="n">3</span>))                   <span class="c"># 5×3 zeros</span>
+c = np.<span class="f">ones</span>((<span class="n">3</span>, <span class="n">3</span>))                    <span class="c"># 3×3 ones</span>
+I = np.<span class="f">eye</span>(<span class="n">4</span>)                          <span class="c"># 4×4 identity matrix</span>
+r = np.random.<span class="f">randn</span>(<span class="n">100</span>, <span class="n">10</span>)          <span class="c"># 100 samples, 10 features (Gaussian)</span>
+u = np.random.<span class="f">uniform</span>(<span class="n">0</span>, <span class="n">1</span>, (<span class="n">50</span>, <span class="n">5</span>))  <span class="c"># uniform random, 50×5</span>
+s = np.<span class="f">linspace</span>(<span class="n">0</span>, <span class="n">1</span>, <span class="n">100</span>)            <span class="c"># 100 evenly spaced from 0 to 1</span>
+
+<span class="c"># ─── Shape, dtype, size ───────────────────────────────────</span>
+X = np.random.<span class="f">randn</span>(<span class="n">1000</span>, <span class="n">20</span>)  <span class="c"># 1000 samples, 20 features</span>
+X.<span class="f">shape</span>   <span class="c"># → (1000, 20)</span>
+X.<span class="f">ndim</span>    <span class="c"># → 2</span>
+X.<span class="f">dtype</span>   <span class="c"># → float64</span>
+X.<span class="f">size</span>    <span class="c"># → 20000 (total elements)</span>
+
+<span class="c"># ─── VECTORIZED operations — FAST ──────────────────────────</span>
+X + <span class="n">10</span>         <span class="c"># add 10 to every element</span>
+X * <span class="n">2</span>          <span class="c"># multiply every element by 2</span>
+X ** <span class="n">2</span>         <span class="c"># square every element</span>
+np.<span class="f">exp</span>(X)      <span class="c"># e^x for every element (sigmoid needs this!)</span>
+np.<span class="f">log</span>(X)      <span class="c"># natural log (cross-entropy loss needs this!)</span>
+np.<span class="f">sqrt</span>(X)     <span class="c"># square root</span>
+np.<span class="f">abs</span>(X)      <span class="c"># absolute value (MAE loss!)</span>
+
+<span class="c"># ─── Aggregate operations ─────────────────────────────────</span>
+X.<span class="f">sum</span>()              <span class="c"># total sum</span>
+X.<span class="f">sum</span>(axis=<span class="n">0</span>)        <span class="c"># sum each column (feature means)</span>
+X.<span class="f">sum</span>(axis=<span class="n">1</span>)        <span class="c"># sum each row (sample totals)</span>
+X.<span class="f">mean</span>(), X.<span class="f">std</span>()   <span class="c"># global mean and std</span>
+X.<span class="f">max</span>(axis=<span class="n">0</span>)        <span class="c"># max per feature</span>
+X.<span class="f">argmax</span>()           <span class="c"># index of maximum (predicted class!)</span>
+
+<span class="c"># ─── dtype conversion ─────────────────────────────────────</span>
+X.<span class="f">astype</span>(np.<span class="f">float32</span>)  <span class="c"># float32 uses half the memory of float64</span>
+X.<span class="f">astype</span>(<span class="f">int</span>)        <span class="c"># convert to integer</span></pre></div>
+</section>
+
+<!-- ══ N2: INDEXING ══ -->
+<section class="sec" id="n2">
+  <div class="sec-n" style="color:var(--np)">Module 08 · NumPy</div>
+  <h2 class="sec-title">Indexing, Slicing & Broadcasting</h2>
+  <p class="sec-desc">Broadcasting is NumPy's most powerful (and confusing) feature. It lets you do operations between arrays of different shapes without writing loops. Understanding it unlocks everything in deep learning.</p>
+
+  <!-- Broadcasting viz -->
+  <div class="viz">
+    <div class="viz-t">Broadcasting — How Shapes Align <span>Visual</span></div>
+    <canvas id="broadCanvas" height="220"></canvas>
+    <p style="font-size:12px;color:var(--dm);margin-top:8px">A (3×3) matrix minus a (3,) vector: the vector is automatically "broadcast" across all rows. This is how you subtract the mean from every sample in one line.</p>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">08_indexing_broadcasting.py</div><div class="clg">python</div></div>
+<pre><span class="k">import</span> numpy <span class="k">as</span> np
+
+X = np.random.<span class="f">randn</span>(<span class="n">100</span>, <span class="n">5</span>)   <span class="c"># 100 samples, 5 features</span>
+
+<span class="c"># ─── Basic indexing ────────────────────────────────────────</span>
+X[<span class="n">0</span>]            <span class="c"># first row (sample 0)</span>
+X[<span class="n">0</span>, <span class="n">2</span>]         <span class="c"># row 0, column 2</span>
+X[<span class="n">-1</span>]           <span class="c"># last row</span>
+X[<span class="n">5</span>:<span class="n">10</span>]         <span class="c"># rows 5-9</span>
+X[:, <span class="n">0</span>]         <span class="c"># entire first column (feature 0)</span>
+X[:, :<span class="n">3</span>]        <span class="c"># first 3 features only</span>
+X[<span class="n">10</span>:<span class="n">20</span>, <span class="n">1</span>:<span class="n">4</span>]   <span class="c"># rows 10-19, columns 1-3</span>
+
+<span class="c"># ─── Boolean indexing — most important for filtering ───────</span>
+X[X > <span class="n">0</span>]                   <span class="c"># all positive values (flattens!)</span>
+mask = X[:, <span class="n">0</span>] > <span class="n">0</span>         <span class="c"># mask: True/False for each sample</span>
+X[mask]                    <span class="c"># samples where feature 0 is positive</span>
+X[X[:, <span class="n">0</span>] > <span class="n">0</span>]             <span class="c"># one-liner version</span>
+
+<span class="c"># ─── Fancy indexing — select specific rows ─────────────────</span>
+indices = np.<span class="f">array</span>([<span class="n">0</span>, <span class="n">5</span>, <span class="n">10</span>, <span class="n">50</span>])
+X[indices]   <span class="c"># select exactly those rows</span>
+
+<span class="c"># ─── Reshaping — critical for deep learning ────────────────</span>
+flat = X.<span class="f">reshape</span>(<span class="n">-1</span>)              <span class="c"># flatten to 1D (500,)</span>
+col = X.<span class="f">reshape</span>(<span class="n">-1</span>, <span class="n">1</span>)           <span class="c"># column vector (500, 1)</span>
+img = np.<span class="f">zeros</span>((<span class="n">28</span>*<span class="n">28</span>,)).<span class="f">reshape</span>(<span class="n">1</span>, <span class="n">28</span>, <span class="n">28</span>)  <span class="c"># MNIST pixel → image</span>
+X_T = X.<span class="f">T</span>                          <span class="c"># transpose</span>
+
+<span class="c"># ─── BROADCASTING — the magic ─────────────────────────────</span>
+mean = X.<span class="f">mean</span>(axis=<span class="n">0</span>)   <span class="c"># shape (5,) — per-feature mean</span>
+std  = X.<span class="f">std</span>(axis=<span class="n">0</span>)    <span class="c"># shape (5,)</span>
+X_norm = (X - mean) / std  <span class="c"># (100,5)-(5,) → broadcast! StandardScaler in one line</span>
+
+<span class="c"># Broadcasting rules:
+# 1. Align shapes from the RIGHT
+# 2. Dimensions of size 1 stretch to match
+# (100,5) - (5,)  →  (100,5) - (1,5)  →  (100,5) ✓</span>
+
+<span class="c"># ─── np.where — vectorized if/else ─────────────────────────</span>
+labels = np.<span class="f">where</span>(X[:, <span class="n">0</span>] > <span class="n">0</span>, <span class="n">1</span>, <span class="n">0</span>)  <span class="c"># 1 if positive else 0</span></pre></div>
+</section>
+
+<!-- ══ N3: LINALG ══ -->
+<section class="sec" id="n3">
+  <div class="sec-n" style="color:var(--np)">Module 09 · NumPy</div>
+  <h2 class="sec-title">Linear Algebra & Statistics</h2>
+  <p class="sec-desc">np.linalg and np.dot are the building blocks of every ML algorithm. Matrix multiplication IS neural network forward pass. Eigendecomposition IS PCA. These aren't optional.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">09_linalg.py</div><div class="clg">python</div></div>
+<pre><span class="k">import</span> numpy <span class="k">as</span> np
+
+<span class="c"># ─── Matrix multiplication — the core of forward pass ──────</span>
+X = np.random.<span class="f">randn</span>(<span class="n">64</span>, <span class="n">20</span>)   <span class="c"># batch of 64, 20 features</span>
+W = np.random.<span class="f">randn</span>(<span class="n">20</span>, <span class="n">10</span>)   <span class="c"># weight matrix</span>
+b = np.<span class="f">zeros</span>(<span class="n">10</span>)               <span class="c"># bias vector</span>
+
+Z = X @ W + b                   <span class="c"># → shape (64, 10) — one linear layer!</span>
+<span class="c"># Same as: Z = np.dot(X, W) + b</span>
+
+<span class="c"># ─── Dot product — similarity between vectors ──────────────</span>
+a = np.<span class="f">array</span>([<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>])
+b_v = np.<span class="f">array</span>([<span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>])
+np.<span class="f">dot</span>(a, b_v)     <span class="c"># → 32   (1*4 + 2*5 + 3*6)</span>
+
+<span class="c"># Cosine similarity (used in RAG you already built!):</span>
+cos_sim = np.<span class="f">dot</span>(a, b_v) / (np.<span class="f">linalg</span>.<span class="f">norm</span>(a) * np.<span class="f">linalg</span>.<span class="f">norm</span>(b_v))
+
+<span class="c"># ─── Essential linalg ─────────────────────────────────────</span>
+np.<span class="f">linalg</span>.<span class="f">norm</span>(a)          <span class="c"># Euclidean norm (length of vector)</span>
+np.<span class="f">linalg</span>.<span class="f">det</span>(W[:10,:10]) <span class="c"># determinant</span>
+np.<span class="f">linalg</span>.<span class="f">inv</span>(W[:10,:10]) <span class="c"># matrix inverse (OLS formula needs this)</span>
+vals, vecs = np.<span class="f">linalg</span>.<span class="f">eig</span>(np.cov(X.T))  <span class="c"># eigenvalues/vectors → PCA!</span>
+U, S, Vt = np.<span class="f">linalg</span>.<span class="f">svd</span>(X, full_matrices=<span class="k">False</span>)  <span class="c"># SVD → dimensionality reduction</span>
+
+<span class="c"># ─── Statistics ────────────────────────────────────────────</span>
+np.<span class="f">mean</span>(X, axis=<span class="n">0</span>)    <span class="c"># per-feature mean</span>
+np.<span class="f">std</span>(X, axis=<span class="n">0</span>)     <span class="c"># per-feature std</span>
+np.<span class="f">median</span>(X, axis=<span class="n">0</span>) <span class="c"># per-feature median (robust to outliers)</span>
+np.<span class="f">percentile</span>(X, [<span class="n">25</span>, <span class="n">75</span>], axis=<span class="n">0</span>)  <span class="c"># Q1 and Q3 for IQR</span>
+np.<span class="f">corrcoef</span>(X.T)       <span class="c"># correlation matrix (feature correlations)</span>
+np.<span class="f">cov</span>(X.T)            <span class="c"># covariance matrix (input to PCA)</span>
+
+<span class="c"># ─── Random with seed — reproducibility ────────────────────</span>
+np.random.<span class="f">seed</span>(<span class="n">42</span>)                    <span class="c"># old way</span>
+rng = np.random.<span class="f">default_rng</span>(<span class="n">42</span>)     <span class="c"># modern way</span>
+rng.<span class="f">integers</span>(<span class="n">0</span>, <span class="n">100</span>, size=<span class="n">10</span>)       <span class="c"># random ints</span>
+rng.<span class="f">shuffle</span>(X)                        <span class="c"># shuffle rows in-place</span></pre></div>
+</section>
+
+<!-- ══ D1: SERIES/DF ══ -->
+<section class="sec" id="d1">
+  <div class="sec-n" style="color:var(--pd)">Module 10 · Pandas</div>
+  <h2 class="sec-title">Series & DataFrame — The Foundation</h2>
+  <p class="sec-desc">Pandas is your primary tool for loading, exploring, and cleaning tabular data before it goes into any ML model. A DataFrame is like an Excel sheet with superpowers — and the Python you already know transfers directly.</p>
+
+  <!-- DataFrame viz -->
+  <div class="viz">
+    <div class="viz-t">DataFrame Anatomy — What Every Part Is <span>Visual</span></div>
+    <canvas id="dfCanvas" height="220"></canvas>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">10_pandas_basics.py</div><div class="clg">python</div></div>
+<pre><span class="k">import</span> pandas <span class="k">as</span> pd    <span class="c"># always aliased as pd</span>
+<span class="k">import</span> numpy <span class="k">as</span> np
+
+<span class="c"># ─── Series — 1D labeled array ─────────────────────────────</span>
+ages = pd.<span class="f">Series</span>([<span class="n">25</span>, <span class="n">30</span>, <span class="n">35</span>, <span class="n">28</span>], index=[<span class="s">"Alice"</span>, <span class="s">"Bob"</span>, <span class="s">"Charlie"</span>, <span class="s">"Diana"</span>])
+ages[<span class="s">"Bob"</span>]      <span class="c"># → 30  (label-based)</span>
+ages[<span class="n">1</span>]          <span class="c"># → 30  (position-based)</span>
+ages > <span class="n">27</span>        <span class="c"># → boolean Series (True/False)</span>
+ages.<span class="f">mean</span>()      <span class="c"># → 29.5</span>
+
+<span class="c"># ─── DataFrame — the main tool ─────────────────────────────</span>
+df = pd.<span class="f">DataFrame</span>({
+    <span class="s">"age"</span>:    [<span class="n">25</span>, <span class="n">30</span>, <span class="n">35</span>, <span class="n">28</span>, <span class="n">45</span>],
+    <span class="s">"income"</span>: [<span class="n">50000</span>, <span class="n">75000</span>, <span class="n">90000</span>, <span class="n">62000</span>, <span class="n">120000</span>],
+    <span class="s">"label"</span>:  [<span class="n">0</span>, <span class="n">1</span>, <span class="n">1</span>, <span class="n">0</span>, <span class="n">1</span>]
+})
+
+<span class="c"># ─── First things you do with ANY new dataset ──────────────</span>
+df.<span class="f">shape</span>           <span class="c"># → (5, 3) — rows, columns</span>
+df.<span class="f">head</span>(<span class="n">5</span>)         <span class="c"># first 5 rows</span>
+df.<span class="f">tail</span>(<span class="n">3</span>)         <span class="c"># last 3 rows</span>
+df.<span class="f">info</span>()          <span class="c"># column types + null counts ← RUN THIS FIRST</span>
+df.<span class="f">describe</span>()      <span class="c"># count, mean, std, min, quartiles, max</span>
+df.<span class="f">dtypes</span>          <span class="c"># data type of each column</span>
+df.<span class="f">isnull</span>().<span class="f">sum</span>()  <span class="c"># missing values per column ← ALWAYS CHECK</span>
+df.<span class="f">columns</span>         <span class="c"># column names</span>
+
+<span class="c"># ─── Column access ─────────────────────────────────────────</span>
+df[<span class="s">"age"</span>]             <span class="c"># → Series (single column)</span>
+df[[<span class="s">"age"</span>, <span class="s">"income"</span>]] <span class="c"># → DataFrame (multiple columns)</span>
+df.<span class="f">age</span>                 <span class="c"># dot notation (only if no spaces in name)</span>
+
+<span class="c"># ─── .loc vs .iloc — IMPORTANT distinction ─────────────────</span>
+df.<span class="f">loc</span>[<span class="n">0</span>]               <span class="c"># row by INDEX LABEL</span>
+df.<span class="f">iloc</span>[<span class="n">0</span>]              <span class="c"># row by POSITION  ← usually want this</span>
+df.<span class="f">loc</span>[<span class="n">0</span>:<span class="n">2</span>, <span class="s">"age"</span>]       <span class="c"># rows 0-2 (inclusive!), column "age"</span>
+df.<span class="f">iloc</span>[<span class="n">0</span>:<span class="n">2</span>, <span class="n">0</span>]          <span class="c"># rows 0-1 (exclusive), column 0</span>
+
+<span class="c"># ─── Load CSV — your most used line ────────────────────────</span>
+df = pd.<span class="f">read_csv</span>(<span class="s">"data.csv"</span>)
+df = pd.<span class="f">read_csv</span>(<span class="s">"data.csv"</span>, sep=<span class="s">";"</span>, encoding=<span class="s">"utf-8"</span>, low_memory=<span class="k">False</span>)</pre></div>
+</section>
+
+<!-- ══ D2: FILTERING ══ -->
+<section class="sec" id="d2">
+  <div class="sec-n" style="color:var(--pd)">Module 11 · Pandas</div>
+  <h2 class="sec-title">Filtering, Sorting & GroupBy</h2>
+  <p class="sec-desc">Filtering lets you select relevant subsets. GroupBy lets you compute stats per category — like mean income per label, or fraud rate per city. These are EDA workhorses.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">11_filter_groupby.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── Boolean filtering ─────────────────────────────────────</span>
+young = df[df[<span class="s">"age"</span>] < <span class="n">30</span>]
+high_income = df[df[<span class="s">"income"</span>] > <span class="n">80000</span>]
+fraud = df[(df[<span class="s">"label"</span>] == <span class="n">1</span>) & (df[<span class="s">"income"</span>] < <span class="n">40000</span>)]  <span class="c"># & not 'and'</span>
+either = df[(df[<span class="s">"age"</span>] > <span class="n">50</span>) | (df[<span class="s">"label"</span>] == <span class="n">1</span>)]       <span class="c"># | not 'or'</span>
+
+<span class="c"># .query() method — sometimes cleaner</span>
+df.<span class="f">query</span>(<span class="s">"age < 30 and income > 50000"</span>)
+df.<span class="f">query</span>(<span class="s">"label in [0, 1] and age > @threshold"</span>)  <span class="c"># @ for variables</span>
+
+<span class="c"># .isin() — filter by list of values</span>
+df[df[<span class="s">"city"</span>].<span class="f">isin</span>([<span class="s">"Mumbai"</span>, <span class="s">"Delhi"</span>, <span class="s">"Bangalore"</span>])]
+
+<span class="c"># ─── Sorting ───────────────────────────────────────────────</span>
+df.<span class="f">sort_values</span>(<span class="s">"income"</span>, ascending=<span class="k">False</span>)           <span class="c"># by income desc</span>
+df.<span class="f">sort_values</span>([<span class="s">"label"</span>, <span class="s">"income"</span>], ascending=[<span class="k">True</span>, <span class="k">False</span>])
+
+<span class="c"># ─── GroupBy — the most important Pandas operation ─────────</span>
+<span class="c"># Mean income per label (class 0 vs class 1)</span>
+df.<span class="f">groupby</span>(<span class="s">"label"</span>)[<span class="s">"income"</span>].<span class="f">mean</span>()
+
+<span class="c"># Multiple aggregations at once</span>
+df.<span class="f">groupby</span>(<span class="s">"label"</span>).<span class="f">agg</span>({
+    <span class="s">"income"</span>: [<span class="s">"mean"</span>, <span class="s">"std"</span>, <span class="s">"count"</span>],
+    <span class="s">"age"</span>:    [<span class="s">"mean"</span>, <span class="s">"min"</span>, <span class="s">"max"</span>]
+})
+
+<span class="c"># Count per category</span>
+df[<span class="s">"label"</span>].<span class="f">value_counts</span>()           <span class="c"># class distribution</span>
+df[<span class="s">"city"</span>].<span class="f">value_counts</span>(normalize=<span class="k">True</span>)  <span class="c"># as percentages</span>
+
+<span class="c"># GroupBy + transform — add group mean as new column</span>
+df[<span class="s">"mean_income_by_label"</span>] = df.<span class="f">groupby</span>(<span class="s">"label"</span>)[<span class="s">"income"</span>].<span class="f">transform</span>(<span class="s">"mean"</span>)</pre></div>
+</section>
+
+<!-- ══ D3: CLEANING ══ -->
+<section class="sec" id="d3">
+  <div class="sec-n" style="color:var(--pd)">Module 12 · Pandas</div>
+  <h2 class="sec-title">Data Cleaning & Merging</h2>
+  <p class="sec-desc">Real datasets are dirty. Missing values, wrong types, duplicates, inconsistent strings. This is where 70% of real ML time goes. Master these patterns and you'll work 10x faster.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">12_cleaning_merging.py</div><div class="clg">python</div></div>
+<pre><span class="c"># ─── Missing values ────────────────────────────────────────</span>
+df.<span class="f">isnull</span>().<span class="f">sum</span>()             <span class="c"># null count per column</span>
+df.<span class="f">isnull</span>().<span class="f">mean</span>() * <span class="n">100</span>     <span class="c"># % missing per column</span>
+
+df.<span class="f">dropna</span>()                   <span class="c"># drop ALL rows with any null</span>
+df.<span class="f">dropna</span>(subset=[<span class="s">"income"</span>])  <span class="c"># drop only if income is null</span>
+df.<span class="f">dropna</span>(thresh=<span class="n">3</span>)           <span class="c"># keep rows with ≥3 non-null values</span>
+
+df[<span class="s">"income"</span>].<span class="f">fillna</span>(df[<span class="s">"income"</span>].<span class="f">median</span>())        <span class="c"># fill with median</span>
+df[<span class="s">"city"</span>].<span class="f">fillna</span>(<span class="s">"Unknown"</span>)                        <span class="c"># fill categorical</span>
+df.<span class="f">fillna</span>(method=<span class="s">"ffill"</span>)                           <span class="c"># forward fill (time series)</span>
+
+<span class="c"># ─── Duplicates ────────────────────────────────────────────</span>
+df.<span class="f">duplicated</span>().<span class="f">sum</span>()             <span class="c"># how many duplicate rows?</span>
+df.<span class="f">drop_duplicates</span>(inplace=<span class="k">True</span>)  <span class="c"># remove them</span>
+
+<span class="c"># ─── Type conversion ───────────────────────────────────────</span>
+df[<span class="s">"age"</span>] = df[<span class="s">"age"</span>].<span class="f">astype</span>(<span class="f">int</span>)
+df[<span class="s">"date"</span>] = pd.<span class="f">to_datetime</span>(df[<span class="s">"date"</span>])           <span class="c"># parse dates</span>
+df[<span class="s">"income"</span>] = pd.<span class="f">to_numeric</span>(df[<span class="s">"income"</span>], errors=<span class="s">"coerce"</span>)  <span class="c"># "coerce" → NaN on error</span>
+
+<span class="c"># ─── String cleaning ───────────────────────────────────────</span>
+df[<span class="s">"name"</span>].<span class="f">str</span>.<span class="f">lower</span>()                  <span class="c"># lowercase</span>
+df[<span class="s">"name"</span>].<span class="f">str</span>.<span class="f">strip</span>()                  <span class="c"># remove whitespace</span>
+df[<span class="s">"name"</span>].<span class="f">str</span>.<span class="f">replace</span>(<span class="s">","</span>, <span class="s">""</span>)          <span class="c"># remove commas</span>
+df[<span class="s">"city"</span>].<span class="f">str</span>.<span class="f">contains</span>(<span class="s">"Mumbai"</span>)       <span class="c"># boolean mask</span>
+df[<span class="s">"email"</span>].<span class="f">str</span>.<span class="f">extract</span>(<span class="s">r"(\w+)@"</span>)      <span class="c"># regex extract</span>
+
+<span class="c"># ─── Merging (like SQL JOINs) ──────────────────────────────</span>
+result = pd.<span class="f">merge</span>(df1, df2, on=<span class="s">"user_id"</span>, how=<span class="s">"left"</span>)
+<span class="c"># how: "inner"(both), "left"(all left), "right", "outer"(all)</span>
+
+<span class="c"># Concatenate DataFrames</span>
+combined = pd.<span class="f">concat</span>([df_train, df_val], ignore_index=<span class="k">True</span>)   <span class="c"># rows</span>
+wide = pd.<span class="f">concat</span>([df1, df2], axis=<span class="n">1</span>)                          <span class="c"># columns</span>
+
+<span class="c"># ─── apply() — apply any function to rows/columns ──────────</span>
+df[<span class="s">"income_log"</span>] = df[<span class="s">"income"</span>].<span class="f">apply</span>(np.log1p)  <span class="c"># log transform</span>
+df[<span class="s">"age_bucket"</span>] = df[<span class="s">"age"</span>].<span class="f">apply</span>(<span class="k">lambda</span> x: <span class="s">"young"</span> <span class="k">if</span> x < <span class="n">30</span> <span class="k">else</span> <span class="s">"senior"</span>)</pre></div>
+</section>
+
+<!-- ══ D4: EDA ══ -->
+<section class="sec" id="d4">
+  <div class="sec-n" style="color:var(--pd)">Module 13 · Pandas</div>
+  <h2 class="sec-title">EDA & Pre-ML Workflow</h2>
+  <p class="sec-desc">Exploratory Data Analysis (EDA) is the process of understanding your dataset BEFORE building any model. This is the complete workflow — from loading a CSV to handing off a clean array to sklearn.</p>
+
+  <!-- Correlation viz -->
+  <div class="viz">
+    <div class="viz-t">Feature Correlation Matrix — EDA Tool <span>Live</span></div>
+    <canvas id="corrCanvas" height="240"></canvas>
+    <p style="font-size:12px;color:var(--dm);margin-top:8px">High correlation (near ±1) between two features = multicollinearity. Consider dropping one. High correlation with target = useful feature.</p>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">13_eda_workflow.py — The complete pre-ML pipeline</div><div class="clg">python</div></div>
+<pre><span class="k">import</span> pandas <span class="k">as</span> pd
+<span class="k">import</span> numpy <span class="k">as</span> np
+<span class="k">from</span> sklearn.model_selection <span class="k">import</span> train_test_split
+
+<span class="c"># ═══ STEP 1: Load and initial inspection ══════════════════</span>
+df = pd.<span class="f">read_csv</span>(<span class="s">"data.csv"</span>)
+<span class="f">print</span>(<span class="s">f"Shape: {df.shape}"</span>)
+<span class="f">print</span>(df.<span class="f">info</span>())            <span class="c"># types + null counts</span>
+<span class="f">print</span>(df.<span class="f">describe</span>())        <span class="c"># stats</span>
+<span class="f">print</span>(df.<span class="f">isnull</span>().<span class="f">sum</span>())   <span class="c"># missing per column</span>
+
+<span class="c"># ═══ STEP 2: Separate target and features ════════════════</span>
+X = df.<span class="f">drop</span>(<span class="s">"label"</span>, axis=<span class="n">1</span>)   <span class="c"># features DataFrame</span>
+y = df[<span class="s">"label"</span>]               <span class="c"># target Series</span>
+<span class="f">print</span>(<span class="s">f"Class distribution:\n{y.value_counts()}"</span>)
+
+<span class="c"># ═══ STEP 3: Identify column types ═══════════════════════</span>
+numeric_cols = X.<span class="f">select_dtypes</span>(include=[np.number]).<span class="f">columns</span>.<span class="f">tolist</span>()
+cat_cols = X.<span class="f">select_dtypes</span>(include=[<span class="s">"object"</span>, <span class="s">"category"</span>]).<span class="f">columns</span>.<span class="f">tolist</span>()
+<span class="f">print</span>(<span class="s">f"Numeric: {numeric_cols}"</span>)
+<span class="f">print</span>(<span class="s">f"Categorical: {cat_cols}"</span>)
+
+<span class="c"># ═══ STEP 4: Check for problems ══════════════════════════</span>
+<span class="k">for</span> col <span class="k">in</span> numeric_cols:
+    skewness = X[col].<span class="f">skew</span>()
+    <span class="k">if</span> <span class="f">abs</span>(skewness) > <span class="n">1.0</span>:
+        <span class="f">print</span>(<span class="s">f"{col}: skewness={skewness:.2f} → consider log transform"</span>)
+
+<span class="c"># Correlation with target</span>
+correlations = df[numeric_cols + [<span class="s">"label"</span>]].<span class="f">corr</span>()[<span class="s">"label"</span>].<span class="f">abs</span>().<span class="f">sort_values</span>(ascending=<span class="k">False</span>)
+<span class="f">print</span>(<span class="s">"Feature-target correlations:"</span>)
+<span class="f">print</span>(correlations)
+
+<span class="c"># ═══ STEP 5: Feature engineering ════════════════════════</span>
+X[<span class="s">"income_log"</span>] = np.<span class="f">log1p</span>(X[<span class="s">"income"</span>])        <span class="c"># log transform skewed</span>
+X[<span class="s">"income_per_age"</span>] = X[<span class="s">"income"</span>] / X[<span class="s">"age"</span>]  <span class="c"># interaction feature</span>
+
+<span class="c"># ═══ STEP 6: Split (BEFORE any scaling!) ════════════════</span>
+X_train, X_test, y_train, y_test = <span class="f">train_test_split</span>(
+    X, y, test_size=<span class="n">0.2</span>, random_state=<span class="n">42</span>, stratify=y   <span class="c"># stratify for imbalanced!</span>
+)
+<span class="f">print</span>(<span class="s">f"Train: {X_train.shape}, Test: {X_test.shape}"</span>)
+
+<span class="c"># ═══ STEP 7: Now feed into sklearn Pipeline (from ML guide)</span>
+<span class="c"># The preprocessor fits on X_train only — no leakage!</span></pre></div>
+
+  <div class="chk">
+    <div class="chk-l">🎓 Python + NumPy + Pandas Complete</div>
+    <h3>You're ML-ready when you can:</h3>
+    <ul class="chk-li">
+      <li>Write list/dict/set comprehensions without thinking</li>
+      <li>Create and manipulate NumPy arrays with broadcasting</li>
+      <li>Perform matrix multiplication for a linear layer: X @ W + b</li>
+      <li>Load a CSV, run info()/describe()/isnull(), split X/y correctly</li>
+      <li>Filter, groupby, and clean a DataFrame in under 5 minutes</li>
+      <li>Hand off a clean DataFrame to sklearn without data leakage</li>
+    </ul>
+  </div>
+</section>
+
+</div><!-- .ct -->
+<footer>Python · NumPy · Pandas — the foundation everything else is built on. <strong>Next: Deep Learning Guide →</strong></footer>
+</main>
+
+<script>
+// Progress
+const ms=document.getElementById('ms'),pf=document.getElementById('pf'),pn=document.getElementById('pn');
+const links=document.querySelectorAll('.sb-a');
+ms.addEventListener('scroll',()=>{
+  const p=Math.min(ms.scrollTop/(ms.scrollHeight-ms.clientHeight)*100,100);
+  pf.style.width=p+'%'; pn.textContent=Math.round(p)+'%';
+  document.querySelectorAll('.sec').forEach((s,i)=>{
+    const t=s.getBoundingClientRect().top;
+    if(t<200&&t>-s.offsetHeight+200){links.forEach(l=>l.classList.remove('on'));if(links[i])links[i].classList.add('on')}
+  });
+});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+// Quiz
+function answer(btn,correct,fb){
+  const quiz=btn.closest('.quiz');
+  quiz.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  const fbEl=quiz.querySelector('.quiz-fb');
+  fbEl.style.display='block';
+  fbEl.style.color=correct?'#5ec484':'#e05c5c';
+  fbEl.textContent=(correct?'✓ Correct! ':'✗ Not quite. ')+fb;
+}
+
+// Type visualization
+const tC=document.getElementById('typeCanvas'),tCtx=tC.getContext('2d');
+function drawTypes(){
+  tC.width=tC.parentElement.offsetWidth; tC.height=180;
+  const w=tC.width,h=tC.height;
+  tCtx.clearRect(0,0,w,h);
+  const types=[
+    {name:'int',ex:'42, -7, 0',use:'Labels, counts, indices',col:'#f7ca4a'},
+    {name:'float',ex:'3.14, 0.001',use:'Weights, probabilities',col:'#5a9fd4'},
+    {name:'str',ex:'"age", "cat"',use:'Column names, categories',col:'#e05c5c'},
+    {name:'bool',ex:'True, False',use:'Masks, binary labels',col:'#5ec484'},
+    {name:'None',ex:'None',use:'Missing values',col:'#c084f0'},
+  ];
+  const bw=(w-40)/types.length, bh=100, by=(h-bh)/2;
+  types.forEach((t,i)=>{
+    const bx=20+i*bw;
+    tCtx.fillStyle=t.col+'22'; tCtx.beginPath(); tCtx.roundRect(bx+4,by,bw-8,bh,10); tCtx.fill();
+    tCtx.strokeStyle=t.col+'88'; tCtx.lineWidth=1.5; tCtx.beginPath(); tCtx.roundRect(bx+4,by,bw-8,bh,10); tCtx.stroke();
+    tCtx.fillStyle=t.col; tCtx.font='bold 14px Syne'; tCtx.textAlign='center';
+    tCtx.fillText(t.name,bx+bw/2,by+26);
+    tCtx.fillStyle='rgba(255,255,255,0.5)'; tCtx.font='10px Fira Code';
+    tCtx.fillText(t.ex,bx+bw/2,by+46);
+    tCtx.fillStyle='rgba(255,255,255,0.35)'; tCtx.font='10px Literata';
+    const words=t.use.split(' '), lh=13;
+    let ly=by+66;
+    words.reduce((acc,w2)=>{
+      if((acc+w2).length>12){tCtx.fillText(acc,bx+bw/2,ly); ly+=lh; return w2+' ';}
+      return acc+w2+' ';
+    },'');
+  });
+  tCtx.textAlign='left';
+}
+setTimeout(drawTypes,100); window.addEventListener('resize',drawTypes);
+
+// Loss animation
+const lC=document.getElementById('lossCanvas'),lCtx=lC.getContext('2d');
+let lossData=[],lossTimer=null,lossEpoch=0;
+function resetLoss(){clearInterval(lossTimer);lossTimer=null;lossData=[];lossEpoch=0;document.getElementById('lossInfo').textContent='';drawLoss()}
+function startLoss(){
+  if(lossTimer)return;
+  lossTimer=setInterval(()=>{
+    if(lossEpoch>=60){clearInterval(lossTimer);lossTimer=null;return}
+    const loss=0.9*Math.exp(-lossEpoch*0.07)+0.08+Math.sin(lossEpoch*.8)*.015;
+    const valLoss=loss+0.04+Math.random()*.02;
+    lossData.push({epoch:lossEpoch,train:loss,val:valLoss});
+    lossEpoch++;
+    document.getElementById('lossInfo').textContent=`Epoch ${lossEpoch} | Loss: ${loss.toFixed(4)}`;
+    drawLoss();
+  },80);
+}
+function drawLoss(){
+  lC.width=lC.parentElement.offsetWidth; lC.height=200;
+  const w=lC.width,h=lC.height,pad=40;
+  lCtx.clearRect(0,0,w,h);
+  if(!lossData.length){lCtx.fillStyle='rgba(255,255,255,0.2)';lCtx.font='13px Fira Code';lCtx.textAlign='center';lCtx.fillText('Press ▶ Start Training',w/2,h/2);lCtx.textAlign='left';return}
+  const maxE=60, ymin=0, ymax=1;
+  const tx=e=>pad+e/maxE*(w-2*pad);
+  const ty=y=>pad+(1-y/ymax)*(h-2*pad);
+  // Grid
+  lCtx.strokeStyle='rgba(255,255,255,0.06)'; lCtx.lineWidth=1;
+  [.2,.4,.6,.8,1].forEach(v=>{lCtx.beginPath();lCtx.moveTo(pad,ty(v));lCtx.lineTo(w-pad,ty(v));lCtx.stroke()});
+  // Train loss
+  lCtx.beginPath(); lossData.forEach((d,i)=>i===0?lCtx.moveTo(tx(d.epoch),ty(d.train)):lCtx.lineTo(tx(d.epoch),ty(d.train)));
+  lCtx.strokeStyle='#f7ca4a'; lCtx.lineWidth=2.5; lCtx.stroke();
+  // Val loss
+  lCtx.beginPath(); lossData.forEach((d,i)=>i===0?lCtx.moveTo(tx(d.epoch),ty(d.val)):lCtx.lineTo(tx(d.epoch),ty(d.val)));
+  lCtx.strokeStyle='#5a9fd4'; lCtx.lineWidth=2; lCtx.setLineDash([5,3]); lCtx.stroke(); lCtx.setLineDash([]);
+  // Legend
+  lCtx.fillStyle='#f7ca4a'; lCtx.fillRect(pad,pad-18,16,3);
+  lCtx.font='11px Fira Code'; lCtx.fillText('train_loss',pad+22,pad-10);
+  lCtx.fillStyle='#5a9fd4'; lCtx.fillRect(pad+120,pad-18,16,3);
+  lCtx.fillText('val_loss',pad+142,pad-10);
+}
+drawLoss();
+
+// Array shapes viz
+const aC=document.getElementById('arrayCanvas'),aCtx=aC.getContext('2d');
+function showArr(mode){
+  aC.width=aC.parentElement.offsetWidth; aC.height=200;
+  const w=aC.width,h=aC.height;
+  aCtx.clearRect(0,0,w,h);
+  if(mode==='1d'){
+    const n=8, cw=44, ch=44, sx=(w-n*cw)/2, sy=(h-ch)/2;
+    for(let i=0;i<n;i++){
+      const v=(Math.random()*4-2).toFixed(1);
+      aCtx.fillStyle='rgba(90,159,212,0.2)'; aCtx.beginPath(); aCtx.roundRect(sx+i*cw+2,sy,cw-4,ch,6); aCtx.fill();
+      aCtx.strokeStyle='rgba(90,159,212,0.5)'; aCtx.lineWidth=1.2; aCtx.beginPath(); aCtx.roundRect(sx+i*cw+2,sy,cw-4,ch,6); aCtx.stroke();
+      aCtx.fillStyle='#c8d8f0'; aCtx.font='12px Fira Code'; aCtx.textAlign='center';
+      aCtx.fillText(v,sx+i*cw+cw/2,sy+ch/2+4);
+    }
+    aCtx.fillStyle='rgba(255,255,255,0.4)'; aCtx.font='11px Fira Code'; aCtx.textAlign='center';
+    aCtx.fillText(`shape=(${n},)  — 1D array: feature vector, 1 sample`,w/2,sy+ch+22);
+  } else if(mode==='2d'){
+    const rows=4,cols=6,cw=52,ch=34,sx=(w-cols*cw)/2,sy=(h-rows*ch)/2;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const v=(Math.random()*4-2).toFixed(1);
+      const alpha=0.1+r/rows*.2;
+      aCtx.fillStyle=`rgba(90,159,212,${alpha})`; aCtx.beginPath(); aCtx.roundRect(sx+c*cw+2,sy+r*ch+2,cw-4,ch-4,5); aCtx.fill();
+      aCtx.strokeStyle='rgba(90,159,212,0.4)'; aCtx.lineWidth=1; aCtx.beginPath(); aCtx.roundRect(sx+c*cw+2,sy+r*ch+2,cw-4,ch-4,5); aCtx.stroke();
+      aCtx.fillStyle='#c8d8f0'; aCtx.font='10.5px Fira Code'; aCtx.textAlign='center';
+      aCtx.fillText(v,sx+c*cw+cw/2,sy+r*ch+ch/2+4);
+    }
+    aCtx.fillStyle='rgba(255,255,255,0.4)'; aCtx.font='11px Fira Code'; aCtx.textAlign='center';
+    aCtx.fillText(`shape=(${rows},${cols})  — 2D matrix: ${rows} samples × ${cols} features`,w/2,sy+rows*ch+18);
+  } else {
+    const layers=3,rows=3,cols=4,cw=44,ch=28,gap=22;
+    const totalW=layers*(cols*cw+gap)-gap, sx=(w-totalW)/2, sy=(h-rows*ch)/2;
+    for(let l=0;l<layers;l++) for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const ox=sx+l*(cols*cw+gap)+c*cw, oy=sy+r*ch;
+      aCtx.fillStyle=`rgba(192,132,240,${0.1+l*.08})`; aCtx.beginPath(); aCtx.roundRect(ox+2,oy+2,cw-4,ch-4,4); aCtx.fill();
+      aCtx.strokeStyle='rgba(192,132,240,0.4)'; aCtx.lineWidth=1; aCtx.beginPath(); aCtx.roundRect(ox+2,oy+2,cw-4,ch-4,4); aCtx.stroke();
+    }
+    ['Ch0','Ch1','Ch2'].forEach((lbl,i)=>{
+      aCtx.fillStyle='rgba(192,132,240,0.6)'; aCtx.font='10px Fira Code'; aCtx.textAlign='center';
+      aCtx.fillText(lbl,sx+i*(cols*cw+gap)+(cols*cw)/2,sy-6);
+    });
+    aCtx.fillStyle='rgba(255,255,255,0.4)'; aCtx.font='11px Fira Code'; aCtx.textAlign='center';
+    aCtx.fillText(`shape=(${layers},${rows},${cols})  — 3D tensor: channels × height × width (image!)`,w/2,sy+rows*ch+18);
+  }
+  aCtx.textAlign='left';
+}
+setTimeout(()=>showArr('1d'),100);
+
+// Broadcasting viz
+const bC=document.getElementById('broadCanvas'),bCtx=bC.getContext('2d');
+function drawBroadcast(){
+  bC.width=bC.parentElement.offsetWidth; bC.height=220;
+  const w=bC.width,h=bC.height,pad=20;
+  bCtx.clearRect(0,0,w,h);
+  const cs=38, mat=[[1,2,3],[4,5,6],[7,8,9]], vec=[1,2,3], res=[[0,0,2],[3,3,4],[6,6,6]];
+  const ox=pad+20, oy=(h-3*cs)/2;
+  const drawGrid=(gx,gy,vals,cols,rows,color,label)=>{
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      bCtx.fillStyle=color+'22'; bCtx.beginPath(); bCtx.roundRect(gx+c*cs+2,gy+r*cs+2,cs-4,cs-4,5); bCtx.fill();
+      bCtx.strokeStyle=color+'66'; bCtx.lineWidth=1.2; bCtx.beginPath(); bCtx.roundRect(gx+c*cs+2,gy+r*cs+2,cs-4,cs-4,5); bCtx.stroke();
+      if(vals&&vals[r]&&vals[r][c]!==undefined){bCtx.fillStyle='#c8d8f0'; bCtx.font='12px Fira Code'; bCtx.textAlign='center'; bCtx.fillText(vals[r][c],gx+c*cs+cs/2,gy+r*cs+cs/2+4);}
+    }
+    bCtx.fillStyle=color; bCtx.font='11px Fira Code'; bCtx.textAlign='center'; bCtx.fillText(label,gx+(cols*cs)/2,gy+rows*cs+18);
+    bCtx.textAlign='left';
+  };
+  drawGrid(ox,oy,mat,3,3,'#5a9fd4','(3,3) matrix');
+  const op1x=ox+3*cs+14; bCtx.fillStyle='rgba(255,255,255,0.4)'; bCtx.font='22px Syne'; bCtx.fillText('−',op1x,oy+3*cs/2+8);
+  const vecX=op1x+28; drawGrid(vecX,oy,[vec.map(v=>v)],3,1,'#f7ca4a','(3,) vector\n→ broadcast!');
+  const opX=vecX+3*cs+14; bCtx.fillStyle='rgba(255,255,255,0.4)'; bCtx.font='22px Syne'; bCtx.fillText('=',opX,oy+3*cs/2+8);
+  const resX=opX+28; drawGrid(resX,oy,res,3,3,'#5ec484','(3,3) result');
+  // Arrow showing broadcast direction
+  bCtx.strokeStyle='rgba(247,202,74,0.4)'; bCtx.lineWidth=1.5; bCtx.setLineDash([4,3]);
+  for(let i=1;i<3;i++){bCtx.beginPath(); bCtx.moveTo(vecX,oy+i*cs); bCtx.lineTo(vecX+3*cs,oy+i*cs); bCtx.stroke();}
+  bCtx.setLineDash([]);
+}
+setTimeout(drawBroadcast,100); window.addEventListener('resize',drawBroadcast);
+
+// DataFrame viz
+const dC=document.getElementById('dfCanvas'),dCtx=dC.getContext('2d');
+function drawDF(){
+  dC.width=dC.parentElement.offsetWidth; dC.height=220;
+  const w=dC.width,h=dC.height;
+  dCtx.clearRect(0,0,w,h);
+  const cols=['',  'age','income','label'], rows=[['0','25','50000','0'],['1','30','75000','1'],['2','35','90000','1'],['3','28','62000','0']];
+  const cws=[50,70,90,70], rh=36, sx=60, sy=30;
+  // Column headers
+  let cx=sx;
+  cols.forEach((c,i)=>{
+    dCtx.fillStyle=i===0?'transparent':'rgba(90,159,212,0.2)';
+    dCtx.beginPath(); dCtx.roundRect(cx+2,sy,cws[i]-4,rh-4,6); dCtx.fill();
+    dCtx.fillStyle=i===0?'var(--dm)':'#5a9fd4'; dCtx.font='bold 12px Syne'; dCtx.textAlign='center';
+    dCtx.fillText(c,cx+cws[i]/2,sy+rh/2+4);
+    cx+=cws[i];
+  });
+  // Rows
+  rows.forEach((row,ri)=>{
+    let rx=sx;
+    row.forEach((cell,ci)=>{
+      const isIdx=ci===0, isLabel=ci===3;
+      dCtx.fillStyle=isIdx?'transparent':isLabel?`rgba(224,92,92,0.15)`:`rgba(255,255,255,0.04)`;
+      if(!isIdx){dCtx.beginPath(); dCtx.roundRect(rx+2,sy+(ri+1)*rh,cws[ci]-4,rh-4,5); dCtx.fill();}
+      dCtx.fillStyle=isIdx?'rgba(255,255,255,0.3)':isLabel?'#e05c5c':'#c8d8f0';
+      dCtx.font=`${isIdx?'11':'12'}px Fira Code`; dCtx.textAlign='center';
+      dCtx.fillText(cell,rx+cws[ci]/2,sy+(ri+1)*rh+rh/2+4);
+      rx+=cws[ci];
+    });
+  });
+  // Labels
+  const totalW=cws.reduce((a,b)=>a+b,0);
+  dCtx.fillStyle='rgba(90,159,212,0.7)'; dCtx.font='10px Fira Code'; dCtx.textAlign='center';
+  dCtx.fillText('← columns (features) →',sx+totalW/2,sy+5*rh+20);
+  dCtx.save(); dCtx.translate(sx-30,sy+3*rh); dCtx.rotate(-Math.PI/2);
+  dCtx.fillText('rows (samples)',0,0); dCtx.restore();
+  dCtx.fillStyle='rgba(224,92,92,0.7)'; dCtx.font='10px Fira Code'; dCtx.textAlign='left';
+  dCtx.fillText('← target (y)',sx+totalW+8,sy+3*rh+4);
+  dCtx.textAlign='left';
+}
+setTimeout(drawDF,100); window.addEventListener('resize',drawDF);
+
+// Correlation heatmap
+const cC=document.getElementById('corrCanvas'),cCtx=cC.getContext('2d');
+function drawCorr(){
+  cC.width=cC.parentElement.offsetWidth; cC.height=240;
+  const w=cC.width,h=cC.height,n=5;
+  cCtx.clearRect(0,0,w,h);
+  const labels=['age','income','score','label','city_enc'];
+  const corr=[[1,.72,.31,.58,.12],[.72,1,.45,.68,.08],[.31,.45,1,.52,.25],[.58,.68,.52,1,.19],[.12,.08,.25,.19,1]];
+  const cs=Math.min((Math.min(w,h)-80)/n,50);
+  const ox=(w-n*cs)/2, oy=30;
+  corr.forEach((row,r)=>row.forEach((v,c)=>{
+    const col=v>0?`rgba(90,159,212,${Math.abs(v)})`:`rgba(224,92,92,${Math.abs(v)})`;
+    cCtx.fillStyle=col; cCtx.beginPath(); cCtx.roundRect(ox+c*cs+2,oy+r*cs+2,cs-4,cs-4,5); cCtx.fill();
+    cCtx.fillStyle=Math.abs(v)>0.5?'#fff':'rgba(255,255,255,0.6)';
+    cCtx.font='11px Fira Code'; cCtx.textAlign='center';
+    cCtx.fillText(v.toFixed(2),ox+c*cs+cs/2,oy+r*cs+cs/2+4);
+  }));
+  // Labels
+  labels.forEach((l,i)=>{
+    cCtx.fillStyle='rgba(255,255,255,0.45)'; cCtx.font='10px Fira Code'; cCtx.textAlign='center';
+    cCtx.fillText(l,ox+i*cs+cs/2,oy-6);
+    cCtx.save(); cCtx.translate(ox-6,oy+i*cs+cs/2); cCtx.rotate(-Math.PI/2);
+    cCtx.fillText(l,0,0); cCtx.restore();
+  });
+  cCtx.textAlign='left';
+}
+setTimeout(drawCorr,100); window.addEventListener('resize',drawCorr);
+</script>
+</body>
+</html>

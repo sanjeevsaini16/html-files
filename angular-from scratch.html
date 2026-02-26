@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular — Complete Dev Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f1a;--surface:#111520;--card:#161c2d;--border:#1f2840;--red:#f43f5e;--orange:#fb923c;--yellow:#fbbf24;--green:#4ade80;--blue:#38bdf8;--purple:#a78bfa;--pink:#f472b6;--text:#dde4f5;--muted:#4a5680;--code:#080d1c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.75;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:270px;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:50;padding-bottom:40px;}
+.main{margin-left:270px;padding:0 40px 80px;}
+.sidebar-brand{padding:22px 18px 14px;border-bottom:1px solid var(--border);}
+.sidebar-brand h1{font-size:1.1rem;font-weight:800;letter-spacing:-0.5px;}
+.sidebar-brand h1 em{font-style:normal;color:var(--red);}
+.sidebar-brand p{font-size:0.62rem;color:var(--muted);margin-top:3px;letter-spacing:2px;text-transform:uppercase;}
+.search-box{padding:12px 14px;border-bottom:1px solid var(--border);}
+.search-box input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 11px;border-radius:6px;font-family:inherit;font-size:0.8rem;outline:none;}
+.search-box input:focus{border-color:var(--blue);}
+.nav-group{padding:14px 14px 4px;font-size:0.58rem;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 14px;cursor:pointer;font-size:0.8rem;color:var(--muted);transition:all 0.15s;border-left:3px solid transparent;}
+.nav-item:hover{color:var(--text);background:var(--card);}
+.nav-item.active{color:var(--text);background:rgba(56,189,248,0.07);border-left-color:var(--blue);}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.page-header{padding:48px 0 26px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.page-header h2{font-size:2.2rem;font-weight:800;letter-spacing:-1px;line-height:1.2;}
+.page-header p{color:var(--muted);font-size:0.9rem;margin-top:8px;max-width:680px;}
+.topic-section{display:none;}
+.topic-section.active{display:block;}
+.cards-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.card:hover{border-color:var(--blue);transform:translateY(-2px);}
+.card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-title{font-size:0.9rem;font-weight:700;}
+.card-tag{font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;letter-spacing:0.5px;}
+.card-body{padding:16px 18px;}
+.card-body p{font-size:0.82rem;color:var(--muted);margin-bottom:10px;}
+.card-body strong{color:var(--text);}
+.analogy{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);border-radius:7px;padding:10px 13px;margin:10px 0;font-size:0.78rem;}
+.analogy::before{content:'💡 ';font-weight:700;color:var(--purple);}
+.code-block{background:var(--code);border:1px solid var(--border);border-radius:7px;overflow:hidden;margin:10px 0;font-size:0.73rem;}
+.code-header{background:#0d1225;padding:7px 12px;font-size:0.68rem;color:var(--muted);display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.code-header span:first-child{color:var(--blue);}
+pre{padding:12px;overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.6;}
+.kw{color:#ff79c6;} .fn{color:#50fa7b;} .str{color:#f1fa8c;} .cm{color:#44507a;font-style:italic;} .num{color:#bd93f9;} .cls{color:#8be9fd;} .dec{color:#ff9580;}
+.tip{background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:7px;padding:10px 13px;margin:10px 0;}
+.tip-title{font-size:0.68rem;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.tip ul{list-style:none;padding:0;}
+.tip ul li{font-size:0.77rem;color:var(--muted);padding:2px 0;}
+.tip ul li::before{content:'→ ';color:var(--blue);}
+.warn{background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2);border-radius:7px;padding:10px 13px;margin:10px 0;font-size:0.78rem;color:var(--muted);}
+.warn::before{content:'⚠️ ';font-weight:700;}
+.menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 11px;cursor:pointer;color:var(--text);}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.main{margin-left:0;padding:55px 18px 60px;}.menu-toggle{display:block;}.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<div class="app">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>Angular <em>Ref</em></h1>
+    <p>For 3yr devs · Deep dive</p>
+  </div>
+  <div class="search-box"><input type="text" id="searchInput" placeholder="Search Angular..." oninput="filterCards()"></div>
+
+  <div class="nav-group">Core Concepts</div>
+  <div class="nav-item active" onclick="show('overview')" data-s="overview"><span class="dot" style="background:#fff"></span>Overview & Architecture</div>
+  <div class="nav-item" onclick="show('components')" data-s="components"><span class="dot" style="background:var(--red)"></span>Components</div>
+  <div class="nav-item" onclick="show('templates')" data-s="templates"><span class="dot" style="background:var(--orange)"></span>Templates & Directives</div>
+  <div class="nav-item" onclick="show('databinding')" data-s="databinding"><span class="dot" style="background:var(--yellow)"></span>Data Binding</div>
+
+  <div class="nav-group">Services & State</div>
+  <div class="nav-item" onclick="show('services')" data-s="services"><span class="dot" style="background:var(--green)"></span>Services & DI</div>
+  <div class="nav-item" onclick="show('rxjs')" data-s="rxjs"><span class="dot" style="background:var(--blue)"></span>RxJS & Observables</div>
+  <div class="nav-item" onclick="show('state')" data-s="state"><span class="dot" style="background:var(--purple)"></span>State Management</div>
+
+  <div class="nav-group">Routing & Forms</div>
+  <div class="nav-item" onclick="show('routing')" data-s="routing"><span class="dot" style="background:var(--pink)"></span>Routing & Guards</div>
+  <div class="nav-item" onclick="show('forms')" data-s="forms"><span class="dot" style="background:var(--orange)"></span>Forms — Template & Reactive</div>
+
+  <div class="nav-group">Advanced</div>
+  <div class="nav-item" onclick="show('pipes')" data-s="pipes"><span class="dot" style="background:var(--green)"></span>Pipes & Custom Pipes</div>
+  <div class="nav-item" onclick="show('lifecycle')" data-s="lifecycle"><span class="dot" style="background:var(--yellow)"></span>Lifecycle Hooks</div>
+  <div class="nav-item" onclick="show('performance')" data-s="performance"><span class="dot" style="background:var(--red)"></span>Performance & Optimization</div>
+  <div class="nav-item" onclick="show('http')" data-s="http"><span class="dot" style="background:var(--blue)"></span>HTTP & Interceptors</div>
+  <div class="nav-item" onclick="show('signals')" data-s="signals"><span class="dot" style="background:var(--purple)"></span>Signals (Angular 17+)</div>
+</nav>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<section class="topic-section active" id="section-overview">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:var(--red)">Angular Framework</div>
+    <h2>Architecture &<br>Core Concepts</h2>
+    <p>You said you're strong in Angular. This guide goes DEEP — not basics. Every property, every concept, with exactly the right depth for your 3yr experience.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;">
+      <div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">12+</div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:3px;">Sections</p>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;">
+      <div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">60+</div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:3px;">Concepts</p>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;">
+      <div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">v17+</div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:3px;">Modern Angular</p>
+    </div>
+  </div>
+
+  <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:20px 24px;margin-bottom:28px;">
+    <p style="font-size:0.8rem;font-weight:700;color:var(--blue);margin-bottom:8px;">🏗️ Angular's Building Blocks (Big Picture)</p>
+    <p style="font-size:0.82rem;color:var(--muted);">An Angular app = a tree of Components. Components have Templates (HTML). Services handle logic & data. Modules group related things. Routing maps URLs to components. Directives add behavior to HTML. Pipes transform display data. RxJS handles async streams. DI provides dependencies where needed.</p>
+  </div>
+</section>
+
+<!-- COMPONENTS -->
+<section class="topic-section" id="section-components">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:var(--red)">Module 1</div>
+    <h2>Components</h2>
+    <p>The fundamental building block. Everything in Angular is a component or relates to one.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">@Component Decorator — Every Property</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">CORE</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Component decorator — all options</span><span>TypeScript</span></div>
+          <pre><span class="dec">@Component</span>({
+  <span class="cm">// REQUIRED</span>
+  selector: <span class="str">'app-user-card'</span>,       <span class="cm">// CSS selector: element/attr/class</span>
+  templateUrl: <span class="str">'./user-card.html'</span>,  <span class="cm">// OR template: `...` inline</span>
+  styleUrls: [<span class="str">'./user-card.scss'</span>],  <span class="cm">// OR styles: [`...`] inline</span>
+
+  <span class="cm">// CHANGE DETECTION</span>
+  changeDetection: ChangeDetectionStrategy.OnPush, <span class="cm">// PERFORMANCE!</span>
+
+  <span class="cm">// ENCAPSULATION</span>
+  encapsulation: ViewEncapsulation.Emulated, <span class="cm">// default: adds unique attrs</span>
+  <span class="cm">// ViewEncapsulation.None   → styles are global</span>
+  <span class="cm">// ViewEncapsulation.ShadowDom → real shadow DOM</span>
+
+  <span class="cm">// STANDALONE (Angular 14+)</span>
+  standalone: <span class="kw">true</span>,
+  imports: [<span class="cls">CommonModule</span>, <span class="cls">RouterModule</span>],  <span class="cm">// for standalone</span>
+
+  <span class="cm">// HOST</span>
+  host: { <span class="str">'class'</span>: <span class="str">'my-component'</span>, <span class="str">'(click)'</span>: <span class="str">'onClick()'</span> },
+
+  <span class="cm">// ANIMATIONS</span>
+  animations: [trigger(<span class="str">'fadeIn'</span>, [...])],
+})</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">@Input() — All Variants</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">INPUTS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>@Input variations — TypeScript</span><span>TypeScript</span></div>
+          <pre><span class="cm">// Basic</span>
+<span class="dec">@Input</span>() title: string = <span class="str">''</span>;
+
+<span class="cm">// With alias (parent uses 'data', internally it's 'item')</span>
+<span class="dec">@Input</span>(<span class="str">'data'</span>) item!: <span class="cls">User</span>;
+
+<span class="cm">// Required (Angular 16+) — throws error if not passed</span>
+<span class="dec">@Input</span>({ required: <span class="kw">true</span> }) userId!: string;
+
+<span class="cm">// Transform (auto-convert string → number from template)</span>
+<span class="dec">@Input</span>({ transform: numberAttribute }) count!: number;
+<span class="dec">@Input</span>({ transform: booleanAttribute }) disabled!: boolean;
+
+<span class="cm">// With setter — run logic when value changes</span>
+<span class="kw">private</span> _name = <span class="str">''</span>;
+<span class="dec">@Input</span>()
+<span class="kw">set</span> <span class="fn">name</span>(val: string) {
+  <span class="kw">this</span>._name = val.trim().toUpperCase();
+}
+<span class="kw">get</span> <span class="fn">name</span>() { <span class="kw">return this</span>._name; }
+
+<span class="cm">// Signal input (Angular 17+)</span>
+count = input(<span class="num">0</span>);           <span class="cm">// optional, default=0</span>
+name  = input.required&lt;string&gt;();  <span class="cm">// required signal input</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">@Output() & EventEmitter</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">OUTPUTS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>@Output patterns</span><span>TypeScript</span></div>
+          <pre><span class="cm">// Child component</span>
+<span class="kw">export class</span> <span class="cls">UserCardComponent</span> {
+  <span class="dec">@Output</span>() selected = <span class="kw">new</span> <span class="cls">EventEmitter</span>&lt;<span class="cls">User</span>&gt;();
+  <span class="dec">@Output</span>() deleted = <span class="kw">new</span> <span class="cls">EventEmitter</span>&lt;string&gt;();  <span class="cm">// emit ID</span>
+
+  <span class="fn">onSelect</span>(user: <span class="cls">User</span>) {
+    <span class="kw">this</span>.selected.emit(user);
+  }
+}
+
+<span class="cm">// Parent template</span>
+&lt;app-user-card
+  (selected)="handleSelect($event)"
+  (deleted)="removeUser($event)"
+/&gt;
+
+<span class="cm">// Parent component</span>
+<span class="fn">handleSelect</span>(user: <span class="cls">User</span>) { <span class="cm">/* $event is the User object */</span> }
+
+<span class="cm">// output() — Signal API (Angular 17+)</span>
+<span class="kw">export class</span> <span class="cls">NewCardComponent</span> {
+  selected = output&lt;<span class="cls">User</span>&gt;();
+  <span class="fn">onSelect</span>(u: <span class="cls">User</span>) { <span class="kw">this</span>.selected.emit(u); }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">@ViewChild & @ContentChild</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">QUERIES</div></div>
+      <div class="card-body">
+        <p><strong>@ViewChild:</strong> Access a child component, directive, or DOM element from the component's own template.</p>
+        <p><strong>@ContentChild:</strong> Access projected content (ng-content) passed INTO this component.</p>
+        <div class="code-block">
+          <div class="code-header"><span>ViewChild / ContentChild</span><span>TypeScript</span></div>
+          <pre><span class="kw">export class</span> <span class="cls">ParentComponent</span> <span class="kw">implements</span> <span class="cls">AfterViewInit</span> {
+  <span class="cm">// Get child COMPONENT instance</span>
+  <span class="dec">@ViewChild</span>(<span class="cls">ChildComponent</span>) child!: <span class="cls">ChildComponent</span>;
+
+  <span class="cm">// Get DOM element via template ref</span>
+  <span class="dec">@ViewChild</span>(<span class="str">'myInput'</span>) inputEl!: <span class="cls">ElementRef</span>&lt;<span class="cls">HTMLInputElement</span>&gt;;
+
+  <span class="cm">// All matching children (plural)</span>
+  <span class="dec">@ViewChildren</span>(<span class="cls">ChildComponent</span>) children!: <span class="cls">QueryList</span>&lt;<span class="cls">ChildComponent</span>&gt;;
+
+  <span class="cm">// NOT available in constructor or ngOnInit!</span>
+  <span class="fn">ngAfterViewInit</span>() {
+    <span class="kw">this</span>.inputEl.nativeElement.focus();  <span class="cm">// ✅ Safe here</span>
+    <span class="kw">this</span>.child.someMethod();
+  }
+}
+
+<span class="cm">// ContentChild: content projected via &lt;ng-content&gt;</span>
+<span class="dec">@ContentChild</span>(<span class="cls">HeaderComponent</span>) header!: <span class="cls">HeaderComponent</span>;
+<span class="cm">// Available in ngAfterContentInit()</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Content Projection — ng-content</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">PROJECTION</div></div>
+      <div class="card-body">
+        <div class="analogy">ng-content is like a "slot" — think of a modal component that you can fill in with any content from the parent. Like Angular Material's mat-dialog-content slot.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Content Projection patterns</span><span>HTML + TypeScript</span></div>
+          <pre><span class="cm">&lt;!-- card.component.html --&gt;</span>
+&lt;<span class="cls">div</span> class=<span class="str">"card"</span>&gt;
+  &lt;div class=<span class="str">"card-header"</span>&gt;
+    &lt;ng-content select=<span class="str">"[card-title]"</span>&gt;&lt;/ng-content&gt;  <span class="cm">&lt;!-- named slot --&gt;</span>
+  &lt;/div&gt;
+  &lt;div class=<span class="str">"card-body"</span>&gt;
+    &lt;ng-content&gt;&lt;/ng-content&gt;  <span class="cm">&lt;!-- default slot --&gt;</span>
+  &lt;/div&gt;
+&lt;/div&gt;
+
+<span class="cm">&lt;!-- Parent usage --&gt;</span>
+&lt;<span class="cls">app-card</span>&gt;
+  &lt;h2 <span class="kw">card-title</span>&gt;My Title&lt;/h2&gt;  <span class="cm">&lt;!-- goes to named slot --&gt;</span>
+  &lt;p&gt;This goes in the default slot&lt;/p&gt;
+&lt;/app-card&gt;
+
+<span class="cm">&lt;!-- ngTemplateOutlet: dynamic templates --&gt;</span>
+&lt;ng-container *ngTemplateOutlet=<span class="str">"myTemplate; context: {$implicit: item}"</span>&gt;
+&lt;/ng-container&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TEMPLATES & DIRECTIVES -->
+<section class="topic-section" id="section-templates">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);color:var(--orange)">Module 2</div>
+    <h2>Templates & Directives</h2>
+    <p>Everything that happens inside the HTML of a component.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Built-in Structural Directives</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">DIRECTIVES</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Structural directives</span><span>HTML</span></div>
+          <pre><span class="cm">&lt;!-- *ngIf (old) / @if (new Angular 17+) --&gt;</span>
+&lt;<span class="cls">div</span> *ngIf=<span class="str">"isLoggedIn; else guestBlock"</span>&gt;Welcome!&lt;/div&gt;
+&lt;ng-template #guestBlock&gt;&lt;p&gt;Please login&lt;/p&gt;&lt;/ng-template&gt;
+
+@<span class="kw">if</span> (isLoggedIn) { &lt;<span class="cls">p</span>&gt;Welcome!&lt;/p&gt; } @else { &lt;<span class="cls">p</span>&gt;Login&lt;/p&gt; }
+
+<span class="cm">&lt;!-- *ngFor / @for --&gt;</span>
+&lt;<span class="cls">li</span> *ngFor=<span class="str">"let item of items; let i=index; trackBy: trackById"</span>&gt;
+  {{i}}: {{item.name}}
+&lt;/li&gt;
+
+@<span class="kw">for</span> (item <span class="kw">of</span> items; track item.id) {
+  &lt;<span class="cls">li</span>&gt;{{item.name}}&lt;/li&gt;
+} @empty { &lt;<span class="cls">p</span>&gt;No items&lt;/p&gt; }
+
+<span class="cm">&lt;!-- *ngSwitch / @switch --&gt;</span>
+&lt;<span class="cls">div</span> [ngSwitch]=<span class="str">"status"</span>&gt;
+  &lt;<span class="cls">p</span> *ngSwitchCase=<span class="str">"'active'"</span>&gt;Active&lt;/p&gt;
+  &lt;<span class="cls">p</span> *ngSwitchDefault&gt;Unknown&lt;/p&gt;
+&lt;/div&gt;</pre>
+        </div>
+        <div class="warn">trackBy is CRITICAL for *ngFor performance! Without it, Angular re-renders every item on any array change, even if only one item changed.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Built-in Attribute Directives</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">DIRECTIVES</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Attribute directives</span><span>HTML</span></div>
+          <pre><span class="cm">&lt;!-- [ngClass] — dynamic class binding --&gt;</span>
+&lt;<span class="cls">div</span> [ngClass]=<span class="str">"{'active': isActive, 'disabled': !enabled}"</span>&gt;
+&lt;<span class="cls">div</span> [ngClass]=<span class="str">"getClasses()"</span>&gt;  <span class="cm">&lt;!-- method returning object/array/string --&gt;</span>
+
+<span class="cm">&lt;!-- [ngStyle] — dynamic inline styles --&gt;</span>
+&lt;<span class="cls">div</span> [ngStyle]=<span class="str">"{'color': textColor, 'font-size.px': fontSize}"</span>&gt;
+
+<span class="cm">&lt;!-- [class.xxx] — cleaner single class binding --&gt;</span>
+&lt;<span class="cls">div</span> [class.active]=<span class="str">"isActive"</span> [class.error]=<span class="str">"hasError"</span>&gt;
+
+<span class="cm">&lt;!-- [style.xxx] — cleaner single style binding --&gt;</span>
+&lt;<span class="cls">div</span> [style.color]=<span class="str">"primaryColor"</span> [style.fontSize.px]=<span class="str">"size"</span>&gt;
+
+<span class="cm">&lt;!-- ngModel — two-way binding (needs FormsModule) --&gt;</span>
+&lt;<span class="cls">input</span> [(ngModel)]=<span class="str">"username"</span> (ngModelChange)=<span class="str">"onNameChange($event)"</span>&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Custom Directive — Full Example</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">CUSTOM</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Custom attribute directive</span><span>TypeScript</span></div>
+          <pre><span class="dec">@Directive</span>({
+  selector: <span class="str">'[appHighlight]'</span>,  <span class="cm">// used as attribute</span>
+  standalone: <span class="kw">true</span>
+})
+<span class="kw">export class</span> <span class="cls">HighlightDirective</span> {
+  <span class="dec">@Input</span>(<span class="str">'appHighlight'</span>) color = <span class="str">'yellow'</span>;
+  <span class="dec">@Input</span>() defaultColor = <span class="str">'white'</span>;
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> el: <span class="cls">ElementRef</span>, <span class="kw">private</span> renderer: <span class="cls">Renderer2</span>) {}
+
+  <span class="cm">// HostListener: listen to DOM events on the host element</span>
+  <span class="dec">@HostListener</span>(<span class="str">'mouseenter'</span>) <span class="fn">onMouseEnter</span>() {
+    <span class="kw">this</span>.highlight(<span class="kw">this</span>.color);
+  }
+  <span class="dec">@HostListener</span>(<span class="str">'mouseleave'</span>) <span class="fn">onMouseLeave</span>() {
+    <span class="kw">this</span>.highlight(<span class="kw">this</span>.defaultColor);
+  }
+
+  <span class="kw">private</span> <span class="fn">highlight</span>(color: string) {
+    <span class="cm">// ✅ Use Renderer2, NOT direct DOM — works in SSR!</span>
+    <span class="kw">this</span>.renderer.setStyle(<span class="kw">this</span>.el.nativeElement, <span class="str">'backgroundColor'</span>, color);
+  }
+}
+
+<span class="cm">&lt;!-- Usage --&gt;</span>
+&lt;<span class="cls">p</span> appHighlight=<span class="str">"cyan"</span> defaultColor=<span class="str">"white"</span>&gt;Hover me!&lt;/p&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Template Reference Variables & ng-template</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">TEMPLATES</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Template refs</span><span>HTML + TypeScript</span></div>
+          <pre><span class="cm">&lt;!-- #ref on element → get DOM element --&gt;</span>
+&lt;<span class="cls">input</span> #nameInput type=<span class="str">"text"</span>&gt;
+&lt;<span class="cls">button</span> (click)=<span class="str">"nameInput.focus()"</span>&gt;Focus&lt;/button&gt;
+
+<span class="cm">&lt;!-- #ref on component → get component instance --&gt;</span>
+&lt;<span class="cls">app-child</span> #child&gt;&lt;/app-child&gt;
+&lt;<span class="cls">button</span> (click)=<span class="str">"child.reset()"</span>&gt;Reset Child&lt;/button&gt;
+
+<span class="cm">&lt;!-- ng-template: a lazy template, not rendered by default --&gt;</span>
+&lt;ng-template #loadingTpl&gt;
+  &lt;<span class="cls">div</span> class=<span class="str">"spinner"</span>&gt;Loading...&lt;/div&gt;
+&lt;/ng-template&gt;
+
+<span class="cm">&lt;!-- ng-container: grouping without adding DOM element --&gt;</span>
+&lt;ng-container *ngIf=<span class="str">"isLoggedIn"</span>&gt;
+  &lt;<span class="cls">app-nav</span>&gt;&lt;/app-nav&gt;
+  &lt;<span class="cls">app-header</span>&gt;&lt;/app-header&gt;
+&lt;/ng-container&gt;
+
+<span class="cm">&lt;!-- Render ng-template dynamically --&gt;</span>
+&lt;ng-container *ngTemplateOutlet=<span class="str">"loading ? loadingTpl : contentTpl"</span>&gt;
+&lt;/ng-container&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DATA BINDING -->
+<section class="topic-section" id="section-databinding">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--yellow)">Module 3</div>
+    <h2>Data Binding</h2>
+    <p>The 4 types of binding and when to use each. Plus advanced patterns.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">All 4 Binding Types</div><div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--yellow)">BINDING</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Data binding cheatsheet</span><span>HTML</span></div>
+          <pre><span class="cm">&lt;!-- 1. Interpolation: component → view (one-way) --&gt;</span>
+&lt;<span class="cls">h1</span>&gt;{{title}}&lt;/h1&gt;
+&lt;<span class="cls">p</span>&gt;{{1 + 1}}&lt;/p&gt;  <span class="cm">&lt;!-- expressions OK --&gt;</span>
+&lt;<span class="cls">p</span>&gt;{{user?.name | uppercase}}&lt;/p&gt;  <span class="cm">&lt;!-- optional chaining + pipe --&gt;</span>
+
+<span class="cm">&lt;!-- 2. Property binding: component → view (one-way) --&gt;</span>
+&lt;<span class="cls">img</span> [src]=<span class="str">"imageUrl"</span> [alt]=<span class="str">"imageAlt"</span>&gt;
+&lt;<span class="cls">button</span> [disabled]=<span class="str">"isLoading"</span>&gt;Save&lt;/button&gt;
+&lt;<span class="cls">app-user</span> [user]=<span class="str">"currentUser"</span>&gt;&lt;/app-user&gt;
+
+<span class="cm">&lt;!-- 3. Event binding: view → component (one-way) --&gt;</span>
+&lt;<span class="cls">button</span> (click)=<span class="str">"save()"</span>&gt;Save&lt;/button&gt;
+&lt;<span class="cls">input</span> (input)=<span class="str">"onInput($event)"</span> (blur)=<span class="str">"validate()"</span>&gt;
+&lt;<span class="cls">div</span> (keydown.enter)=<span class="str">"submit()"</span> (keydown.escape)=<span class="str">"cancel()"</span>&gt;
+
+<span class="cm">&lt;!-- 4. Two-way binding: both directions --&gt;</span>
+&lt;<span class="cls">input</span> [(ngModel)]=<span class="str">"username"</span>&gt;
+<span class="cm">&lt;!-- [(ngModel)] is syntax sugar for: --&gt;</span>
+&lt;<span class="cls">input</span> [ngModel]=<span class="str">"username"</span> (ngModelChange)=<span class="str">"username=$event"</span>&gt;
+
+<span class="cm">&lt;!-- Custom two-way on your own component: --&gt;</span>
+&lt;<span class="cls">app-counter</span> [(count)]=<span class="str">"myCount"</span>&gt;&lt;/app-counter&gt;
+<span class="cm">&lt;!-- Requires: @Input() count + @Output() countChange --&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Safe Navigation & Async Pipe</div><div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--yellow)">BINDING</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>async pipe & safe navigation</span><span>HTML</span></div>
+          <pre><span class="cm">&lt;!-- async pipe: auto-subscribes and unsubscribes! --&gt;</span>
+&lt;<span class="cls">div</span> *ngIf=<span class="str">"user$ | async as user"</span>&gt;
+  {{user.name}}
+&lt;/div&gt;
+
+<span class="cm">&lt;!-- Multiple async with one subscription --&gt;</span>
+&lt;ng-container *ngIf=<span class="str">"{users: users$ | async, loading: loading$ | async} as vm"</span>&gt;
+  &lt;<span class="cls">div</span> *ngIf=<span class="str">"!vm.loading"</span>&gt;
+    &lt;<span class="cls">div</span> *ngFor=<span class="str">"let u of vm.users"</span>&gt;{{u.name}}&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/ng-container&gt;
+
+<span class="cm">&lt;!-- Safe navigation operator ?. --&gt;</span>
+{{user?.address?.city}}  <span class="cm">&lt;!-- won't crash if user is null --&gt;</span>
+&lt;<span class="cls">p</span>&gt;{{items?.[0]?.name}}&lt;/p&gt;
+
+<span class="cm">&lt;!-- Non-null assertion --&gt;</span>
+{{user!.name}}  <span class="cm">&lt;!-- tell TS: "I know this isn't null" --&gt;</span></pre>
+        </div>
+        <div class="tip">
+          <div class="tip-title">⭐ async pipe benefits</div>
+          <ul>
+            <li>Auto-unsubscribes on component destroy (no memory leaks)</li>
+            <li>Triggers change detection when value arrives</li>
+            <li>Works with both Observables and Promises</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES & DI -->
+<section class="topic-section" id="section-services">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:var(--green)">Module 4</div>
+    <h2>Services & Dependency Injection</h2>
+    <p>Services are where your business logic, API calls, and shared state live. DI is Angular's system for providing them.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">@Injectable & Provider Scopes</div><div class="card-tag" style="background:rgba(74,222,128,0.15);color:var(--green)">DI</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Injectable scopes</span><span>TypeScript</span></div>
+          <pre><span class="cm">// providedIn: 'root' — SINGLETON, app-wide (most common)</span>
+<span class="dec">@Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="cls">UserService</span> { ... }
+
+<span class="cm">// providedIn: 'any' — one instance per lazy-loaded module</span>
+<span class="dec">@Injectable</span>({ providedIn: <span class="str">'any'</span> })
+<span class="kw">export class</span> <span class="cls">CacheService</span> { ... }
+
+<span class="cm">// Component-level: new instance per component</span>
+<span class="dec">@Component</span>({ providers: [<span class="cls">FormService</span>] })   <span class="cm">// fresh instance each time</span>
+
+<span class="cm">// Multiple injection tokens</span>
+<span class="kw">const</span> API_URL = <span class="kw">new</span> <span class="cls">InjectionToken</span>&lt;string&gt;(<span class="str">'api-url'</span>);
+
+<span class="cm">// Inject pattern (Angular 14+ — no constructor needed!)</span>
+<span class="kw">export class</span> <span class="cls">UserComponent</span> {
+  <span class="kw">private</span> userService = inject(<span class="cls">UserService</span>);  <span class="cm">// ✅ Clean!</span>
+  <span class="kw">private</span> router = inject(<span class="cls">Router</span>);
+  <span class="kw">private</span> apiUrl = inject(API_URL);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Service Patterns — Best Practices</div><div class="card-tag" style="background:rgba(74,222,128,0.15);color:var(--green)">PATTERNS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Service with state + API</span><span>TypeScript</span></div>
+          <pre><span class="dec">@Injectable</span>({ providedIn: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="cls">UserService</span> {
+  <span class="kw">private</span> http = inject(<span class="cls">HttpClient</span>);
+
+  <span class="cm">// State: BehaviorSubject holds current value</span>
+  <span class="kw">private</span> users$ = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="cls">User</span>[]&gt;([]);
+
+  <span class="cm">// Public read-only observable</span>
+  readonly users = <span class="kw">this</span>.users$.asObservable();
+
+  <span class="fn">loadUsers</span>(): <span class="cls">Observable</span>&lt;<span class="cls">User</span>[]&gt; {
+    <span class="kw">return this</span>.http.get&lt;<span class="cls">User</span>[]&gt;(<span class="str">'/api/users'</span>).pipe(
+      tap(users => <span class="kw">this</span>.users$.next(users)),  <span class="cm">// update state</span>
+      catchError(err => {
+        console.error(err);
+        <span class="kw">return</span> of([]);  <span class="cm">// recover gracefully</span>
+      })
+    );
+  }
+
+  <span class="fn">getUserById</span>(id: string): <span class="cls">Observable</span>&lt;<span class="cls">User</span>&gt; {
+    <span class="kw">return this</span>.http.get&lt;<span class="cls">User</span>&gt;(<span class="str">`/api/users/${id}`</span>);
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RXJS -->
+<section class="topic-section" id="section-rxjs">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--blue)">Module 5</div>
+    <h2>RxJS & Observables</h2>
+    <p>The most powerful and most misunderstood part of Angular. This is where Angular developers truly level up.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Observable, Subject, BehaviorSubject</div><div class="card-tag" style="background:rgba(56,189,248,0.15);color:var(--blue)">RXJS CORE</div></div>
+      <div class="card-body">
+        <div class="analogy">Observable = a newspaper subscription. You sign up (subscribe), papers arrive (next), subscription cancelled (complete/error). Subject = a chat room — you can listen AND send. BehaviorSubject = a chat room that shows new members the latest message immediately.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Subjects comparison</span><span>TypeScript</span></div>
+          <pre><span class="cm">// Subject: no initial value, only future values</span>
+<span class="kw">const</span> events$ = <span class="kw">new</span> <span class="cls">Subject</span>&lt;string&gt;();
+
+<span class="cm">// BehaviorSubject: has current value, emits it immediately on subscribe</span>
+<span class="kw">const</span> user$ = <span class="kw">new</span> <span class="cls">BehaviorSubject</span>&lt;<span class="cls">User</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+user$.getValue();        <span class="cm">// get current value synchronously</span>
+user$.next(newUser);     <span class="cm">// emit new value</span>
+user$.asObservable();    <span class="cm">// expose as read-only</span>
+
+<span class="cm">// ReplaySubject: replays last N values to new subscribers</span>
+<span class="kw">const</span> history$ = <span class="kw">new</span> <span class="cls">ReplaySubject</span>&lt;string&gt;(<span class="num">5</span>);  <span class="cm">// last 5</span>
+
+<span class="cm">// AsyncSubject: only emits LAST value when complete()</span>
+<span class="kw">const</span> result$ = <span class="kw">new</span> <span class="cls">AsyncSubject</span>&lt;number&gt;();
+
+<span class="cm">// Signal-based (Angular 17+)</span>
+<span class="kw">const</span> count = signal(<span class="num">0</span>);
+<span class="kw">const</span> doubled = computed(() => count() * <span class="num">2</span>);
+effect(() => console.log(<span class="str">`Count: ${count()}`</span>));</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Essential RxJS Operators</div><div class="card-tag" style="background:rgba(56,189,248,0.15);color:var(--blue)">OPERATORS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Most important operators</span><span>TypeScript</span></div>
+          <pre><span class="kw">import</span> { map, filter, switchMap, mergeMap, exhaustMap,
+         debounceTime, distinctUntilChanged, catchError,
+         takeUntil, takeUntilDestroyed, tap, combineLatest,
+         forkJoin, of, from, startWith, withLatestFrom } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+<span class="cm">// TRANSFORMATION</span>
+source$.pipe(map(x => x * <span class="num">2</span>))               <span class="cm">// transform each value</span>
+source$.pipe(filter(x => x > <span class="num">0</span>))            <span class="cm">// filter values</span>
+source$.pipe(tap(x => console.log(x)))        <span class="cm">// side effect, don't transform</span>
+
+<span class="cm">// FLATTENING (THE IMPORTANT ONES)</span>
+<span class="cm">// switchMap: cancels previous inner obs, use for search/autocomplete</span>
+search$.pipe(switchMap(q => this.api.search(q)))
+
+<span class="cm">// mergeMap: runs all in parallel, use when ORDER doesn't matter</span>
+ids$.pipe(mergeMap(id => this.api.load(id)))
+
+<span class="cm">// concatMap: waits for each, use for sequential operations</span>
+actions$.pipe(concatMap(a => this.api.save(a)))
+
+<span class="cm">// exhaustMap: ignores new until current completes — use for login button</span>
+loginClick$.pipe(exhaustMap(() => this.auth.login(creds)))
+
+<span class="cm">// COMBINATION</span>
+combineLatest([a$, b$]).pipe(map(([a, b]) => a + b))  <span class="cm">// latest of all</span>
+forkJoin([api1$, api2$])  <span class="cm">// wait for all to complete (like Promise.all)</span>
+
+<span class="cm">// TIME</span>
+search$.pipe(debounceTime(<span class="num">300</span>), distinctUntilChanged())  <span class="cm">// search input!</span>
+
+<span class="cm">// CLEANUP — CRITICAL, prevents memory leaks</span>
+<span class="kw">private</span> destroy$ = <span class="kw">new</span> <span class="cls">Subject</span>&lt;<span class="kw">void</span>&gt;();
+ngOnDestroy() { <span class="kw">this</span>.destroy$.next(); <span class="kw">this</span>.destroy$.complete(); }
+source$.pipe(takeUntil(<span class="kw">this</span>.destroy$)).subscribe(...)
+
+<span class="cm">// Angular 16+ — automatic cleanup via DestroyRef</span>
+source$.pipe(takeUntilDestroyed(<span class="kw">this</span>.destroyRef)).subscribe(...)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">switchMap vs mergeMap vs concatMap vs exhaustMap</div><div class="card-tag" style="background:rgba(56,189,248,0.15);color:var(--blue)">FLATTENING</div></div>
+      <div class="card-body">
+        <div class="tip">
+          <div class="tip-title">Quick Decision Guide</div>
+          <ul>
+            <li><strong>switchMap</strong> — Autocomplete/search: cancel old, use latest query</li>
+            <li><strong>mergeMap</strong> — Parallel downloads: run all at once, order doesn't matter</li>
+            <li><strong>concatMap</strong> — Save queue: wait for each save before starting next</li>
+            <li><strong>exhaustMap</strong> — Login/submit button: ignore rapid clicks, wait for first</li>
+          </ul>
+        </div>
+        <div class="analogy">Hotel elevator button: switchMap = only last floor request counts. mergeMap = all floors open simultaneously. concatMap = goes to every floor in order. exhaustMap = won't start until it finishes its current trip.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ROUTING -->
+<section class="topic-section" id="section-routing">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);color:var(--pink)">Module 7</div>
+    <h2>Routing & Route Guards</h2>
+    <p>URL-to-component mapping, lazy loading, guards, resolvers, and advanced routing patterns.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Route Configuration — All Options</div><div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--pink)">ROUTING</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Route config — everything</span><span>TypeScript</span></div>
+          <pre"><span class="kw">const</span> routes: <span class="cls">Routes</span> = [
+  { path: <span class="str">''</span>, redirectTo: <span class="str">'/home'</span>, pathMatch: <span class="str">'full'</span> },
+  { path: <span class="str">'home'</span>, component: <span class="cls">HomeComponent</span> },
+
+  <span class="cm">// Route params</span>
+  { path: <span class="str">'users/:id'</span>, component: <span class="cls">UserDetailComponent</span> },
+
+  <span class="cm">// Query params: /search?q=angular&page=2</span>
+  { path: <span class="str">'search'</span>, component: <span class="cls">SearchComponent</span> },
+
+  <span class="cm">// Lazy loading module (old way)</span>
+  { path: <span class="str">'admin'</span>, loadChildren: () =>
+    import(<span class="str">'./admin/admin.module'</span>).then(m => m.<span class="cls">AdminModule</span>) },
+
+  <span class="cm">// Lazy loading standalone (new way)</span>
+  { path: <span class="str">'dashboard'</span>, loadComponent: () =>
+    import(<span class="str">'./dashboard/dashboard.component'</span>).then(c => c.<span class="cls">DashboardComponent</span>) },
+
+  <span class="cm">// With guards</span>
+  {
+    path: <span class="str">'settings'</span>,
+    component: <span class="cls">SettingsComponent</span>,
+    canActivate: [authGuard],
+    canDeactivate: [unsavedChangesGuard],
+    resolve: { userData: userResolver }
+  },
+
+  <span class="cm">// Nested routes</span>
+  {
+    path: <span class="str">'products'</span>,
+    component: <span class="cls">ProductsComponent</span>,
+    children: [
+      { path: <span class="str">''</span>, component: <span class="cls">ProductListComponent</span> },
+      { path: <span class="str">':id'</span>, component: <span class="cls">ProductDetailComponent</span> }
+    ]
+  },
+  { path: <span class="str">'**'</span>, component: <span class="cls">NotFoundComponent</span> }
+];</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Route Guards (Functional Style)</div><div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--pink)">GUARDS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Guards — Angular 15+ functional</span><span>TypeScript</span></div>
+          <pre><span class="cm">// canActivate: block unauthenticated access</span>
+<span class="kw">export const</span> authGuard: <span class="cls">CanActivateFn</span> = (route, state) => {
+  <span class="kw">const</span> auth = inject(<span class="cls">AuthService</span>);
+  <span class="kw">const</span> router = inject(<span class="cls">Router</span>);
+  <span class="kw">if</span> (auth.isLoggedIn()) <span class="kw">return true</span>;
+  <span class="kw">return</span> router.createUrlTree([<span class="str">'/login'</span>], {
+    queryParams: { returnUrl: state.url }
+  });
+};
+
+<span class="cm">// canActivateChild: protects all child routes</span>
+<span class="kw">export const</span> adminGuard: <span class="cls">CanActivateChildFn</span> = () =>
+  inject(<span class="cls">AuthService</span>).hasRole(<span class="str">'admin'</span>);
+
+<span class="cm">// canDeactivate: warn before leaving with unsaved changes</span>
+<span class="kw">export const</span> unsavedGuard: <span class="cls">CanDeactivateFn</span>&lt;<span class="cls">EditComponent</span>&gt; = (component) => {
+  <span class="kw">if</span> (!component.isDirty) <span class="kw">return true</span>;
+  <span class="kw">return</span> confirm(<span class="str">'Unsaved changes. Leave anyway?'</span>);
+};
+
+<span class="cm">// resolve: pre-fetch data before activating route</span>
+<span class="kw">export const</span> userResolver: <span class="cls">ResolveFn</span>&lt;<span class="cls">User</span>&gt; = (route) => {
+  <span class="kw">return</span> inject(<span class="cls">UserService</span>).getUserById(route.params[<span class="str">'id'</span>]);
+};
+<span class="cm">// Access in component: route.snapshot.data['userData']</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Router Navigation & Reading Params</div><div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--pink)">NAVIGATION</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Router service patterns</span><span>TypeScript</span></div>
+          <pre><span class="kw">export class</span> <span class="cls">UserComponent</span> {
+  <span class="kw">private</span> router = inject(<span class="cls">Router</span>);
+  <span class="kw">private</span> route = inject(<span class="cls">ActivatedRoute</span>);
+
+  <span class="cm">// Navigate programmatically</span>
+  <span class="fn">goToUser</span>(id: string) {
+    <span class="kw">this</span>.router.navigate([<span class="str">'/users'</span>, id]);
+    <span class="kw">this</span>.router.navigate([<span class="str">'/search'</span>], {
+      queryParams: { q: <span class="str">'angular'</span> },
+      queryParamsHandling: <span class="str">'merge'</span>  <span class="cm">// keep existing params</span>
+    });
+  }
+
+  <span class="cm">// Read route params (reactive — auto-updates)</span>
+  userId$ = <span class="kw">this</span>.route.paramMap.pipe(
+    map(params => params.get(<span class="str">'id'</span>)!)
+  );
+
+  <span class="cm">// Read query params</span>
+  search$ = <span class="kw">this</span>.route.queryParamMap.pipe(
+    map(p => p.get(<span class="str">'q'</span>) ?? <span class="str">''</span>)
+  );
+
+  <span class="cm">// Snapshot (static — only reads once)</span>
+  id = <span class="kw">this</span>.route.snapshot.params[<span class="str">'id'</span>];
+
+  <span class="cm">// Resolved data</span>
+  user = <span class="kw">this</span>.route.snapshot.data[<span class="str">'userData'</span>];
+
+  <span class="cm">// Subscribe to navigation events</span>
+  constructor() {
+    <span class="kw">this</span>.router.events.pipe(
+      filter(e => e <span class="kw">instanceof</span> <span class="cls">NavigationEnd</span>)
+    ).subscribe(e => console.log(e));
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FORMS -->
+<section class="topic-section" id="section-forms">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);color:var(--orange)">Module 8</div>
+    <h2>Forms — Template & Reactive</h2>
+    <p>Two complete systems. Reactive forms are preferred for complex/dynamic forms. Template forms for simpler cases.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Reactive Forms — FormGroup, FormControl, FormArray</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">REACTIVE</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Reactive Forms complete example</span><span>TypeScript</span></div>
+          <pre"><span class="kw">export class</span> <span class="cls">UserFormComponent</span> {
+  <span class="kw">private</span> fb = inject(<span class="cls">FormBuilder</span>);
+
+  form = <span class="kw">this</span>.fb.group({
+    name: [<span class="str">''</span>, [Validators.required, Validators.minLength(<span class="num">3</span>)]],
+    email: [<span class="str">''</span>, [Validators.required, Validators.email]],
+    age: [<span class="kw">null</span>, [Validators.min(<span class="num">18</span>), Validators.max(<span class="num">100</span>)]],
+    address: <span class="kw">this</span>.fb.group({        <span class="cm">// nested group</span>
+      street: [<span class="str">''</span>],
+      city: [<span class="str">''</span>, Validators.required]
+    }),
+    skills: <span class="kw">this</span>.fb.array([])       <span class="cm">// dynamic array</span>
+  });
+
+  <span class="cm">// Access controls</span>
+  <span class="kw">get</span> <span class="fn">nameCtrl</span>() { <span class="kw">return this</span>.form.get(<span class="str">'name'</span>)!; }
+  <span class="kw">get</span> <span class="fn">skills</span>() { <span class="kw">return this</span>.form.get(<span class="str">'skills'</span>) <span class="kw">as</span> <span class="cls">FormArray</span>; }
+
+  <span class="cm">// Add to FormArray dynamically</span>
+  <span class="fn">addSkill</span>() {
+    <span class="kw">this</span>.skills.push(<span class="kw">this</span>.fb.control(<span class="str">''</span>, Validators.required));
+  }
+
+  <span class="cm">// Patch vs setValue</span>
+  <span class="fn">loadUser</span>(user: <span class="cls">User</span>) {
+    <span class="kw">this</span>.form.patchValue(user);   <span class="cm">// partial update OK</span>
+    <span class="kw">this</span>.form.setValue({ name: user.name, email: user.email, ... });  <span class="cm">// ALL fields</span>
+  }
+
+  <span class="cm">// Listen to changes</span>
+  constructor() {
+    <span class="kw">this</span>.form.get(<span class="str">'name'</span>)!.valueChanges.pipe(
+      debounceTime(<span class="num">300</span>), distinctUntilChanged()
+    ).subscribe(v => console.log(v));
+  }
+
+  <span class="fn">onSubmit</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.form.invalid) { <span class="kw">this</span>.form.markAllAsTouched(); <span class="kw">return</span>; }
+    console.log(<span class="kw">this</span>.form.getRawValue());
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Custom Validators & Async Validators</div><div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--orange)">VALIDATORS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Custom validators</span><span>TypeScript</span></div>
+          <pre><span class="cm">// Sync validator function</span>
+<span class="kw">function</span> <span class="fn">noSpacesValidator</span>(control: <span class="cls">AbstractControl</span>): <span class="cls">ValidationErrors</span> | <span class="kw">null</span> {
+  <span class="kw">if</span> (control.value?.includes(<span class="str">' '</span>)) <span class="kw">return</span> { noSpaces: <span class="kw">true</span> };
+  <span class="kw">return null</span>;
+}
+
+<span class="cm">// Cross-field validator (on FormGroup)</span>
+<span class="kw">function</span> <span class="fn">passwordMatchValidator</span>(group: <span class="cls">AbstractControl</span>) {
+  <span class="kw">const</span> pass = group.get(<span class="str">'password'</span>)?.value;
+  <span class="kw">const</span> confirm = group.get(<span class="str">'confirmPassword'</span>)?.value;
+  <span class="kw">return</span> pass === confirm ? <span class="kw">null</span> : { passwordMismatch: <span class="kw">true</span> };
+}
+
+<span class="cm">// Async validator (e.g. check if username taken)</span>
+<span class="kw">function</span> <span class="fn">usernameAvailable</span>(userService: <span class="cls">UserService</span>): <span class="cls">AsyncValidatorFn</span> {
+  <span class="kw">return</span> (control) => <span class="kw">timer</span>(<span class="num">300</span>).pipe(
+    switchMap(() => userService.checkUsername(control.value)),
+    map(taken => taken ? { usernameTaken: <span class="kw">true</span> } : <span class="kw">null</span>)
+  );
+}
+
+<span class="cm">// Use them</span>
+name: [<span class="str">''</span>, [Validators.required, noSpacesValidator],
+            [usernameAvailable(<span class="kw">this</span>.userService)]]  <span class="cm">// 3rd arg = async</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PIPES -->
+<section class="topic-section" id="section-pipes">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:var(--green)">Module 9</div>
+    <h2>Pipes & Custom Pipes</h2>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Built-in Pipes</div><div class="card-tag" style="background:rgba(74,222,128,0.15);color:var(--green)">PIPES</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>All built-in pipes</span><span>HTML</span></div>
+          <pre>{{ title | uppercase }}                        <!-- 'HELLO' -->
+{{ name | lowercase }}                         <!-- 'hello' -->
+{{ title | titlecase }}                        <!-- 'Hello World' -->
+
+{{ price | currency:'INR':'symbol':'1.2-2' }} <!-- ₹1,234.56 -->
+{{ num | number:'1.2-3' }}                     <!-- 1,234.567 -->
+{{ percent | percent:'1.0-2' }}               <!-- 12.34% -->
+
+{{ date | date:'dd/MM/yyyy' }}                <!-- 25/02/2026 -->
+{{ date | date:'short' }}                     <!-- 2/25/26, 3:00 PM -->
+{{ date | date:'fullDate' }}                  <!-- Wednesday, Feb 25, 2026 -->
+
+{{ obj | json }}                              <!-- for debugging! -->
+{{ array | slice:0:5 }}                       <!-- first 5 items -->
+{{ observable$ | async }}                     <!-- subscribe + auto-unsubscribe -->
+{{ 'hello' | i18nSelect: {m:'Mr',f:'Ms'} }}   <!-- i18n -->
+{{ items | keyvalue }}                        <!-- iterate object entries --></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Custom Pipe — Pure vs Impure</div><div class="card-tag" style="background:rgba(74,222,128,0.15);color:var(--green)">CUSTOM PIPE</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Custom pipe</span><span>TypeScript</span></div>
+          <pre><span class="dec">@Pipe</span>({
+  name: <span class="str">'truncate'</span>,
+  standalone: <span class="kw">true</span>,
+  pure: <span class="kw">true</span>  <span class="cm">// default: only recalculates when input REFERENCE changes</span>
+  <span class="cm">// pure: false → recalculates on EVERY change detection (expensive!)</span>
+})
+<span class="kw">export class</span> <span class="cls">TruncatePipe</span> <span class="kw">implements</span> <span class="cls">PipeTransform</span> {
+  <span class="fn">transform</span>(value: string, maxLength = <span class="num">100</span>, suffix = <span class="str">'...'</span>): string {
+    <span class="kw">if</span> (!value) <span class="kw">return</span> <span class="str">''</span>;
+    <span class="kw">return</span> value.length > maxLength
+      ? value.substring(<span class="num">0</span>, maxLength) + suffix
+      : value;
+  }
+}
+
+<span class="cm">&lt;!-- Usage --&gt;</span>
+{{ description | truncate:50 }}
+{{ description | truncate:100:' [more]' }}</pre>
+        </div>
+        <div class="warn">Impure pipes run on EVERY change detection cycle. Only use when you MUST react to mutable data changes (like a filter on an array that mutates). Pure pipes are always preferred.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LIFECYCLE -->
+<section class="topic-section" id="section-lifecycle">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--yellow)">Module 10</div>
+    <h2>Lifecycle Hooks</h2>
+  </div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-header"><div class="card-title">All Lifecycle Hooks — Order & Purpose</div><div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--yellow)">LIFECYCLE</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Lifecycle hooks in order</span><span>TypeScript</span></div>
+          <pre><span class="kw">export class</span> <span class="cls">MyComponent</span> <span class="kw">implements</span>
+  <span class="cls">OnChanges</span>, <span class="cls">OnInit</span>, <span class="cls">DoCheck</span>, <span class="cls">AfterContentInit</span>,
+  <span class="cls">AfterContentChecked</span>, <span class="cls">AfterViewInit</span>, <span class="cls">AfterViewChecked</span>, <span class="cls">OnDestroy</span> {
+
+  <span class="cm">// 1. Called when @Input() values change (even before OnInit)</span>
+  <span class="fn">ngOnChanges</span>(changes: <span class="cls">SimpleChanges</span>) {
+    <span class="kw">if</span> (changes[<span class="str">'userId'</span>]?.currentValue) {
+      <span class="kw">this</span>.loadUser(changes[<span class="str">'userId'</span>].currentValue);
+    }
+  }
+
+  <span class="cm">// 2. Called ONCE after first ngOnChanges — your main init hook</span>
+  <span class="fn">ngOnInit</span>() { <span class="kw">this</span>.loadData(); }
+
+  <span class="cm">// 3. Every CD cycle (expensive — use sparingly)</span>
+  <span class="fn">ngDoCheck</span>() { }
+
+  <span class="cm">// 4. After projected content (ng-content) init</span>
+  <span class="fn">ngAfterContentInit</span>() { }
+
+  <span class="cm">// 5. After every CD check of projected content</span>
+  <span class="fn">ngAfterContentChecked</span>() { }
+
+  <span class="cm">// 6. After component's VIEW and child views are initialized</span>
+  <span class="cm">// ✅ @ViewChild properties available HERE</span>
+  <span class="fn">ngAfterViewInit</span>() { <span class="kw">this</span>.chart.render(); }
+
+  <span class="cm">// 7. After every check of view and child views</span>
+  <span class="fn">ngAfterViewChecked</span>() { }
+
+  <span class="cm">// 8. Cleanup — unsubscribe, clear timers</span>
+  <span class="fn">ngOnDestroy</span>() {
+    <span class="kw">this</span>.destroy$.next();
+    <span class="kw">this</span>.destroy$.complete();
+    clearInterval(<span class="kw">this</span>.timer);
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFORMANCE -->
+<section class="topic-section" id="section-performance">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);color:var(--red)">Module 11</div>
+    <h2>Performance & Optimization</h2>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">OnPush Change Detection</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">PERFORMANCE</div></div>
+      <div class="card-body">
+        <p><strong>Default strategy:</strong> Angular checks every component on EVERY event (click, timer, HTTP). With a large app, this is thousands of checks.</p>
+        <p><strong>OnPush strategy:</strong> Component only re-renders when: an @Input() reference changes, an event from inside the component fires, an async pipe emits, or you call markForCheck() manually.</p>
+        <div class="analogy">Default = re-checking all 1000 employees when one person sneezes. OnPush = only check an employee when their workload explicitly changes.</div>
+        <div class="code-block">
+          <div class="code-header"><span>OnPush + immutable patterns</span><span>TypeScript</span></div>
+          <pre><span class="dec">@Component</span>({
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+<span class="kw">export class</span> <span class="cls">UserCardComponent</span> {
+  <span class="cm">// ✅ GOOD: new object reference triggers re-render</span>
+  <span class="dec">@Input</span>() user!: <span class="cls">User</span>;
+
+  <span class="cm">// In parent: always create NEW objects/arrays</span>
+  updateUser() {
+    <span class="kw">this</span>.user = { ...<span class="kw">this</span>.user, name: <span class="str">'New Name'</span> };  <span class="cm">// ✅ new ref</span>
+    <span class="cm">// this.user.name = 'New Name'  ← ❌ same ref, won't trigger!</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Lazy Loading & Preloading Strategies</div><div class="card-tag" style="background:rgba(244,63,94,0.15);color:var(--red)">PERFORMANCE</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Preloading strategies</span><span>TypeScript</span></div>
+          <pre"><span class="kw">import</span> { <span class="cls">PreloadAllModules</span>, <span class="cls">NoPreloading</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+
+<span class="kw">providers</span>: [
+  provideRouter(routes,
+    withPreloading(<span class="cls">PreloadAllModules</span>),  <span class="cm">// lazy load all in background</span>
+    <span class="cm">// withPreloading(NoPreloading)      // never preload</span>
+    <span class="cm">// custom: only preload flagged routes</span>
+  )
+]
+
+<span class="cm">// Custom preloading strategy</span>
+<span class="kw">const</span> routes = [
+  {
+    path: <span class="str">'admin'</span>,
+    loadChildren: () => import(<span class="str">'./admin/admin.module'</span>),
+    data: { preload: <span class="kw">true</span> }  <span class="cm">// custom flag</span>
+  }
+];
+
+<span class="cm">// deferrable views (Angular 17+)</span>
+@defer (on viewport; prefetch on idle) {
+  &lt;<span class="cls">heavy-component</span> /&gt;
+} @loading { &lt;<span class="cls">spinner</span> /&gt; }
+@placeholder { &lt;<span class="cls">div</span>&gt;Coming soon...&lt;/div&gt; }</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HTTP -->
+<section class="topic-section" id="section-http">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--blue)">Module 12</div>
+    <h2>HTTP Client & Interceptors</h2>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">HttpClient — All Methods & Options</div><div class="card-tag" style="background:rgba(56,189,248,0.15);color:var(--blue)">HTTP</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>HttpClient complete reference</span><span>TypeScript</span></div>
+          <pre><span class="kw">export class</span> <span class="cls">ApiService</span> {
+  <span class="kw">private</span> http = inject(<span class="cls">HttpClient</span>);
+
+  <span class="fn">getUsers</span>(): <span class="cls">Observable</span>&lt;<span class="cls">User</span>[]&gt; {
+    <span class="kw">return this</span>.http.get&lt;<span class="cls">User</span>[]&gt;(<span class="str">'/api/users'</span>, {
+      params: { page: <span class="str">'1'</span>, limit: <span class="str">'20'</span> },
+      headers: { <span class="str">'X-Custom'</span>: <span class="str">'value'</span> }
+    });
+  }
+
+  <span class="cm">// Observe full response (headers, status code, etc)</span>
+  <span class="fn">getWithHeaders</span>() {
+    <span class="kw">return this</span>.http.get&lt;<span class="cls">User</span>&gt;(<span class="str">'/api/me'</span>, { observe: <span class="str">'response'</span> }).pipe(
+      tap(resp => {
+        console.log(resp.status);         <span class="cm">// 200</span>
+        console.log(resp.headers.get(<span class="str">'X-Token'</span>));
+        console.log(resp.body);           <span class="cm">// User object</span>
+      })
+    );
+  }
+
+  <span class="cm">// Upload with progress</span>
+  <span class="fn">upload</span>(file: <span class="cls">File</span>) {
+    <span class="kw">const</span> fd = <span class="kw">new</span> <span class="cls">FormData</span>();
+    fd.append(<span class="str">'file'</span>, file);
+    <span class="kw">return this</span>.http.post(<span class="str">'/api/upload'</span>, fd, {
+      observe: <span class="str">'events'</span>,
+      reportProgress: <span class="kw">true</span>
+    }).pipe(
+      filter(e => e.type === <span class="cls">HttpEventType</span>.<span class="fn">UploadProgress</span>),
+      map(e => Math.round(<span class="num">100</span> * e.loaded / (e.total ?? <span class="num">1</span>)))
+    );
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">HTTP Interceptors (Functional)</div><div class="card-tag" style="background:rgba(56,189,248,0.15);color:var(--blue)">INTERCEPTORS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Functional interceptor (Angular 15+)</span><span>TypeScript</span></div>
+          <pre"><span class="cm">// Auth interceptor — add Bearer token to every request</span>
+<span class="kw">export const</span> authInterceptor: <span class="cls">HttpInterceptorFn</span> = (req, next) => {
+  <span class="kw">const</span> token = inject(<span class="cls">AuthService</span>).getToken();
+  <span class="kw">if</span> (!token) <span class="kw">return</span> next(req);
+  <span class="kw">return</span> next(req.clone({
+    setHeaders: { Authorization: <span class="str">`Bearer ${token}`</span> }
+  }));
+};
+
+<span class="cm">// Error interceptor — global error handling</span>
+<span class="kw">export const</span> errorInterceptor: <span class="cls">HttpInterceptorFn</span> = (req, next) => {
+  <span class="kw">return</span> next(req).pipe(
+    catchError((err: <span class="cls">HttpErrorResponse</span>) => {
+      <span class="kw">if</span> (err.status === <span class="num">401</span>) inject(<span class="cls">Router</span>).navigate([<span class="str">'/login'</span>]);
+      <span class="kw">if</span> (err.status === <span class="num">0</span>)   inject(<span class="cls">NotifyService</span>).error(<span class="str">'No connection'</span>);
+      <span class="kw">return throwError</span>(() => err);
+    })
+  );
+};
+
+<span class="cm">// Register in app.config.ts</span>
+provideHttpClient(withInterceptors([authInterceptor, errorInterceptor]))</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SIGNALS -->
+<section class="topic-section" id="section-signals">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:var(--purple)">Module 13 · New</div>
+    <h2>Signals (Angular 17+)</h2>
+    <p>The new reactivity model. More predictable than RxJS for simple state. The future of Angular's state management.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">signal, computed, effect</div><div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--purple)">SIGNALS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>Signals complete example</span><span>TypeScript</span></div>
+          <pre"><span class="kw">export class</span> <span class="cls">CounterComponent</span> {
+  <span class="cm">// signal() — writable reactive state</span>
+  count = signal(<span class="num">0</span>);
+  items = signal&lt;string[]&gt;([]);
+
+  <span class="cm">// computed() — derived, auto-updates when deps change</span>
+  doubled  = computed(() => <span class="kw">this</span>.count() * <span class="num">2</span>);
+  isEmpty  = computed(() => <span class="kw">this</span>.items().length === <span class="num">0</span>);
+
+  <span class="cm">// effect() — side effects when signals change (like useEffect)</span>
+  constructor() {
+    effect(() => {
+      console.log(<span class="str">`Count changed to: ${this.count()}`</span>);
+      <span class="cm">// Auto-tracks which signals are read inside</span>
+    });
+  }
+
+  increment() {
+    <span class="kw">this</span>.count.update(c => c + <span class="num">1</span>);       <span class="cm">// based on current</span>
+    <span class="kw">this</span>.count.set(<span class="num">10</span>);                   <span class="cm">// set directly</span>
+  }
+
+  addItem(item: string) {
+    <span class="kw">this</span>.items.update(list => [...list, item]);  <span class="cm">// immutable!</span>
+  }
+
+  <span class="cm">// Convert Observable → Signal</span>
+  userSignal = toSignal(<span class="kw">this</span>.userService.user$, { initialValue: <span class="kw">null</span> });
+
+  <span class="cm">// Convert Signal → Observable</span>
+  count$ = toObservable(<span class="kw">this</span>.count);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Signal Inputs & Outputs (Angular 17+)</div><div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--purple)">SIGNALS</div></div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header"><span>New signal-based component API</span><span>TypeScript</span></div>
+          <pre"><span class="kw">export class</span> <span class="cls">UserCardComponent</span> {
+  <span class="cm">// Signal inputs — auto reactive, no @Input() decorator</span>
+  userId = input.required&lt;string&gt;();    <span class="cm">// required</span>
+  theme  = input(<span class="str">'dark'</span>);               <span class="cm">// optional with default</span>
+
+  <span class="cm">// Model signal — two-way binding (like ngModel)</span>
+  value  = model(<span class="str">''</span>);                   <span class="cm">// two-way [(value)]</span>
+
+  <span class="cm">// Signal output</span>
+  selected = output&lt;string&gt;();
+
+  <span class="cm">// Computed from signal input</span>
+  displayName = computed(() =>
+    <span class="str">`User: ${this.userId()}`</span>  <span class="cm">// call input like function</span>
+  );
+
+  <span class="fn">onSelect</span>() {
+    <span class="kw">this</span>.selected.emit(<span class="kw">this</span>.userId());
+  }
+}
+
+<span class="cm">&lt;!-- Template usage --&gt;</span>
+&lt;<span class="cls">app-user-card</span>
+  [userId]=<span class="str">"'123'"</span>
+  [theme]=<span class="str">"'light'"</span>
+  [(value)]=<span class="str">"myValue"</span>
+  (selected)=<span class="str">"onSelected($event)"</span>
+/&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function show(name) {
+  document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelector(`[data-s="${name}"]`).classList.add('active');
+  window.scrollTo(0,0);
+  if (window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+function filterCards(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q)?'':'none';});
+}
+</script>
+</body>
+</html>

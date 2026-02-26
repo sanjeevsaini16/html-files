@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebSockets — Angular + FastAPI Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#020508;--s1:#040a10;--s2:#07111c;--card:#091420;--border:#0e2035;
+  --a:#7c3aed;--a2:#a78bfa;--b:#06b6d4;--b2:#67e8f9;
+  --g:#10b981;--o:#f59e0b;--r:#ef4444;--p:#ec4899;
+  --text:#c4daf5;--muted:#1e4060;--code:#030a14;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;line-height:1.75;}
+.wrap{display:flex;}
+.sb{width:280px;background:var(--s1);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;z-index:100;}
+.content{margin-left:280px;padding:0 50px 100px;}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--border);}
+.sb-logo h1{font-size:1rem;font-weight:800;letter-spacing:-0.3px;}
+.sb-logo h1 em{font-style:normal;background:linear-gradient(90deg,var(--a2),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-logo p{font-size:0.58rem;color:var(--muted);margin-top:4px;letter-spacing:2.5px;text-transform:uppercase;}
+.sb-q{padding:12px 16px;border-bottom:1px solid var(--border);}
+.sb-q input{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:7px;font-family:inherit;font-size:0.8rem;outline:none;}
+.sb-q input:focus{border-color:var(--a2);}
+.sg{padding:14px 16px 5px;font-size:0.57rem;font-weight:600;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.si{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;font-size:0.8rem;color:var(--muted);border-left:2px solid transparent;transition:all 0.15s;}
+.si:hover{color:var(--text);background:var(--s2);}
+.si.on{color:var(--text);border-left-color:var(--a2);background:rgba(167,139,250,0.07);}
+.d{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ph{padding:50px 0 26px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;}
+.ph h2{font-size:2.4rem;font-weight:800;letter-spacing:-1px;line-height:1.15;}
+.ph p{color:var(--muted);font-size:0.9rem;margin-top:10px;max-width:680px;}
+.sec{display:none;}.sec.on{display:block;}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s,transform 0.15s;}
+.card:hover{border-color:rgba(167,139,250,0.3);transform:translateY(-2px);}
+.fw{grid-column:1/-1;}
+.ch{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.ct{font-size:0.9rem;font-weight:700;}
+.ctag{font-size:0.62rem;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap;}
+.cb{padding:16px 18px;}
+.cb p{font-size:0.82rem;color:var(--muted);margin-bottom:10px;}
+.cb strong{color:var(--text);}
+.why{background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.2);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:0.8rem;}
+.why::before{content:'📡 ';}
+.tip{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:10px 14px;margin:10px 0;}
+.tip-t{font-size:0.65rem;font-weight:700;color:var(--g);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.tip ul{list-style:none;}.tip ul li{font-size:0.78rem;color:var(--muted);padding:2px 0;}
+.tip ul li::before{content:'✓ ';color:var(--g);}
+.warn{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:0.79rem;color:var(--muted);}
+.warn::before{content:'⚠️ ';}
+.cw{background:var(--code);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:10px 0;}
+.cw-h{background:#04101c;padding:7px 14px;font-size:0.68rem;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.cw-h .fn{color:var(--a2);font-family:'JetBrains Mono',monospace;}
+.cw-h .ln{color:var(--muted);}
+pre{padding:14px;overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.65;font-size:0.73rem;}
+.kw{color:#ff79c6;}.f{color:#50fa7b;}.s{color:#f1fa8c;}.c{color:#12304a;font-style:italic;}.n{color:#bd93f9;}.cl{color:#8be9fd;}.dc{color:#ffb86c;}.op{color:#ff79c6;}
+.tab-bar{display:flex;gap:4px;margin-bottom:0;border-bottom:1px solid var(--border);padding:0 18px;}
+.tab{padding:10px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;}
+.tab.on{color:var(--a2);border-bottom-color:var(--a2);}
+.tab-content{display:none;padding:16px 18px 18px;}.tab-content.on{display:block;}
+.arch{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin:12px 0;}
+.arch-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.arch-box-t{font-size:0.72rem;font-weight:700;margin-bottom:6px;}
+.arch-box p{font-size:0.7rem;color:var(--muted);}
+.mob-btn{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);}
+@media(max-width:768px){.sb{transform:translateX(-100%);transition:0.3s;}.sb.open{transform:translateX(0);}.content{margin-left:0;padding:55px 16px 60px;}.mob-btn{display:block;}.grid{grid-template-columns:1fr;}.arch{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<button class="mob-btn" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
+<div class="wrap">
+
+<nav class="sb" id="sb">
+  <div class="sb-logo">
+    <h1><em>WebSockets</em></h1>
+    <p>Angular + FastAPI · Real-Time</p>
+  </div>
+  <div class="sb-q"><input type="text" id="sq" placeholder="Search..." oninput="filterC()"></div>
+
+  <div class="sg">Foundations</div>
+  <div class="si on" onclick="nav('intro')" data-t="intro"><span class="d" style="background:#fff"></span>HTTP vs WebSocket</div>
+  <div class="si" onclick="nav('fastapi-ws')" data-t="fastapi-ws"><span class="d" style="background:var(--g)"></span>FastAPI WebSocket Server</div>
+  <div class="si" onclick="nav('angular-ws')" data-t="angular-ws"><span class="d" style="background:var(--b)"></span>Angular WebSocket Service</div>
+
+  <div class="sg">Real Patterns</div>
+  <div class="si" onclick="nav('chat')" data-t="chat"><span class="d" style="background:var(--a2)"></span>Live Chat Application</div>
+  <div class="si" onclick="nav('rooms')" data-t="rooms"><span class="d" style="background:var(--o)"></span>Rooms & Connection Manager</div>
+  <div class="si" onclick="nav('notifications')" data-t="notifications"><span class="d" style="background:var(--p)"></span>Push Notifications</div>
+  <div class="si" onclick="nav('realtime-data')" data-t="realtime-data"><span class="d" style="background:var(--g)"></span>Live Dashboard / ML Predictions</div>
+
+  <div class="sg">Production</div>
+  <div class="si" onclick="nav('auth-ws')" data-t="auth-ws"><span class="d" style="background:var(--r)"></span>Auth & JWT over WebSocket</div>
+  <div class="si" onclick="nav('reconnect')" data-t="reconnect"><span class="d" style="background:var(--o)"></span>Reconnection & Error Handling</div>
+  <div class="si" onclick="nav('rxjs')" data-t="rxjs"><span class="d" style="background:var(--b)"></span>RxJS WebSocket — Full Pattern</div>
+</nav>
+
+<main class="content">
+
+<!-- INTRO -->
+<section class="sec on" id="sec-intro">
+  <div class="ph">
+    <div class="badge" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:var(--a2)">📡 Start Here</div>
+    <h2>HTTP vs WebSocket —<br>The Core Difference</h2>
+    <p>Know when to use WebSockets vs regular HTTP calls. Choose the wrong one and you'll either waste resources or miss real-time capabilities.</p>
+  </div>
+  <div class="grid">
+    <div class="card fw">
+      <div class="ch"><div class="ct">The Fundamental Difference</div><div class="ctag" style="background:rgba(167,139,250,0.12);color:var(--a2)">CONCEPT</div></div>
+      <div class="cb">
+        <div class="why">HTTP is like sending a letter: you write it, send it, wait for a reply letter. Every message = a new envelope, stamp, and round trip. WebSocket is like a phone call: one connection opened, both sides talk freely, no new envelope each time.</div>
+        <div class="arch">
+          <div class="arch-box">
+            <div class="arch-box-t" style="color:var(--o)">🌐 HTTP — Request/Response</div>
+            <p>Client always initiates. Server can only respond. Each request opens a new connection (or reuses one briefly). Works great for: fetching data on demand, form submissions, CRUD APIs. Angular: HttpClient.get(), post().</p>
+          </div>
+          <div class="arch-box">
+            <div class="arch-box-t" style="color:var(--a2)">⚡ WebSocket — Full-Duplex</div>
+            <p>One connection, both sides can send at any time. Server can push to client WITHOUT the client asking. Works great for: chat, live scores, stock prices, multiplayer games, ML model streaming results, dashboards.</p>
+          </div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">Use WebSocket when...</div>
+          <ul>
+            <li>Server needs to PUSH data to client (not just respond)</li>
+            <li>Very frequent updates (more than once per 2 seconds)</li>
+            <li>Real-time collaboration (multiple users affecting same data)</li>
+            <li>Low latency matters (games, trading, auctions)</li>
+            <li>Long-running operations with progress (ML training, file uploads)</li>
+          </ul>
+        </div>
+        <div class="warn">Use regular HTTP for: user profile fetching, login/register, form submissions, one-time data loads. Connecting WebSocket for these is wasteful overkill.</div>
+        <div class="cw">
+          <div class="cw-h"><span class="fn">connection lifecycle</span><span class="ln">concept</span></div>
+          <pre><span class="c">// HTTP</span>
+Client: GET /users             <span class="c">→ new TCP connection (or reuse)</span>
+Server:                       ← sends response
+<span class="c">-- connection may close --</span>
+Client: GET /users/1           <span class="c">→ new request (could be same connection)</span>
+Server:                       ← sends response
+
+<span class="c">// WebSocket</span>
+Client: GET /ws (Upgrade: websocket)    <span class="c">→ HTTP handshake</span>
+Server: 101 Switching Protocols        ← upgrade confirmed
+<span class="c">-- SINGLE CONNECTION STAYS OPEN --</span>
+Client: {"type": "join", "room": "chat"}  <span class="c">→ send anytime</span>
+Server: {"type": "message", "text": "hi"} ← push anytime
+Server: {"type": "user_joined"}           ← push anytime
+Client: {"type": "message", "text": "yo"} <span class="c">→ send anytime</span>
+<span class="c">-- connection closes when either side disconnects --</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FASTAPI WS SERVER -->
+<section class="sec" id="sec-fastapi-ws">
+  <div class="ph">
+    <div class="badge" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--g)">Backend</div>
+    <h2>FastAPI WebSocket<br>Server</h2>
+    <p>FastAPI has native async WebSocket support. No libraries needed beyond FastAPI itself.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card fw">
+      <div class="ch"><div class="ct">WebSocket Endpoint — From Simple to Full</div><div class="ctag" style="background:rgba(16,185,129,0.12);color:var(--g)">FASTAPI</div></div>
+      <div class="cb">
+        <div class="tab-bar" id="tab1">
+          <div class="tab on" onclick="switchTab('tab1','t1a')">Simple Echo</div>
+          <div class="tab" onclick="switchTab('tab1','t1b')">Connection Manager</div>
+          <div class="tab" onclick="switchTab('tab1','t1c')">Rooms</div>
+        </div>
+        <div class="tab-content on" id="t1a">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">app/routers/ws.py</span><span class="ln">Python</span></div>
+            <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, WebSocket, WebSocketDisconnect
+<span class="kw">import</span> json, logging
+
+router = APIRouter()
+
+<span class="c"># Simple echo server — reflects back what client sends</span>
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/echo"</span>)
+<span class="kw">async def</span> <span class="f">ws_echo</span>(websocket: WebSocket):
+    <span class="kw">await</span> websocket.accept()   <span class="c"># accept the connection</span>
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            <span class="c"># Receive — text, bytes, or JSON</span>
+            data = <span class="kw">await</span> websocket.receive_text()       <span class="c"># raw string</span>
+            <span class="c"># data = await websocket.receive_json()    # parse JSON</span>
+            <span class="c"># data = await websocket.receive_bytes()   # binary</span>
+
+            <span class="c"># Send — text, bytes, or JSON</span>
+            <span class="kw">await</span> websocket.send_text(<span class="s">f"Echo: {data}"</span>)
+            <span class="c"># await websocket.send_json({"echo": data})</span>
+
+    <span class="kw">except</span> WebSocketDisconnect:
+        <span class="c"># Client disconnected — normal, handle gracefully</span>
+        logging.info(<span class="s">"Client disconnected"</span>)
+
+<span class="c"># Path parameters work with WebSockets too!</span>
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/{client_id}"</span>)
+<span class="kw">async def</span> <span class="f">ws_with_id</span>(websocket: WebSocket, client_id: str):
+    <span class="kw">await</span> websocket.accept()
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            msg = <span class="kw">await</span> websocket.receive_json()
+            <span class="kw">await</span> websocket.send_json({
+                <span class="s">"from"</span>: client_id,
+                <span class="s">"data"</span>: msg,
+                <span class="s">"timestamp"</span>: datetime.utcnow().isoformat()
+            })
+    <span class="kw">except</span> WebSocketDisconnect:
+        logging.info(<span class="s">f"Client {client_id} disconnected"</span>)</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t1b">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">app/ws_manager.py — broadcast to all connected clients</span><span class="ln">Python</span></div>
+            <pre><span class="kw">from</span> fastapi <span class="kw">import</span> WebSocket
+<span class="kw">from</span> typing <span class="kw">import</span> Dict
+<span class="kw">import</span> asyncio
+
+<span class="kw">class</span> <span class="cl">ConnectionManager</span>:
+    <span class="s">"""Manages all active WebSocket connections"""</span>
+
+    <span class="kw">def</span> <span class="f">__init__</span>(self):
+        self.active: Dict[str, WebSocket] = {}  <span class="c"># client_id → socket</span>
+
+    <span class="kw">async def</span> <span class="f">connect</span>(self, ws: WebSocket, client_id: str):
+        <span class="kw">await</span> ws.accept()
+        self.active[client_id] = ws
+        <span class="kw">await</span> self.broadcast({
+            <span class="s">"type"</span>: <span class="s">"user_joined"</span>,
+            <span class="s">"client_id"</span>: client_id,
+            <span class="s">"online_count"</span>: len(self.active)
+        }, exclude=client_id)
+
+    <span class="kw">def</span> <span class="f">disconnect</span>(self, client_id: str):
+        self.active.pop(client_id, <span class="kw">None</span>)
+
+    <span class="kw">async def</span> <span class="f">send_to</span>(self, client_id: str, message: dict):
+        <span class="s">"""Send to specific client"""</span>
+        ws = self.active.get(client_id)
+        <span class="kw">if</span> ws:
+            <span class="kw">await</span> ws.send_json(message)
+
+    <span class="kw">async def</span> <span class="f">broadcast</span>(self, message: dict, exclude: str = <span class="kw">None</span>):
+        <span class="s">"""Send to ALL connected clients"""</span>
+        dead = []
+        <span class="kw">for</span> cid, ws <span class="kw">in</span> self.active.items():
+            <span class="kw">if</span> cid == exclude: <span class="kw">continue</span>
+            <span class="kw">try</span>:
+                <span class="kw">await</span> ws.send_json(message)
+            <span class="kw">except</span> Exception:
+                dead.append(cid)  <span class="c"># connection died silently</span>
+        <span class="kw">for</span> cid <span class="kw">in</span> dead:
+            self.disconnect(cid)
+
+<span class="c"># Singleton instance</span>
+manager = ConnectionManager()
+
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/chat/{client_id}"</span>)
+<span class="kw">async def</span> <span class="f">chat_ws</span>(websocket: WebSocket, client_id: str):
+    <span class="kw">await</span> manager.connect(websocket, client_id)
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            data = <span class="kw">await</span> websocket.receive_json()
+            <span class="kw">await</span> manager.broadcast({
+                <span class="s">"type"</span>: <span class="s">"message"</span>,
+                <span class="s">"from"</span>: client_id,
+                <span class="s">"text"</span>: data.get(<span class="s">"text"</span>),
+                <span class="s">"timestamp"</span>: datetime.utcnow().isoformat()
+            })
+    <span class="kw">except</span> WebSocketDisconnect:
+        manager.disconnect(client_id)
+        <span class="kw">await</span> manager.broadcast({
+            <span class="s">"type"</span>: <span class="s">"user_left"</span>,
+            <span class="s">"client_id"</span>: client_id
+        })</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t1c">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">ws_manager.py — rooms</span><span class="ln">Python</span></div>
+            <pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">class</span> <span class="cl">RoomManager</span>:
+    <span class="kw">def</span> <span class="f">__init__</span>(self):
+        <span class="c"># room_id → {client_id: websocket}</span>
+        self.rooms: Dict[str, Dict[str, WebSocket]] = defaultdict(dict)
+
+    <span class="kw">async def</span> <span class="f">join</span>(self, ws: WebSocket, room_id: str, client_id: str):
+        <span class="kw">await</span> ws.accept()
+        self.rooms[room_id][client_id] = ws
+        <span class="kw">await</span> self.broadcast_to_room(room_id, {
+            <span class="s">"type"</span>: <span class="s">"joined"</span>, <span class="s">"user"</span>: client_id,
+            <span class="s">"members"</span>: list(self.rooms[room_id].keys())
+        })
+
+    <span class="kw">async def</span> <span class="f">leave</span>(self, room_id: str, client_id: str):
+        self.rooms[room_id].pop(client_id, <span class="kw">None</span>)
+        <span class="kw">if not</span> self.rooms[room_id]:
+            <span class="kw">del</span> self.rooms[room_id]  <span class="c"># empty room cleanup</span>
+        <span class="kw">else</span>:
+            <span class="kw">await</span> self.broadcast_to_room(room_id, {
+                <span class="s">"type"</span>: <span class="s">"left"</span>, <span class="s">"user"</span>: client_id
+            })
+
+    <span class="kw">async def</span> <span class="f">broadcast_to_room</span>(self, room_id: str, message: dict):
+        <span class="kw">for</span> ws <span class="kw">in</span> self.rooms.get(room_id, {}).values():
+            <span class="kw">try</span>:
+                <span class="kw">await</span> ws.send_json(message)
+            <span class="kw">except</span>: <span class="kw">pass</span>
+
+room_manager = RoomManager()
+
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/room/{room_id}/{client_id}"</span>)
+<span class="kw">async def</span> <span class="f">room_ws</span>(ws: WebSocket, room_id: str, client_id: str):
+    <span class="kw">await</span> room_manager.join(ws, room_id, client_id)
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            data = <span class="kw">await</span> ws.receive_json()
+            <span class="kw">await</span> room_manager.broadcast_to_room(room_id, {
+                <span class="s">"type"</span>: <span class="s">"message"</span>, <span class="s">"from"</span>: client_id,
+                <span class="s">"text"</span>: data.get(<span class="s">"text"</span>)
+            })
+    <span class="kw">except</span> WebSocketDisconnect:
+        <span class="kw">await</span> room_manager.leave(room_id, client_id)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ANGULAR WS SERVICE -->
+<section class="sec" id="sec-angular-ws">
+  <div class="ph">
+    <div class="badge" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);color:var(--b2)">Frontend</div>
+    <h2>Angular WebSocket<br>Service</h2>
+    <p>The right way to use WebSockets in Angular — as an injectable service with RxJS Observables, so any component can subscribe to messages.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card fw">
+      <div class="ch"><div class="ct">WebSocket Service — Core Architecture</div><div class="ctag" style="background:rgba(6,182,212,0.12);color:var(--b2)">ANGULAR</div></div>
+      <div class="cb">
+        <div class="tab-bar" id="tab2">
+          <div class="tab on" onclick="switchTab('tab2','t2a')">WebSocket Service</div>
+          <div class="tab" onclick="switchTab('tab2','t2b')">Component Usage</div>
+          <div class="tab" onclick="switchTab('tab2','t2c')">RxJS Pattern</div>
+        </div>
+        <div class="tab-content on" id="t2a">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">websocket.service.ts</span><span class="ln">TypeScript</span></div>
+            <pre><span class="kw">import</span> { Injectable, OnDestroy } <span class="kw">from</span> <span class="s">'@angular/core'</span>;
+<span class="kw">import</span> { Subject, Observable, timer, EMPTY } <span class="kw">from</span> <span class="s">'rxjs'</span>;
+<span class="kw">import</span> { webSocket, WebSocketSubject } <span class="kw">from</span> <span class="s">'rxjs/webSocket'</span>;
+<span class="kw">import</span> { switchMap, retryWhen, delayWhen, tap, catchError } <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+
+<span class="kw">export interface</span> <span class="cl">WsMessage</span> {
+  type: <span class="kw">string</span>;
+  [key: <span class="kw">string</span>]: <span class="kw">any</span>;
+}
+
+<span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">WebSocketService</span> <span class="kw">implements</span> <span class="cl">OnDestroy</span> {
+  <span class="kw">private</span> socket$!: WebSocketSubject&lt;WsMessage&gt;;
+  <span class="kw">private</span> messagesSubject$ = <span class="kw">new</span> Subject&lt;WsMessage&gt;();
+
+  <span class="c">// Observable that components subscribe to</span>
+  messages$ = <span class="kw">this</span>.messagesSubject$.asObservable();
+
+  connect(url: <span class="kw">string</span>): <span class="kw">void</span> {
+    <span class="kw">if</span> (<span class="kw">this</span>.socket$ && !<span class="kw">this</span>.socket$.closed) <span class="kw">return</span>;
+
+    <span class="kw">this</span>.socket$ = webSocket({
+      url,
+      openObserver: {
+        next: () => console.log(<span class="s">'🔗 WebSocket connected'</span>)
+      },
+      closeObserver: {
+        next: () => console.log(<span class="s">'🔌 WebSocket disconnected'</span>)
+      }
+    });
+
+    <span class="kw">this</span>.socket$.pipe(
+      <span class="c">// Auto-reconnect on error (retryWhen deprecated → use retry in RxJS 7+)</span>
+      retryWhen(errors =>
+        errors.pipe(
+          tap(() => console.log(<span class="s">'⚠️ WS error, reconnecting in 2s...'</span>)),
+          delayWhen(() => timer(<span class="n">2000</span>))
+        )
+      )
+    ).subscribe({
+      next: (msg) => <span class="kw">this</span>.messagesSubject$.next(msg),
+      error: (err) => console.error(<span class="s">'WS error:'</span>, err),
+    });
+  }
+
+  send(message: WsMessage): <span class="kw">void</span> {
+    <span class="kw">if</span> (<span class="kw">this</span>.socket$ && !<span class="kw">this</span>.socket$.closed) {
+      <span class="kw">this</span>.socket$.next(message);
+    } <span class="kw">else</span> {
+      console.warn(<span class="s">'WebSocket not connected'</span>);
+    }
+  }
+
+  disconnect(): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket$?.complete();
+  }
+
+  <span class="c">// Filter messages by type — returns Observable for that type only</span>
+  on&lt;T&gt;(type: <span class="kw">string</span>): Observable&lt;T&gt; {
+    <span class="kw">return this</span>.messages$.pipe(
+      filter(msg => msg.type === type)
+    ) <span class="kw">as</span> Observable&lt;T&gt;;
+  }
+
+  ngOnDestroy(): <span class="kw">void</span> {
+    <span class="kw">this</span>.disconnect();
+  }
+}</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t2b">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">chat.component.ts</span><span class="ln">TypeScript</span></div>
+            <pre><span class="kw">import</span> { Component, OnInit, OnDestroy, inject } <span class="kw">from</span> <span class="s">'@angular/core'</span>;
+<span class="kw">import</span> { Subject } <span class="kw">from</span> <span class="s">'rxjs'</span>;
+<span class="kw">import</span> { takeUntil } <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+<span class="kw">import</span> { WebSocketService } <span class="kw">from</span> <span class="s">'../services/websocket.service'</span>;
+
+<span class="dc">@Component</span>({
+  selector: <span class="s">'app-chat'</span>,
+  template: `
+    &lt;div *ngFor="let msg of messages"&gt;
+      &lt;strong&gt;{{ msg.from }}:&lt;/strong&gt; {{ msg.text }}
+    &lt;/div&gt;
+    &lt;input [(ngModel)]="newMessage" (keyup.enter)="send()" /&gt;
+    &lt;button (click)="send()"&gt;Send&lt;/button&gt;
+    &lt;span&gt;{{ onlineCount }} online&lt;/span&gt;
+  `
+})
+<span class="kw">export class</span> <span class="cl">ChatComponent</span> <span class="kw">implements</span> <span class="cl">OnInit</span>, <span class="cl">OnDestroy</span> {
+  <span class="kw">private</span> ws = inject(WebSocketService);
+  <span class="kw">private</span> destroy$ = <span class="kw">new</span> Subject&lt;<span class="kw">void</span>&gt;();
+
+  messages: <span class="kw">any</span>[] = [];
+  newMessage = <span class="s">''</span>;
+  onlineCount = <span class="n">0</span>;
+  clientId = crypto.randomUUID().slice(<span class="n">0</span>, <span class="n">8</span>);
+
+  ngOnInit(): <span class="kw">void</span> {
+    <span class="c">// Connect to WebSocket</span>
+    <span class="kw">this</span>.ws.connect(<span class="s">`ws://localhost:8000/ws/chat/${this.clientId}`</span>);
+
+    <span class="c">// Listen for chat messages</span>
+    <span class="kw">this</span>.ws.on(<span class="s">'message'</span>).pipe(
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe(msg => {
+      <span class="kw">this</span>.messages.push(msg);
+    });
+
+    <span class="c">// Listen for user joins</span>
+    <span class="kw">this</span>.ws.on(<span class="s">'user_joined'</span>).pipe(
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe(msg => {
+      <span class="kw">this</span>.onlineCount = msg.online_count;
+    });
+
+    <span class="c">// Or subscribe to ALL messages</span>
+    <span class="kw">this</span>.ws.messages$.pipe(
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe(msg => {
+      <span class="kw">switch</span> (msg.type) {
+        <span class="kw">case</span> <span class="s">'message'</span>: <span class="kw">this</span>.messages.push(msg); <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="s">'user_joined'</span>: <span class="kw">this</span>.onlineCount = msg.online_count; <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="s">'user_left'</span>: <span class="kw">this</span>.onlineCount--; <span class="kw">break</span>;
+      }
+    });
+  }
+
+  send(): <span class="kw">void</span> {
+    <span class="kw">if</span> (!<span class="kw">this</span>.newMessage.trim()) <span class="kw">return</span>;
+    <span class="kw">this</span>.ws.send({ type: <span class="s">'message'</span>, text: <span class="kw">this</span>.newMessage });
+    <span class="kw">this</span>.newMessage = <span class="s">''</span>;
+  }
+
+  ngOnDestroy(): <span class="kw">void</span> {
+    <span class="kw">this</span>.destroy$.next();    <span class="c">// unsubscribe from all observables</span>
+    <span class="kw">this</span>.destroy$.complete();
+    <span class="kw">this</span>.ws.disconnect();
+  }
+}</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t2c">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">websocket.service.ts — full RxJS pattern</span><span class="ln">TypeScript</span></div>
+            <pre"><span class="kw">import</span> { webSocket } <span class="kw">from</span> <span class="s">'rxjs/webSocket'</span>;
+<span class="kw">import</span> { retry, delay, share, filter, map } <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+
+<span class="c">// Robust production-grade WS service with RxJS</span>
+<span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">WsService</span> {
+  <span class="kw">private</span> readonly WS_URL = environment.wsUrl; <span class="c">// from environment.ts</span>
+
+  <span class="kw">private</span> socket$ = webSocket({
+    url: <span class="kw">this</span>.WS_URL,
+    serializer: (msg) => JSON.stringify(msg),
+    deserializer: ({data}) => JSON.parse(data),
+  }).pipe(
+    retry({ count: 5, delay: 2000 }),  <span class="c">// retry 5 times, 2s apart</span>
+    share()   <span class="c">// ONE shared connection, even if many components subscribe</span>
+  );
+
+  <span class="c">// Type-safe message filtering</span>
+  chatMessages$ = <span class="kw">this</span>.socket$.pipe(
+    filter((m: <span class="kw">any</span>) => m.type === <span class="s">'message'</span>),
+    map((m: <span class="kw">any</span>) => m <span class="kw">as</span> ChatMessage)
+  );
+
+  notifications$ = <span class="kw">this</span>.socket$.pipe(
+    filter((m: <span class="kw">any</span>) => m.type === <span class="s">'notification'</span>)
+  );
+
+  presence$ = <span class="kw">this</span>.socket$.pipe(
+    filter((m: <span class="kw">any</span>) => [<span class="s">'user_joined'</span>, <span class="s">'user_left'</span>].includes(m.type))
+  );
+
+  send(msg: <span class="kw">object</span>): <span class="kw">void</span> {
+    (<span class="kw">this</span>.socket$ <span class="kw">as any</span>).next(msg);
+  }
+}
+
+<span class="c">// environment.ts</span>
+<span class="kw">export const</span> environment = {
+  production: <span class="kw">false</span>,
+  apiUrl: <span class="s">'http://localhost:8000'</span>,
+  wsUrl: <span class="s">'ws://localhost:8000/ws'</span>  <span class="c">// wss:// for production</span>
+};</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CHAT APP -->
+<section class="sec" id="sec-chat">
+  <div class="ph">
+    <div class="badge" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:var(--a2)">Full App</div>
+    <h2>Live Chat App —<br>End to End</h2>
+    <p>Complete working chat: Angular frontend + FastAPI backend. Every file you need.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card fw">
+      <div class="ch"><div class="ct">Complete Chat — Backend + Frontend</div><div class="ctag" style="background:rgba(167,139,250,0.12);color:var(--a2)">FULLSTACK</div></div>
+      <div class="cb">
+        <div class="tab-bar" id="tab3">
+          <div class="tab on" onclick="switchTab('tab3','t3a')">FastAPI Backend</div>
+          <div class="tab" onclick="switchTab('tab3','t3b')">Angular Service</div>
+          <div class="tab" onclick="switchTab('tab3','t3c')">Angular Component</div>
+          <div class="tab" onclick="switchTab('tab3','t3d')">HTML Template</div>
+        </div>
+        <div class="tab-content on" id="t3a">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">app/routers/chat.py</span><span class="ln">Python</span></div>
+            <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, WebSocket, WebSocketDisconnect
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> json
+
+router = APIRouter()
+
+<span class="c"># ── Connection Manager ────────────────────────────</span>
+<span class="kw">class</span> <span class="cl">ChatManager</span>:
+    <span class="kw">def</span> <span class="f">__init__</span>(self):
+        self.connections: dict[str, WebSocket] = {}
+        self.message_history: list = []  <span class="c"># last 50 messages</span>
+
+    <span class="kw">async def</span> <span class="f">connect</span>(self, ws: WebSocket, username: str):
+        <span class="kw">await</span> ws.accept()
+        self.connections[username] = ws
+        <span class="c"># Send history to new joiner</span>
+        <span class="kw">await</span> ws.send_json({
+            <span class="s">"type"</span>: <span class="s">"history"</span>,
+            <span class="s">"messages"</span>: self.message_history[-<span class="n">50</span>:]
+        })
+        <span class="c"># Announce to everyone</span>
+        <span class="kw">await</span> self.broadcast({
+            <span class="s">"type"</span>: <span class="s">"system"</span>,
+            <span class="s">"text"</span>: <span class="s">f"{username} joined"</span>,
+            <span class="s">"online"</span>: list(self.connections.keys())
+        })
+
+    <span class="kw">def</span> <span class="f">disconnect</span>(self, username: str):
+        self.connections.pop(username, <span class="kw">None</span>)
+
+    <span class="kw">async def</span> <span class="f">broadcast</span>(self, msg: dict):
+        msg[<span class="s">"timestamp"</span>] = datetime.utcnow().isoformat()
+        <span class="kw">if</span> msg.get(<span class="s">"type"</span>) == <span class="s">"message"</span>:
+            self.message_history.append(msg)
+        stale = []
+        <span class="kw">for</span> uname, ws <span class="kw">in</span> self.connections.items():
+            <span class="kw">try</span>:
+                <span class="kw">await</span> ws.send_json(msg)
+            <span class="kw">except</span>:
+                stale.append(uname)
+        <span class="kw">for</span> u <span class="kw">in</span> stale: self.disconnect(u)
+
+chat = ChatManager()
+
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/chat"</span>)
+<span class="kw">async def</span> <span class="f">chat_endpoint</span>(ws: WebSocket, username: str):
+    <span class="kw">await</span> chat.connect(ws, username)
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            data = <span class="kw">await</span> ws.receive_json()
+            action = data.get(<span class="s">"type"</span>)
+
+            <span class="kw">if</span> action == <span class="s">"message"</span>:
+                <span class="kw">await</span> chat.broadcast({
+                    <span class="s">"type"</span>: <span class="s">"message"</span>,
+                    <span class="s">"from"</span>: username,
+                    <span class="s">"text"</span>: data.get(<span class="s">"text"</span>, <span class="s">""</span>)[:<span class="n">500</span>]  <span class="c"># limit length</span>
+                })
+
+            <span class="kw">elif</span> action == <span class="s">"typing"</span>:
+                <span class="kw">await</span> chat.broadcast({
+                    <span class="s">"type"</span>: <span class="s">"typing"</span>, <span class="s">"user"</span>: username
+                })
+
+    <span class="kw">except</span> WebSocketDisconnect:
+        chat.disconnect(username)
+        <span class="kw">await</span> chat.broadcast({
+            <span class="s">"type"</span>: <span class="s">"system"</span>,
+            <span class="s">"text"</span>: <span class="s">f"{username} left"</span>,
+            <span class="s">"online"</span>: list(chat.connections.keys())
+        })</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t3b">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">chat.service.ts</span><span class="ln">TypeScript</span></div>
+            <pre"><span class="kw">import</span> { Injectable, OnDestroy } <span class="kw">from</span> <span class="s">'@angular/core'</span>;
+<span class="kw">import</span> { Subject, BehaviorSubject, Observable } <span class="kw">from</span> <span class="s">'rxjs'</span>;
+<span class="kw">import</span> { webSocket, WebSocketSubject } <span class="kw">from</span> <span class="s">'rxjs/webSocket'</span>;
+<span class="kw">import</span> { retry, takeUntil, filter, share } <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+
+<span class="kw">export interface</span> <span class="cl">ChatMessage</span> {
+  type: <span class="kw">string</span>;
+  from?: <span class="kw">string</span>;
+  text?: <span class="kw">string</span>;
+  timestamp?: <span class="kw">string</span>;
+  online?: <span class="kw">string</span>[];
+}
+
+<span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">ChatService</span> <span class="kw">implements</span> <span class="cl">OnDestroy</span> {
+  <span class="kw">private</span> destroy$ = <span class="kw">new</span> Subject&lt;<span class="kw">void</span>&gt;();
+  <span class="kw">private</span> socket$!: WebSocketSubject&lt;ChatMessage&gt;;
+
+  messages$ = <span class="kw">new</span> Subject&lt;ChatMessage&gt;();
+  onlineUsers$ = <span class="kw">new</span> BehaviorSubject&lt;<span class="kw">string</span>[]&gt;([]);
+  isConnected$ = <span class="kw">new</span> BehaviorSubject&lt;<span class="kw">boolean</span>&gt;(<span class="kw">false</span>);
+
+  connect(username: <span class="kw">string</span>): <span class="kw">void</span> {
+    <span class="kw">const</span> wsUrl = <span class="s">`ws://localhost:8000/ws/chat?username=${username}`</span>;
+
+    <span class="kw">this</span>.socket$ = webSocket({
+      url: wsUrl,
+      openObserver: { next: () => <span class="kw">this</span>.isConnected$.next(<span class="kw">true</span>) },
+      closeObserver: { next: () => <span class="kw">this</span>.isConnected$.next(<span class="kw">false</span>) }
+    });
+
+    <span class="kw">this</span>.socket$.pipe(
+      retry({ count: 10, delay: 2000 }),
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe(msg => {
+      <span class="kw">this</span>.messages$.next(msg);
+      <span class="kw">if</span> (msg.online) <span class="kw">this</span>.onlineUsers$.next(msg.online);
+    });
+  }
+
+  sendMessage(text: <span class="kw">string</span>): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket$.next({ type: <span class="s">'message'</span>, text });
+  }
+
+  sendTyping(): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket$.next({ type: <span class="s">'typing'</span> });
+  }
+
+  ngOnDestroy(): <span class="kw">void</span> {
+    <span class="kw">this</span>.destroy$.next();
+    <span class="kw">this</span>.socket$.complete();
+  }
+}</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t3c">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">chat.component.ts</span><span class="ln">TypeScript</span></div>
+            <pre><span class="dc">@Component</span>({ selector: <span class="s">'app-chat'</span>, templateUrl: <span class="s">'./chat.component.html'</span> })
+<span class="kw">export class</span> <span class="cl">ChatComponent</span> <span class="kw">implements</span> <span class="cl">OnInit</span>, <span class="cl">OnDestroy</span> {
+  <span class="kw">private</span> chat = inject(ChatService);
+  <span class="kw">private</span> destroy$ = <span class="kw">new</span> Subject&lt;<span class="kw">void</span>&gt;();
+
+  messages: ChatMessage[] = [];
+  newMsg = <span class="s">''</span>;
+  username = <span class="s">''</span>;
+  joined = <span class="kw">false</span>;
+  typingUser = <span class="s">''</span>;
+  onlineUsers: <span class="kw">string</span>[] = [];
+  isConnected$ = <span class="kw">this</span>.chat.isConnected$;
+  onlineUsers$ = <span class="kw">this</span>.chat.onlineUsers$;
+
+  ngOnInit(): <span class="kw">void</span> {
+    <span class="kw">this</span>.chat.messages$.pipe(
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe(msg => {
+      <span class="kw">switch</span> (msg.type) {
+        <span class="kw">case</span> <span class="s">'message'</span>:
+        <span class="kw">case</span> <span class="s">'system'</span>:
+          <span class="kw">this</span>.messages.push(msg);
+          <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="s">'history'</span>:
+          <span class="kw">this</span>.messages = (msg <span class="kw">as any</span>).messages;
+          <span class="kw">break</span>;
+        <span class="kw">case</span> <span class="s">'typing'</span>:
+          <span class="kw">this</span>.typingUser = msg.from!;
+          setTimeout(() => <span class="kw">this</span>.typingUser = <span class="s">''</span>, <span class="n">2000</span>);
+          <span class="kw">break</span>;
+      }
+    });
+  }
+
+  join(): <span class="kw">void</span> {
+    <span class="kw">if</span> (!<span class="kw">this</span>.username.trim()) <span class="kw">return</span>;
+    <span class="kw">this</span>.chat.connect(<span class="kw">this</span>.username);
+    <span class="kw">this</span>.joined = <span class="kw">true</span>;
+  }
+
+  send(): <span class="kw">void</span> {
+    <span class="kw">if</span> (!<span class="kw">this</span>.newMsg.trim()) <span class="kw">return</span>;
+    <span class="kw">this</span>.chat.sendMessage(<span class="kw">this</span>.newMsg);
+    <span class="kw">this</span>.newMsg = <span class="s">''</span>;
+  }
+
+  onTyping(): <span class="kw">void</span> { <span class="kw">this</span>.chat.sendTyping(); }
+
+  ngOnDestroy(): <span class="kw">void</span> { <span class="kw">this</span>.destroy$.next(); }
+}</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t3d">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">chat.component.html</span><span class="ln">Angular Template</span></div>
+            <pre">&lt;<span class="cl">div</span> *ngIf="!joined"&gt;
+  &lt;<span class="cl">input</span> [(ngModel)]="username" placeholder="Your name" /&gt;
+  &lt;<span class="cl">button</span> (click)="join()"&gt;Join Chat&lt;/<span class="cl">button</span>&gt;
+&lt;/<span class="cl">div</span>&gt;
+
+&lt;<span class="cl">div</span> *ngIf="joined"&gt;
+  &lt;<span class="c">&lt;!-- Connection status --&gt;</span>
+  &lt;<span class="cl">span</span> [class.green]="isConnected$ | async"&gt;
+    {{ (isConnected$ | async) ? '🟢 Connected' : '🔴 Reconnecting...' }}
+  &lt;/<span class="cl">span</span>&gt;
+
+  &lt;<span class="c">&lt;!-- Online users --&gt;</span>
+  &lt;<span class="cl">div</span>&gt;Online: {{ onlineUsers$ | async | json }}&lt;/<span class="cl">div</span>&gt;
+
+  &lt;<span class="c">&lt;!-- Messages --&gt;</span>
+  &lt;<span class="cl">div</span> *ngFor="let msg of messages"&gt;
+    &lt;<span class="cl">ng-container</span> [ngSwitch]="msg.type"&gt;
+      &lt;<span class="cl">div</span> *ngSwitchCase="'message'"&gt;
+        &lt;<span class="cl">strong</span>&gt;{{ msg.from }}:&lt;/<span class="cl">strong</span>&gt; {{ msg.text }}
+        &lt;<span class="cl">small</span>&gt;{{ msg.timestamp | date:'HH:mm' }}&lt;/<span class="cl">small</span>&gt;
+      &lt;/<span class="cl">div</span>&gt;
+      &lt;<span class="cl">div</span> *ngSwitchCase="'system'" class="system-msg"&gt;
+        ℹ️ {{ msg.text }}
+      &lt;/<span class="cl">div</span>&gt;
+    &lt;/<span class="cl">ng-container</span>&gt;
+  &lt;/<span class="cl">div</span>&gt;
+
+  &lt;<span class="c">&lt;!-- Typing indicator --&gt;</span>
+  &lt;<span class="cl">div</span> *ngIf="typingUser"&gt;{{ typingUser }} is typing...&lt;/<span class="cl">div</span>&gt;
+
+  &lt;<span class="c">&lt;!-- Input --&gt;</span>
+  &lt;<span class="cl">input</span>
+    [(ngModel)]="newMsg"
+    (keyup.enter)="send()"
+    (input)="onTyping()"
+    placeholder="Type a message..." /&gt;
+  &lt;<span class="cl">button</span> (click)="send()"&gt;Send&lt;/<span class="cl">button</span>&gt;
+&lt;/<span class="cl">div</span>&gt;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NOTIFICATIONS -->
+<section class="sec" id="sec-notifications">
+  <div class="ph">
+    <div class="badge" style="background:rgba(236,72,153,0.1);border:1px solid rgba(236,72,153,0.2);color:var(--p)">Pattern</div>
+    <h2>Server-Side Push<br>Notifications</h2>
+    <p>Server pushes updates to clients — no client polling required. Use for notifications, task completion, alerts.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card fw">
+      <div class="ch"><div class="ct">SSE (simpler) + WebSocket Notifications</div><div class="ctag" style="background:rgba(236,72,153,0.12);color:var(--p)">PUSH</div></div>
+      <div class="cb">
+        <div class="tab-bar" id="tab4">
+          <div class="tab on" onclick="switchTab('tab4','t4a')">FastAPI SSE</div>
+          <div class="tab" onclick="switchTab('tab4','t4b')">FastAPI WS Notify</div>
+          <div class="tab" onclick="switchTab('tab4','t4c')">Angular SSE</div>
+        </div>
+        <div class="tab-content on" id="t4a">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">app/routers/sse.py — Server-Sent Events (one-way push)</span><span class="ln">Python</span></div>
+            <pre"><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> StreamingResponse
+<span class="kw">import</span> asyncio, json
+
+router = APIRouter()
+
+<span class="c"># SSE = one-way push (server → client only). Simpler than WebSocket.</span>
+<span class="c"># Use for: notifications, progress bars, live logs, dashboards</span>
+<span class="dc">@router.get</span>(<span class="s">"/events"</span>)
+<span class="kw">async def</span> <span class="f">event_stream</span>(request: Request, current_user = Depends(get_current_user)):
+    <span class="kw">async def</span> <span class="f">generate</span>():
+        <span class="kw">try</span>:
+            <span class="kw">while True</span>:
+                <span class="c"># Check if client disconnected</span>
+                <span class="kw">if await</span> request.is_disconnected():
+                    <span class="kw">break</span>
+
+                <span class="c"># Fetch pending notifications for this user</span>
+                notifications = <span class="kw">await</span> get_notifications(current_user.id)
+                <span class="kw">for</span> notif <span class="kw">in</span> notifications:
+                    <span class="c"># SSE format: "data: {json}\n\n"</span>
+                    <span class="kw">yield</span> <span class="s">f"data: {json.dumps(notif)}\n\n"</span>
+                    <span class="kw">await</span> mark_sent(notif[<span class="s">'id'</span>])
+
+                <span class="c"># Heartbeat every 30s to keep connection alive</span>
+                <span class="kw">yield</span> <span class="s">": heartbeat\n\n"</span>
+                <span class="kw">await</span> asyncio.sleep(<span class="n">5</span>)
+        <span class="kw">except</span> asyncio.CancelledError:
+            pass
+
+    <span class="kw">return</span> StreamingResponse(
+        generate(),
+        media_type=<span class="s">"text/event-stream"</span>,
+        headers={
+            <span class="s">"Cache-Control"</span>: <span class="s">"no-cache"</span>,
+            <span class="s">"X-Accel-Buffering"</span>: <span class="s">"no"</span>,  <span class="c"># disable Nginx buffering!</span>
+            <span class="s">"Connection"</span>: <span class="s">"keep-alive"</span>
+        }
+    )</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t4b">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">ws_notify.py — push notifications via WebSocket</span><span class="ln">Python</span></div>
+            <pre"><span class="c"># Global registry: user_id → websocket (for pushing to specific users)</span>
+user_sockets: Dict[int, WebSocket] = {}
+
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/notifications"</span>)
+<span class="kw">async def</span> <span class="f">notification_ws</span>(ws: WebSocket, user: User = Depends(get_ws_user)):
+    <span class="kw">await</span> ws.accept()
+    user_sockets[user.id] = ws
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            <span class="c"># Keep alive — client can ping</span>
+            data = <span class="kw">await</span> ws.receive_text()
+            <span class="kw">if</span> data == <span class="s">"ping"</span>:
+                <span class="kw">await</span> ws.send_text(<span class="s">"pong"</span>)
+    <span class="kw">except</span> WebSocketDisconnect:
+        user_sockets.pop(user.id, <span class="kw">None</span>)
+
+<span class="c"># Call this from ANY route to push to specific user</span>
+<span class="kw">async def</span> <span class="f">push_to_user</span>(user_id: int, notification: dict):
+    ws = user_sockets.get(user_id)
+    <span class="kw">if</span> ws:
+        <span class="kw">try</span>:
+            <span class="kw">await</span> ws.send_json(notification)
+        <span class="kw">except</span>:
+            user_sockets.pop(user_id, <span class="kw">None</span>)
+
+<span class="c"># Example: push notification when order is shipped</span>
+<span class="dc">@router.post</span>(<span class="s">"/orders/{order_id}/ship"</span>)
+<span class="kw">async def</span> <span class="f">ship_order</span>(order_id: int, db: DBSession, admin: AdminOnly):
+    order = ship_order_in_db(db, order_id)
+    <span class="c"># Push notification to the customer in real-time!</span>
+    <span class="kw">await</span> push_to_user(order.user_id, {
+        <span class="s">"type"</span>: <span class="s">"notification"</span>,
+        <span class="s">"title"</span>: <span class="s">"Your order shipped! 🚚"</span>,
+        <span class="s">"order_id"</span>: order_id
+    })
+    <span class="kw">return</span> order</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t4c">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">sse.service.ts — Angular SSE client</span><span class="ln">TypeScript</span></div>
+            <pre"><span class="kw">import</span> { Injectable } <span class="kw">from</span> <span class="s">'@angular/core'</span>;
+<span class="kw">import</span> { Observable, fromEvent, Subject } <span class="kw">from</span> <span class="s">'rxjs'</span>;
+<span class="kw">import</span> { map, takeUntil } <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+
+<span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">SseService</span> {
+  <span class="kw">private</span> eventSource?: EventSource;
+
+  connect(url: <span class="kw">string</span>): Observable&lt;<span class="kw">any</span>&gt; {
+    <span class="kw">return new</span> Observable(observer => {
+      <span class="kw">this</span>.eventSource = <span class="kw">new</span> EventSource(url);
+
+      <span class="kw">this</span>.eventSource.onmessage = (event) => {
+        observer.next(JSON.parse(event.data));
+      };
+      <span class="kw">this</span>.eventSource.onerror = (err) => {
+        <span class="c">// SSE auto-reconnects by default!</span>
+        console.error(<span class="s">'SSE error, will retry...'</span>, err);
+      };
+
+      <span class="c">// Cleanup when unsubscribed</span>
+      <span class="kw">return</span> () => <span class="kw">this</span>.eventSource?.close();
+    });
+  }
+
+  disconnect(): <span class="kw">void</span> { <span class="kw">this</span>.eventSource?.close(); }
+}
+
+<span class="c">// Usage in component:</span>
+<span class="c">// this.sseService.connect('http://localhost:8000/events')</span>
+<span class="c">//   .pipe(takeUntil(this.destroy$))</span>
+<span class="c">//   .subscribe(notification => this.notifications.push(notification));</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- REALTIME DATA -->
+<section class="sec" id="sec-realtime-data">
+  <div class="ph">
+    <div class="badge" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--g)">ML + Live Data</div>
+    <h2>Live Dashboard &<br>ML Streaming</h2>
+    <p>Stream ML predictions, live sensor data, or real-time analytics — perfect for your ML learning combined with Angular.</p>
+  </div>
+  <div class="grid">
+    <div class="card fw">
+      <div class="ch"><div class="ct">Stream ML Predictions in Real-Time</div><div class="ctag" style="background:rgba(16,185,129,0.12);color:var(--g)">ML + WS</div></div>
+      <div class="cb">
+        <div class="tab-bar" id="tab5">
+          <div class="tab on" onclick="switchTab('tab5','t5a')">FastAPI ML Stream</div>
+          <div class="tab" onclick="switchTab('tab5','t5b')">Angular Dashboard</div>
+        </div>
+        <div class="tab-content on" id="t5a">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">app/routers/ml_stream.py</span><span class="ln">Python</span></div>
+            <pre"><span class="kw">from</span> fastapi <span class="kw">import</span> WebSocket, WebSocketDisconnect
+<span class="kw">import</span> asyncio, numpy <span class="kw">as</span> np
+
+<span class="c"># Load model once at startup (not per-request!)</span>
+model = load_ml_model()
+
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/predict"</span>)
+<span class="kw">async def</span> <span class="f">predict_stream</span>(ws: WebSocket):
+    <span class="kw">await</span> ws.accept()
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            <span class="c"># Receive features from Angular</span>
+            payload = <span class="kw">await</span> ws.receive_json()
+            features = np.array(payload[<span class="s">"features"</span>])
+
+            <span class="c"># Run ML prediction (offload to thread)</span>
+            loop = asyncio.get_event_loop()
+            result = <span class="kw">await</span> loop.run_in_executor(
+                <span class="kw">None</span>, model.predict, features.reshape(<span class="n">1</span>, -<span class="n">1</span>)
+            )
+
+            <span class="kw">await</span> ws.send_json({
+                <span class="s">"prediction"</span>: result.tolist()[<span class="n">0</span>],
+                <span class="s">"confidence"</span>: float(result.max()),
+                <span class="s">"request_id"</span>: payload.get(<span class="s">"request_id"</span>)
+            })
+    <span class="kw">except</span> WebSocketDisconnect:
+        pass
+
+<span class="c"># Stream live data to dashboard every second</span>
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/dashboard"</span>)
+<span class="kw">async def</span> <span class="f">dashboard_stream</span>(ws: WebSocket):
+    <span class="kw">await</span> ws.accept()
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            <span class="c"># Collect metrics from DB/Redis</span>
+            metrics = <span class="kw">await</span> asyncio.gather(
+                get_active_users(),
+                get_revenue_today(),
+                get_error_rate(),
+                get_prediction_accuracy()
+            )
+            <span class="kw">await</span> ws.send_json({
+                <span class="s">"type"</span>: <span class="s">"metrics"</span>,
+                <span class="s">"active_users"</span>: metrics[<span class="n">0</span>],
+                <span class="s">"revenue"</span>: metrics[<span class="n">1</span>],
+                <span class="s">"error_rate"</span>: metrics[<span class="n">2</span>],
+                <span class="s">"model_accuracy"</span>: metrics[<span class="n">3</span>],
+                <span class="s">"timestamp"</span>: datetime.utcnow().isoformat()
+            })
+            <span class="kw">await</span> asyncio.sleep(<span class="n">1</span>)  <span class="c"># push every second</span>
+    <span class="kw">except</span> WebSocketDisconnect:
+        pass</pre>
+          </div>
+        </div>
+        <div class="tab-content" id="t5b">
+          <div class="cw">
+            <div class="cw-h"><span class="fn">dashboard.component.ts</span><span class="ln">TypeScript</span></div>
+            <pre"><span class="dc">@Component</span>({ selector: <span class="s">'app-dashboard'</span>, templateUrl: <span class="s">'./dashboard.component.html'</span> })
+<span class="kw">export class</span> <span class="cl">DashboardComponent</span> <span class="kw">implements</span> <span class="cl">OnInit</span>, <span class="cl">OnDestroy</span> {
+  <span class="kw">private</span> ws = inject(WebSocketService);
+  <span class="kw">private</span> destroy$ = <span class="kw">new</span> Subject&lt;<span class="kw">void</span>&gt;();
+
+  metrics = { activeUsers: <span class="n">0</span>, revenue: <span class="n">0</span>, errorRate: <span class="n">0</span>, accuracy: <span class="n">0</span> };
+  history: <span class="kw">any</span>[] = [];  <span class="c">// for chart</span>
+
+  ngOnInit(): <span class="kw">void</span> {
+    <span class="kw">this</span>.ws.connect(<span class="s">'ws://localhost:8000/ws/dashboard'</span>);
+
+    <span class="kw">this</span>.ws.messages$.pipe(
+      takeUntil(<span class="kw">this</span>.destroy$)
+    ).subscribe((msg: <span class="kw">any</span>) => {
+      <span class="kw">this</span>.metrics = {
+        activeUsers: msg.active_users,
+        revenue: msg.revenue,
+        errorRate: msg.error_rate,
+        accuracy: msg.model_accuracy
+      };
+
+      <span class="c">// Keep last 60 points for sparkline chart</span>
+      <span class="kw">this</span>.history.push({ t: <span class="kw">new</span> Date(msg.timestamp), ...msg });
+      <span class="kw">if</span> (<span class="kw">this</span>.history.length > <span class="n">60</span>) <span class="kw">this</span>.history.shift();
+    });
+  }
+
+  <span class="c">// ML prediction on demand</span>
+  predict(features: <span class="kw">number</span>[]): <span class="kw">void</span> {
+    <span class="kw">this</span>.ws.send({
+      type: <span class="s">'predict'</span>,
+      features,
+      request_id: Date.now()
+    });
+  }
+
+  ngOnDestroy(): <span class="kw">void</span> { <span class="kw">this</span>.destroy$.next(); }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTH WS -->
+<section class="sec" id="sec-auth-ws">
+  <div class="ph">
+    <div class="badge" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--r)">Security</div>
+    <h2>Auth & JWT over<br>WebSocket</h2>
+    <p>WebSockets can't send Authorization headers. Here's how to authenticate WebSocket connections properly.</p>
+  </div>
+  <div class="grid">
+    <div class="card fw">
+      <div class="ch"><div class="ct">JWT Authentication for WebSocket Connections</div><div class="ctag" style="background:rgba(239,68,68,0.12);color:var(--r)">AUTH</div></div>
+      <div class="cb">
+        <div class="why">WebSocket's connection request doesn't support custom headers. So you can't send "Authorization: Bearer xxx". Solutions: 1) Send token as query param 2) Send token as first message 3) Use cookie. Option 2 is most secure for production.</div>
+        <div class="cw">
+          <div class="cw-h"><span class="fn">auth_ws.py — 3 methods</span><span class="ln">Python</span></div>
+          <pre><span class="c"># ── METHOD 1: Token in query string (simple, ok for internal tools) ──</span>
+<span class="dc">@router.websocket</span>(<span class="s">"/ws"</span>)
+<span class="kw">async def</span> <span class="f">ws_query_auth</span>(ws: WebSocket, token: str, db: DBSession):
+    user = verify_token(token, db)  <span class="c"># validate BEFORE accept()</span>
+    <span class="kw">if not</span> user:
+        <span class="kw">await</span> ws.close(code=<span class="n">1008</span>)  <span class="c"># 1008 = Policy Violation</span>
+        <span class="kw">return</span>
+    <span class="kw">await</span> ws.accept()
+    <span class="c"># ws URL: ws://localhost:8000/ws?token=eyJhbGci...</span>
+
+<span class="c"># ── METHOD 2: First message is auth token (most secure) ──</span>
+<span class="dc">@router.websocket</span>(<span class="s">"/ws/secure"</span>)
+<span class="kw">async def</span> <span class="f">ws_msg_auth</span>(ws: WebSocket, db: DBSession):
+    <span class="kw">await</span> ws.accept()  <span class="c"># accept connection first</span>
+    <span class="kw">try</span>:
+        <span class="c"># Expect auth token as first message (within 5 seconds)</span>
+        auth_msg = <span class="kw">await</span> asyncio.wait_for(ws.receive_json(), timeout=<span class="n">5.0</span>)
+        <span class="kw">if</span> auth_msg.get(<span class="s">"type"</span>) != <span class="s">"auth"</span>:
+            <span class="kw">await</span> ws.send_json({<span class="s">"error"</span>: <span class="s">"First message must be auth"</span>})
+            <span class="kw">await</span> ws.close()
+            <span class="kw">return</span>
+
+        user = verify_token(auth_msg[<span class="s">"token"</span>], db)
+        <span class="kw">if not</span> user:
+            <span class="kw">await</span> ws.send_json({<span class="s">"error"</span>: <span class="s">"Invalid token"</span>})
+            <span class="kw">await</span> ws.close(<span class="n">1008</span>)
+            <span class="kw">return</span>
+
+        <span class="kw">await</span> ws.send_json({<span class="s">"type"</span>: <span class="s">"auth_ok"</span>, <span class="s">"user"</span>: user.name})
+
+        <span class="c"># Now handle real messages</span>
+        <span class="kw">while True</span>:
+            data = <span class="kw">await</span> ws.receive_json()
+            <span class="c"># user is authenticated, process message</span>
+
+    <span class="kw">except</span> asyncio.TimeoutError:
+        <span class="kw">await</span> ws.close(<span class="n">1008</span>)
+    <span class="kw">except</span> WebSocketDisconnect:
+        pass</pre>
+        </div>
+        <div class="cw">
+          <div class="cw-h"><span class="fn">Angular — authenticate WebSocket connection</span><span class="ln">TypeScript</span></div>
+          <pre"><span class="c">// Method 1 — token in URL (not ideal, logs may capture it)</span>
+<span class="kw">const</span> token = localStorage.getItem(<span class="s">'access_token'</span>);
+<span class="kw">this</span>.ws.connect(<span class="s">`ws://localhost:8000/ws?token=${token}`</span>);
+
+<span class="c">// Method 2 — token as first message (preferred)</span>
+<span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">AuthWsService</span> {
+  <span class="kw">private</span> socket$!: WebSocketSubject&lt;<span class="kw">any</span>&gt;;
+
+  connect(): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket$ = webSocket(<span class="s">'ws://localhost:8000/ws/secure'</span>);
+    <span class="c">// Send auth as FIRST message immediately after open</span>
+    <span class="kw">this</span>.socket$.pipe(
+      take(<span class="n">1</span>)  <span class="c">// wait for connection open</span>
+    ).subscribe(() => {
+      <span class="kw">this</span>.socket$.next({
+        type: <span class="s">'auth'</span>,
+        token: <span class="kw">this</span>.authService.getToken()
+      });
+    });
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECONNECT -->
+<section class="sec" id="sec-reconnect">
+  <div class="ph">
+    <div class="badge" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--o)">Reliability</div>
+    <h2>Reconnection &<br>Error Handling</h2>
+  </div>
+  <div class="grid">
+    <div class="card fw">
+      <div class="ch"><div class="ct">Production-Ready Auto-Reconnect Service</div><div class="ctag" style="background:rgba(245,158,11,0.12);color:var(--o)">RECONNECT</div></div>
+      <div class="cb">
+        <div class="cw">
+          <div class="cw-h"><span class="fn">robust-ws.service.ts</span><span class="ln">TypeScript</span></div>
+          <pre"><span class="dc">@Injectable</span>({ providedIn: <span class="s">'root'</span> })
+<span class="kw">export class</span> <span class="cl">RobustWsService</span> {
+  <span class="kw">private</span> socket?: WebSocket;  <span class="c">// native WebSocket for max control</span>
+  <span class="kw">private</span> reconnectAttempts = <span class="n">0</span>;
+  <span class="kw">private</span> maxReconnect = <span class="n">10</span>;
+  <span class="kw">private</span> pingInterval?: <span class="kw">any</span>;
+  <span class="kw">private</span> messageQueue: <span class="kw">any</span>[] = [];
+
+  messages$ = <span class="kw">new</span> Subject&lt;<span class="kw">any</span>&gt;();
+  status$ = <span class="kw">new</span> BehaviorSubject&lt;<span class="s">'connected'</span>|<span class="s">'disconnected'</span>|<span class="s">'reconnecting'</span>&gt;(<span class="s">'disconnected'</span>);
+
+  connect(url: <span class="kw">string</span>): <span class="kw">void</span> {
+    <span class="kw">this</span>.url = url;
+    <span class="kw">this</span>._connect();
+  }
+
+  <span class="kw">private</span> _connect(): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket = <span class="kw">new</span> WebSocket(<span class="kw">this</span>.url);
+
+    <span class="kw">this</span>.socket.onopen = () => {
+      <span class="kw">this</span>.reconnectAttempts = <span class="n">0</span>;
+      <span class="kw">this</span>.status$.next(<span class="s">'connected'</span>);
+      <span class="c">// Flush queued messages</span>
+      <span class="kw">while</span> (<span class="kw">this</span>.messageQueue.length) {
+        <span class="kw">this</span>.socket!.send(JSON.stringify(<span class="kw">this</span>.messageQueue.shift()));
+      }
+      <span class="c">// Start heartbeat ping every 30s</span>
+      <span class="kw">this</span>.pingInterval = setInterval(() => {
+        <span class="kw">if</span> (<span class="kw">this</span>.socket?.readyState === WebSocket.OPEN) {
+          <span class="kw">this</span>.socket.send(<span class="s">'ping'</span>);
+        }
+      }, <span class="n">30000</span>);
+    };
+
+    <span class="kw">this</span>.socket.onmessage = ({data}) => {
+      <span class="kw">if</span> (data === <span class="s">'pong'</span>) <span class="kw">return</span>;  <span class="c">// heartbeat response</span>
+      <span class="kw">this</span>.messages$.next(JSON.parse(data));
+    };
+
+    <span class="kw">this</span>.socket.onclose = (event) => {
+      clearInterval(<span class="kw">this</span>.pingInterval);
+      <span class="kw">if</span> (event.code === <span class="n">1000</span>) <span class="kw">return</span>;  <span class="c">// intentional close, don't reconnect</span>
+      <span class="kw">this</span>._scheduleReconnect();
+    };
+
+    <span class="kw">this</span>.socket.onerror = () => {
+      <span class="kw">this</span>.socket?.close();
+    };
+  }
+
+  <span class="kw">private</span> _scheduleReconnect(): <span class="kw">void</span> {
+    <span class="kw">if</span> (<span class="kw">this</span>.reconnectAttempts >= <span class="kw">this</span>.maxReconnect) {
+      <span class="kw">this</span>.status$.next(<span class="s">'disconnected'</span>);
+      console.error(<span class="s">'Max reconnect attempts reached'</span>);
+      <span class="kw">return</span>;
+    }
+    <span class="kw">this</span>.status$.next(<span class="s">'reconnecting'</span>);
+    <span class="c">// Exponential backoff: 1s, 2s, 4s, 8s, 16s... (max 30s)</span>
+    <span class="kw">const</span> delay = Math.min(<span class="n">1000</span> * Math.pow(<span class="n">2</span>, <span class="kw">this</span>.reconnectAttempts), <span class="n">30000</span>);
+    <span class="kw">this</span>.reconnectAttempts++;
+    setTimeout(() => <span class="kw">this</span>._connect(), delay);
+  }
+
+  send(msg: <span class="kw">object</span>): <span class="kw">void</span> {
+    <span class="kw">if</span> (<span class="kw">this</span>.socket?.readyState === WebSocket.OPEN) {
+      <span class="kw">this</span>.socket.send(JSON.stringify(msg));
+    } <span class="kw">else</span> {
+      <span class="c">// Queue the message, send when reconnected</span>
+      <span class="kw">this</span>.messageQueue.push(msg);
+    }
+  }
+
+  disconnect(): <span class="kw">void</span> {
+    <span class="kw">this</span>.socket?.close(<span class="n">1000</span>);  <span class="c">// 1000 = Normal closure (won't trigger reconnect)</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RxJS DEEP -->
+<section class="sec" id="sec-rxjs">
+  <div class="ph">
+    <div class="badge" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);color:var(--b2)">RxJS</div>
+    <h2>RxJS WebSocket —<br>The Complete Pattern</h2>
+    <p>Combine RxJS operators with WebSockets for powerful reactive real-time data pipelines.</p>
+  </div>
+  <div class="grid">
+    <div class="card fw">
+      <div class="ch"><div class="ct">RxJS webSocket() — Power Patterns</div><div class="ctag" style="background:rgba(6,182,212,0.12);color:var(--b2)">RxJS</div></div>
+      <div class="cb">
+        <div class="cw">
+          <div class="cw-h"><span class="fn">rxjs-ws-patterns.ts</span><span class="ln">TypeScript</span></div>
+          <pre"><span class="kw">import</span> { webSocket } <span class="kw">from</span> <span class="s">'rxjs/webSocket'</span>;
+<span class="kw">import</span> {
+  retry, debounceTime, throttleTime, distinctUntilChanged,
+  bufferTime, scan, filter, map, share, catchError, EMPTY
+} <span class="kw">from</span> <span class="s">'rxjs/operators'</span>;
+
+<span class="kw">const</span> socket$ = webSocket(<span class="s">'ws://localhost:8000/ws/dashboard'</span>).pipe(
+  retry({ count: <span class="n">5</span>, delay: <span class="n">2000</span> }),
+  share()  <span class="c">// IMPORTANT: share prevents multiple WS connections per subscription</span>
+);
+
+<span class="c">// ── Pattern 1: Rate limit UI updates ────────────────</span>
+<span class="c">// Server sends 100 updates/sec, but only re-render every 200ms</span>
+<span class="kw">const</span> throttledMetrics$ = socket$.pipe(
+  filter((m: <span class="kw">any</span>) => m.type === <span class="s">'metric'</span>),
+  throttleTime(<span class="n">200</span>)  <span class="c">// only take first per 200ms window</span>
+);
+
+<span class="c">// ── Pattern 2: Accumulate into array (for chart history) ─</span>
+<span class="kw">const</span> chartData$ = socket$.pipe(
+  filter((m: <span class="kw">any</span>) => m.type === <span class="s">'metric'</span>),
+  scan((history: <span class="kw">any</span>[], msg) => {
+    <span class="kw">const</span> next = [...history, msg];
+    <span class="kw">return</span> next.slice(-<span class="n">60</span>);  <span class="c">// keep last 60 points</span>
+  }, [])
+);
+
+<span class="c">// ── Pattern 3: Search with debounce via WS ────────────</span>
+<span class="c">// User types → send to WS → debounce → get results</span>
+searchQuery$ = <span class="kw">new</span> Subject&lt;<span class="kw">string</span>&gt;();
+
+searchQuery$.pipe(
+  debounceTime(<span class="n">300</span>),             <span class="c">// wait 300ms after user stops typing</span>
+  distinctUntilChanged(),         <span class="c">// skip if same as last value</span>
+  tap(query => socket$.next({ type: <span class="s">'search'</span>, query }))  <span class="c">// send to WS</span>
+).subscribe();
+
+<span class="kw">const</span> searchResults$ = socket$.pipe(
+  filter((m: <span class="kw">any</span>) => m.type === <span class="s">'search_results'</span>),
+  map((m: <span class="kw">any</span>) => m.results)
+);
+
+<span class="c">// ── Pattern 4: Group messages into batches ────────────</span>
+<span class="kw">const</span> batched$ = socket$.pipe(
+  bufferTime(<span class="n">500</span>),        <span class="c">// collect all messages in 500ms windows</span>
+  filter(batch => batch.length > <span class="n">0</span>)  <span class="c">// skip empty windows</span>
+);
+
+<span class="c">// ── Pattern 5: Handle errors gracefully ──────────────</span>
+<span class="kw">const</span> safe$ = socket$.pipe(
+  catchError(err => {
+    console.error(<span class="s">'WS error:'</span>, err);
+    <span class="kw">return</span> EMPTY;  <span class="c">// complete gracefully</span>
+  })
+);</pre>
+        </div>
+        <div class="tip">
+          <div class="tip-t">WebSocket Best Practices</div>
+          <ul>
+            <li>Always unsubscribe in ngOnDestroy using takeUntil(destroy$) or async pipe</li>
+            <li>Use share() operator so multiple components don't open multiple connections</li>
+            <li>Send structured messages with a "type" field — makes routing easy</li>
+            <li>Implement heartbeat (ping/pong) — some proxies close idle connections after 60s</li>
+            <li>Use wss:// (WebSocket Secure = WebSocket over TLS) in production</li>
+            <li>Use exponential backoff for reconnection — don't hammer the server</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function nav(name) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.si').forEach(s => s.classList.remove('on'));
+  document.getElementById('sec-' + name).classList.add('on');
+  document.querySelector(`[data-t="${name}"]`).classList.add('on');
+  window.scrollTo(0,0);
+  if(window.innerWidth<=768) document.getElementById('sb').classList.remove('open');
+}
+function switchTab(barId, tabId) {
+  const bar = document.getElementById(barId);
+  const card = bar.closest('.card');
+  card.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  card.querySelectorAll('.tab-content').forEach(t => t.classList.remove('on'));
+  document.getElementById(tabId).classList.add('on');
+  const idx = tabId.replace(/[a-z]+\d+/,'');
+  bar.querySelectorAll('.tab')[['a','b','c','d','e'].indexOf(tabId.slice(-1))].classList.add('on');
+}
+function filterC() {
+  const q = document.getElementById('sq').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+// Fix switchTab index
+document.querySelectorAll('.tab').forEach((tab, i) => {
+  tab.addEventListener('click', function() {
+    const bar = this.closest('.tab-bar');
+    if (!bar) return;
+    const tabs = bar.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

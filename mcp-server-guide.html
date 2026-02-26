@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Own MCP Server — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Literata:ital,wght@0,300;0,400;0,500;1,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b0f;--surface:#0f1419;--surface2:#171e25;--surface3:#1f2830;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e6f0f8;--muted:rgba(230,240,248,0.55);--dim:rgba(230,240,248,0.28);
+  --blue:#4fc3f7;--green:#81c995;--orange:#ffb74d;--purple:#ce93d8;
+  --red:#f07171;--teal:#4dd0e1;--accent:#4fc3f7;
+  --sidebar:260px;
+  --head:'Syne',sans-serif;--body:'Literata',Georgia,serif;--mono:'Fira Code',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;font-size:15px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);height:100vh;overflow-y:auto;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sb-brand{padding:20px 18px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:5}
+.sb-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4fc3f7,#81c995);display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 4px 16px rgba(79,195,247,0.3)}
+.sb-title{font-family:var(--head);font-size:15px;font-weight:800;line-height:1.2;background:linear-gradient(135deg,#fff,rgba(230,240,248,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-sub{font-size:11px;color:var(--dim);margin-top:2px;font-family:var(--mono)}
+.sb-sec{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--dim);padding:12px 18px 4px}
+.sb-link{display:flex;align-items:center;gap:8px;padding:7px 18px;font-size:12.5px;font-family:var(--head);color:var(--muted);border:none;background:none;cursor:pointer;width:100%;text-align:left;border-left:2px solid transparent;transition:all 120ms ease}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,0.03);border-left-color:rgba(255,255,255,0.2)}
+.sb-link.on{color:#fff;border-left-color:var(--blue);background:rgba(79,195,247,0.09)}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-prog{padding:12px 18px;border-top:1px solid var(--border);margin-top:auto}
+.prog-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:4px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));width:0%;transition:width .4s ease;border-radius:2px}
+.prog-n{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:3px;text-align:right}
+
+.main{flex:1;overflow-y:auto;min-width:0}
+
+.hero{padding:56px 60px 48px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 20% 60%,rgba(79,195,247,.08) 0%,transparent 65%),radial-gradient(ellipse 50% 70% at 80% 20%,rgba(129,201,149,.06) 0%,transparent 55%)}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.2em;margin-bottom:16px;display:flex;align-items:center;gap:10px;animation:fadeUp .5s ease both}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--blue)}
+.hero-h1{font-family:var(--head);font-size:clamp(28px,4vw,50px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:14px;animation:fadeUp .5s ease .07s both}
+.hero-h1 em{font-style:normal;color:var(--blue)}
+.hero-h1 b{font-style:normal;color:var(--green)}
+.hero-p{max-width:600px;font-size:15.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;animation:fadeUp .5s ease .14s both}
+.hero-stats{display:flex;gap:28px;animation:fadeUp .5s ease .21s both}
+.hstat-n{font-family:var(--head);font-size:26px;font-weight:800;line-height:1}
+.hstat-l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-top:2px}
+.hstat-sep{width:1px;background:var(--border);align-self:stretch;margin:4px 0}
+
+.content{max-width:900px;padding:0 60px;margin:0 auto}
+.module{padding:48px 0 24px;border-top:1px solid var(--border)}
+.module:first-child{border-top:none}
+.mod-n{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.mod-n::after{content:'';flex:1;max-width:32px;height:1px;opacity:.35;background:currentColor}
+.mod-title{font-family:var(--head);font-size:26px;font-weight:800;letter-spacing:-.4px;line-height:1.15;margin-bottom:8px}
+.mod-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:700px}
+
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:24px}
+.tcard{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all .18s ease;position:relative;overflow:hidden;cursor:default}
+.tcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cat);opacity:0;transition:opacity .18s ease}
+.tcard:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.tcard:hover::before{opacity:1}
+.tc-name{font-family:var(--head);font-size:13.5px;font-weight:700;margin-bottom:5px;line-height:1.3}
+.tc-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+.tc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tag{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--border)}
+.tag.blue{background:rgba(79,195,247,.15);color:var(--blue);border-color:rgba(79,195,247,.3)}
+.tag.green{background:rgba(129,201,149,.15);color:var(--green);border-color:rgba(129,201,149,.3)}
+.tag.orange{background:rgba(255,183,77,.15);color:var(--orange);border-color:rgba(255,183,77,.3)}
+
+.callout{border-radius:12px;padding:15px 20px;margin:12px 0 22px;font-size:13.5px;line-height:1.65}
+.cl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;font-weight:600}
+.callout p{color:var(--muted)}
+.cw{background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.2)}.cw .cl{color:var(--blue)}
+.ct{background:rgba(129,201,149,.08);border:1px solid rgba(129,201,149,.2)}.ct .cl{color:var(--green)}
+.ca{background:rgba(255,183,77,.08);border:1px solid rgba(255,183,77,.2)}.ca .cl{color:var(--orange)}
+
+.cb{background:#0c1016;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0}
+.ch{background:rgba(255,255,255,.04);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.cdots{display:flex;gap:5px}
+.cd{width:10px;height:10px;border-radius:50%}
+.cd:nth-child(1){background:#ff5f57}.cd:nth-child(2){background:#febc2e}.cd:nth-child(3){background:#28c840}
+.cf{font-family:var(--mono);font-size:11px;color:rgba(255,193,7,.8)}
+.clang{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase}
+pre{padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:#c8d8e8}
+.kw{color:#ff8c69}.str{color:#81c995}.num{color:#ffb74d}.fn{color:#82aaff}.cm{color:#4a6070;font-style:italic}.tp{color:#c792ea}.dec{color:#4fc3f7}
+
+.formula{background:var(--surface3);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:12.5px;color:#c8d8e8;margin:10px 0;border-left:3px solid var(--blue);line-height:1.9;overflow-x:auto}
+
+.iq{border:1px solid rgba(255,193,7,.2);border-radius:12px;padding:16px 20px;margin:14px 0 6px;background:rgba(255,193,7,.04);position:relative}
+.iq-badge{position:absolute;top:-9px;left:14px;background:rgba(255,193,7,.9);color:#070b0f;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:3px;font-weight:700}
+.iq-q{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:7px}
+.iq-a{font-size:13px;color:var(--muted);line-height:1.65}
+
+.chk{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border2);border-radius:12px;padding:20px 24px;margin:24px 0}
+.chk-lbl{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,193,7,.7);margin-bottom:10px}
+.chk h3{font-family:var(--head);font-size:15px;color:var(--text);margin-bottom:10px}
+.chk-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.chk-list li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px}
+.chk-list li::before{content:'□';color:rgba(255,193,7,.6);flex-shrink:0}
+
+/* Arch diagram */
+.arch{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:28px 24px;margin:20px 0;overflow-x:auto}
+.arch-title{font-family:var(--head);font-size:13px;font-weight:700;color:var(--muted);margin-bottom:20px}
+.arch-flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px}
+.arch-box{background:var(--surface3);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;text-align:center;flex-shrink:0;min-width:110px}
+.arch-box-name{font-family:var(--head);font-size:12px;font-weight:700;margin-bottom:3px}
+.arch-box-sub{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+.arch-arrow{font-size:18px;color:var(--dim);margin:0 4px;flex-shrink:0}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:0;margin:14px 0 22px}
+.step{display:flex;gap:16px;padding:10px 0}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-family:var(--head);font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.step-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+.step-conn{width:1px;height:10px;background:var(--border);margin-left:14px}
+
+.ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.ctable th{background:var(--surface3);padding:9px 14px;text-align:left;font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.ctable td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--muted);line-height:1.5}
+.ctable tr:hover td{background:rgba(255,255,255,.02)}
+
+footer{background:var(--surface);border-top:1px solid var(--border);padding:24px 60px;text-align:center;font-size:12px;color:var(--dim)}
+footer strong{color:var(--blue)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+    </div>
+    <div class="sb-title">Build an MCP Server</div>
+    <div class="sb-sub">From Scratch · Complete Guide</div>
+  </div>
+  <div class="sb-sec">Chapters</div>
+  <button class="sb-link on" onclick="goTo('c1')"><span class="sb-dot" style="background:var(--blue)"></span>01 · What is MCP?</button>
+  <button class="sb-link" onclick="goTo('c2')"><span class="sb-dot" style="background:var(--green)"></span>02 · Architecture & Concepts</button>
+  <button class="sb-link" onclick="goTo('c3')"><span class="sb-dot" style="background:var(--orange)"></span>03 · Environment Setup</button>
+  <button class="sb-link" onclick="goTo('c4')"><span class="sb-dot" style="background:var(--purple)"></span>04 · Your First MCP Server</button>
+  <button class="sb-link" onclick="goTo('c5')"><span class="sb-dot" style="background:var(--teal)"></span>05 · Tools — File System MCP</button>
+  <button class="sb-link" onclick="goTo('c6')"><span class="sb-dot" style="background:var(--blue)"></span>06 · Resources & Prompts</button>
+  <button class="sb-link" onclick="goTo('c7')"><span class="sb-dot" style="background:var(--green)"></span>07 · Database MCP Server</button>
+  <button class="sb-link" onclick="goTo('c8')"><span class="sb-dot" style="background:var(--orange)"></span>08 · Connect to Claude Desktop</button>
+  <button class="sb-link" onclick="goTo('c9')"><span class="sb-dot" style="background:var(--purple)"></span>09 · Connect to Your RAG System</button>
+  <button class="sb-link" onclick="goTo('c10')"><span class="sb-dot" style="background:var(--teal)"></span>10 · Production & Portfolio</button>
+  <div class="sb-prog">
+    <div class="prog-label">Reading progress</div>
+    <div class="prog-bar"><div class="prog-fill" id="pf"></div></div>
+    <div class="prog-n" id="pn">0%</div>
+  </div>
+</nav>
+
+<main class="main" id="ms">
+<div class="hero">
+  <div class="hero-eyebrow">The Next Step After RAG</div>
+  <h1 class="hero-h1">Build Your Own <em>MCP Server</em><br>From <b>Scratch</b></h1>
+  <p class="hero-p">MCP (Model Context Protocol) is how you connect AI models like Claude to real data, real tools, and real systems. You already built a RAG system — now build the protocol layer that makes Claude actually useful in the real world.</p>
+  <div class="hero-stats">
+    <div><div class="hstat-n" style="color:var(--blue)">10</div><div class="hstat-l">Chapters</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--green)">TypeScript</div><div class="hstat-l">Language</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--orange)">4</div><div class="hstat-l">Real Projects</div></div>
+    <div class="hstat-sep"></div>
+    <div><div class="hstat-n" style="color:var(--purple)">RAG+</div><div class="hstat-l">Connects to Yours</div></div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- C1 -->
+<section class="module" id="c1">
+  <div class="mod-n" style="color:var(--blue)">Chapter 01</div>
+  <h2 class="mod-title">What Is MCP and Why Should You Care?</h2>
+  <p class="mod-desc">MCP stands for Model Context Protocol. It's an open standard created by Anthropic that defines a clean, consistent way for AI models to connect to external data sources and tools. Think of it as a universal adapter — like USB-C, but for AI.</p>
+
+  <div class="callout cw"><div class="cl">💡 The Core Idea</div><p>Without MCP: every app that wants Claude to access a database, file system, or API has to build a custom integration from scratch. With MCP: you write an MCP server once, and <em>any</em> MCP-compatible AI client (Claude Desktop, your own app, cursor, etc.) can use it immediately — no changes required on the AI side.</p></div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">The Problem MCP Solves</div>
+      <div class="tc-desc">Before MCP, connecting Claude to your database required custom prompt engineering, manual data fetching, and fragile string parsing. Every new data source meant rebuilding the integration. MCP standardizes this completely.</div>
+      <div class="tc-tags"><span class="tag blue">Core Concept</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">MCP vs Function Calling / Tool Use</div>
+      <div class="tc-desc">Tool use / function calling is Claude's ability to call a tool. MCP is the protocol that defines how tools are discovered, described, and invoked. MCP tools ARE function calls — but the discovery and lifecycle is standardized.</div>
+      <div class="tc-tags"><span class="tag blue">Key Distinction</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">What You Can Build</div>
+      <div class="tc-desc">File system access. Database queries. Web scraping. GitHub integration. Slack messages. Calendar access. Custom ML model inference. Anything you can code, you can expose as an MCP server — and Claude can use it.</div>
+      <div class="tc-tags"><span class="tag green">Limitless</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">MCP + Your RAG System</div>
+      <div class="tc-desc">You already built a RAG system with a FastAPI backend. You can wrap your /upload and /query endpoints as MCP tools so Claude can upload documents and query them natively from Claude Desktop. Chapter 9 covers exactly this.</div>
+      <div class="tc-tags"><span class="tag orange">Your Project</span></div>
+    </div>
+  </div>
+
+  <div class="iq"><div class="iq-badge">Interview Q</div>
+    <div class="iq-q">"What is MCP and how does it differ from just calling an API?"</div>
+    <div class="iq-a">MCP is a standardized protocol for AI-tool communication. When you call an API, you hardcode the URL, parameters, and response parsing. With MCP, the server self-describes its capabilities using a standard schema — the AI client discovers them automatically, understands what inputs are needed, and handles the interaction protocol. It's the difference between bespoke integrations and a plug-and-play standard. Once you write an MCP server, any MCP-compatible client works with it.</div>
+  </div>
+</section>
+
+<!-- C2 -->
+<section class="module" id="c2">
+  <div class="mod-n" style="color:var(--green)">Chapter 02</div>
+  <h2 class="mod-title">Architecture & Core Concepts</h2>
+  <p class="mod-desc">MCP has three primitive types: Tools, Resources, and Prompts. Understanding these three is the entire mental model you need. Everything else is implementation.</p>
+
+  <div class="arch">
+    <div class="arch-title">MCP Architecture — How It Flows</div>
+    <div class="arch-flow">
+      <div class="arch-box" style="border-color:rgba(79,195,247,.4)"><div class="arch-box-name" style="color:var(--blue)">Host App</div><div class="arch-box-sub">Claude Desktop<br>Your App</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="border-color:rgba(79,195,247,.3)"><div class="arch-box-name" style="color:var(--blue)">MCP Client</div><div class="arch-box-sub">Built into host<br>Manages servers</div></div>
+      <div class="arch-arrow">⟺</div>
+      <div class="arch-box" style="border-color:rgba(129,201,149,.4)"><div class="arch-box-name" style="color:var(--green)">MCP Server</div><div class="arch-box-sub">Your code<br>Exposes tools</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="border-color:rgba(255,183,77,.4)"><div class="arch-box-name" style="color:var(--orange)">Your Data</div><div class="arch-box-sub">DB / Files<br>APIs / ML</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--dim);margin-top:14px">Transport layer: STDIO (local processes) or HTTP+SSE (remote servers). The MCP client in Claude Desktop manages connections to all your registered MCP servers.</p>
+  </div>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">🔧 Tools</div>
+      <div class="tc-desc">Actions Claude can invoke. Like a function call: has a name, description, input schema (JSON Schema), and returns text. Examples: search_database(query), read_file(path), send_email(to, body). Claude decides when to call them.</div>
+      <div class="tc-tags"><span class="tag green">Primary Primitive</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">📄 Resources</div>
+      <div class="tc-desc">Static or dynamic data Claude can read. Like files — they have a URI and content. Examples: file:///docs/readme.md, db://customers/schema. Claude can read resources directly into context. Like RAG but fully structured.</div>
+      <div class="tc-tags"><span class="tag green">Data Access</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">💬 Prompts</div>
+      <div class="tc-desc">Reusable prompt templates with dynamic arguments. Define them once in your server, use them from any client. Example: summarize_document(doc_id, style='bullet'). Useful for standardizing how Claude approaches common tasks.</div>
+      <div class="tc-tags"><span class="tag green">Prompt Engineering</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">Transport: STDIO vs HTTP</div>
+      <div class="tc-desc">STDIO: server runs as a subprocess, communicates via stdin/stdout. Best for local tools and Claude Desktop. HTTP+SSE: server runs as a web service. Best for remote servers, team use, and production deployment. Both use JSON-RPC 2.0 underneath.</div>
+      <div class="tc-tags"><span class="tag blue">Protocol Layer</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">JSON-RPC 2.0 Underneath</div>
+      <div class="tc-desc">All MCP messages are JSON-RPC 2.0: {jsonrpc:"2.0", method:"tools/call", params:{...}, id:1}. You never write this manually — the SDK handles it. But knowing it helps when debugging with raw logs.</div>
+      <div class="tc-tags"><span class="tag blue">Under the Hood</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--green)">
+      <div class="tc-name">Lifecycle: initialize → list → call</div>
+      <div class="tc-desc">Client sends initialize request → server responds with capabilities → client lists tools/resources → user prompt triggers tool call → server executes and returns result → Claude synthesizes response. Clean, predictable lifecycle.</div>
+      <div class="tc-tags"><span class="tag orange">Lifecycle</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- C3 -->
+<section class="module" id="c3">
+  <div class="mod-n" style="color:var(--orange)">Chapter 03</div>
+  <h2 class="mod-title">Environment Setup</h2>
+  <p class="mod-desc">MCP servers are most commonly written in TypeScript using the official @modelcontextprotocol/sdk. You can also use Python. This guide uses TypeScript — it has the best SDK support and matches what Anthropic uses internally.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><div class="step-title">Install Node.js 18+</div><div class="step-desc">MCP requires Node.js 18 or higher. Check: node --version. Download from nodejs.org if needed. Use nvm for version management.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><div class="step-title">Create project</div><div class="step-desc">mkdir my-mcp-server && cd my-mcp-server && npm init -y</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><div class="step-title">Install MCP SDK</div><div class="step-desc">npm install @modelcontextprotocol/sdk zod. Zod is for input validation — same role as Pydantic in your Python backend.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><div class="step-title">Install TypeScript tooling</div><div class="step-desc">npm install -D typescript @types/node tsx. tsx lets you run TypeScript directly without a build step during development.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body"><div class="step-title">Configure tsconfig.json</div><div class="step-desc">Set target to ES2022, module to Node16, and enable strict mode. The MCP SDK requires modern JS features.</div></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">package.json</div><div class="clang">json</div></div>
+<pre>{
+  <span class="str">"name"</span>: <span class="str">"my-mcp-server"</span>,
+  <span class="str">"type"</span>: <span class="str">"module"</span>,
+  <span class="str">"scripts"</span>: {
+    <span class="str">"dev"</span>:   <span class="str">"tsx src/index.ts"</span>,
+    <span class="str">"build"</span>: <span class="str">"tsc"</span>,
+    <span class="str">"start"</span>: <span class="str">"node dist/index.js"</span>
+  },
+  <span class="str">"dependencies"</span>: {
+    <span class="str">"@modelcontextprotocol/sdk"</span>: <span class="str">"^1.0.0"</span>,
+    <span class="str">"zod"</span>: <span class="str">"^3.22.0"</span>
+  },
+  <span class="str">"devDependencies"</span>: {
+    <span class="str">"typescript"</span>: <span class="str">"^5.3.0"</span>,
+    <span class="str">"@types/node"</span>: <span class="str">"^20.0.0"</span>,
+    <span class="str">"tsx"</span>: <span class="str">"^4.0.0"</span>
+  }
+}</pre></div>
+</section>
+
+<!-- C4 -->
+<section class="module" id="c4">
+  <div class="mod-n" style="color:var(--purple)">Chapter 04</div>
+  <h2 class="mod-title">Your First MCP Server — Hello Tool</h2>
+  <p class="mod-desc">The simplest possible MCP server: one tool that echoes a message back. This teaches you the complete skeleton. Every MCP server you build follows this exact pattern.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">src/index.ts — Minimal MCP Server</div><div class="clang">typescript</div></div>
+<pre><span class="kw">import</span> { Server } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/index.js"</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/stdio.js"</span>;
+<span class="kw">import</span> { CallToolRequestSchema, ListToolsRequestSchema } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/types.js"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="cm">// ─── 1. Create the server ─────────────────────────────────</span>
+<span class="cm">// Name and version are shown in Claude Desktop's server list</span>
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">Server</span>(
+  { name: <span class="str">"my-first-server"</span>, version: <span class="str">"1.0.0"</span> },
+  { capabilities: { tools: {} } }   <span class="cm">// declare what we support</span>
+);
+
+<span class="cm">// ─── 2. List available tools ──────────────────────────────</span>
+<span class="cm">// Claude calls this to discover what your server can do</span>
+server.<span class="fn">setRequestHandler</span>(ListToolsRequestSchema, <span class="kw">async</span> () => ({
+  tools: [{
+    name: <span class="str">"greet"</span>,
+    description: <span class="str">"Say hello to someone. Use when the user wants a greeting."</span>,
+    inputSchema: {
+      type: <span class="str">"object"</span>,
+      properties: {
+        name: { type: <span class="str">"string"</span>, description: <span class="str">"The person to greet"</span> }
+      },
+      required: [<span class="str">"name"</span>]
+    }
+  }]
+}));
+
+<span class="cm">// ─── 3. Handle tool calls ─────────────────────────────────</span>
+<span class="cm">// Claude calls this when it decides to use a tool</span>
+server.<span class="fn">setRequestHandler</span>(CallToolRequestSchema, <span class="kw">async</span> (request) => {
+  <span class="kw">if</span> (request.params.name === <span class="str">"greet"</span>) {
+    <span class="kw">const</span> { name } = request.params.arguments <span class="kw">as</span> { name: <span class="tp">string</span> };
+    <span class="kw">return</span> {
+      content: [{ type: <span class="str">"text"</span>, text: <span class="str">`Hello, ${name}! 👋 MCP is working.`</span> }]
+    };
+  }
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Unknown tool: ${request.params.name}`</span>);
+});
+
+<span class="cm">// ─── 4. Start the server ──────────────────────────────────</span>
+<span class="cm">// STDIO transport: Claude Desktop runs this as a subprocess</span>
+<span class="kw">const</span> transport = <span class="kw">new</span> <span class="fn">StdioServerTransport</span>();
+<span class="kw">await</span> server.<span class="fn">connect</span>(transport);
+<span class="cm">// Server is now running — waiting for JSON-RPC messages on stdin</span></pre></div>
+
+  <div class="callout ct"><div class="cl">✅ The Pattern to Remember</div><p>Every MCP server does exactly 4 things: (1) create Server with capabilities, (2) handle ListTools to describe available tools, (3) handle CallTool to execute them, (4) connect to a transport. That's the complete pattern — no matter how complex your server gets.</p></div>
+</section>
+
+<!-- C5 -->
+<section class="module" id="c5">
+  <div class="mod-n" style="color:var(--teal)">Chapter 05</div>
+  <h2 class="mod-title">Real MCP Server — File System Tools</h2>
+  <p class="mod-desc">A practical MCP server that lets Claude read, write, and list files on your computer. This is one of the most useful real-world MCP servers and teaches you input validation, error handling, and security patterns.</p>
+
+  <div class="callout ca"><div class="cl">🔒 Security First</div><p>Any MCP tool that touches the file system MUST validate paths. Never allow arbitrary path traversal. Restrict to a defined root directory. This applies to any MCP server that touches sensitive systems — database, network, etc.</p></div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">src/filesystem-server.ts</div><div class="clang">typescript</div></div>
+<pre><span class="kw">import</span> { Server } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/index.js"</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/stdio.js"</span>;
+<span class="kw">import</span> { CallToolRequestSchema, ListToolsRequestSchema } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/types.js"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> fs <span class="kw">from</span> <span class="str">"node:fs/promises"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> path <span class="kw">from</span> <span class="str">"node:path"</span>;
+
+<span class="cm">// Only allow access inside this directory (security!)</span>
+<span class="kw">const</span> ALLOWED_ROOT = path.<span class="fn">resolve</span>(<span class="str">"./workspace"</span>);
+
+<span class="fn">function</span> <span class="fn">safePath</span>(userPath: <span class="tp">string</span>): <span class="tp">string</span> {
+  <span class="kw">const</span> resolved = path.<span class="fn">resolve</span>(ALLOWED_ROOT, userPath);
+  <span class="kw">if</span> (!resolved.<span class="fn">startsWith</span>(ALLOWED_ROOT)) {
+    <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Path traversal not allowed"</span>);
+  }
+  <span class="kw">return</span> resolved;
+}
+
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">Server</span>(
+  { name: <span class="str">"filesystem-server"</span>, version: <span class="str">"1.0.0"</span> },
+  { capabilities: { tools: {} } }
+);
+
+server.<span class="fn">setRequestHandler</span>(ListToolsRequestSchema, <span class="kw">async</span> () => ({
+  tools: [
+    {
+      name: <span class="str">"read_file"</span>,
+      description: <span class="str">"Read the contents of a file. Returns the full text content."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: { path: { type: <span class="str">"string"</span> } }, required: [<span class="str">"path"</span>] }
+    },
+    {
+      name: <span class="str">"write_file"</span>,
+      description: <span class="str">"Write content to a file. Creates it if it doesn't exist."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: { path: { type: <span class="str">"string"</span> }, content: { type: <span class="str">"string"</span> } }, required: [<span class="str">"path"</span>, <span class="str">"content"</span>] }
+    },
+    {
+      name: <span class="str">"list_files"</span>,
+      description: <span class="str">"List all files and folders in a directory."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: { directory: { type: <span class="str">"string"</span>, default: <span class="str">"."</span> } } }
+    }
+  ]
+}));
+
+server.<span class="fn">setRequestHandler</span>(CallToolRequestSchema, <span class="kw">async</span> (req) => {
+  <span class="kw">const</span> { name, arguments: args } = req.params;
+  
+  <span class="kw">try</span> {
+    <span class="kw">if</span> (name === <span class="str">"read_file"</span>) {
+      <span class="kw">const</span> content = <span class="kw">await</span> fs.<span class="fn">readFile</span>(<span class="fn">safePath</span>(args.path <span class="kw">as</span> <span class="tp">string</span>), <span class="str">"utf-8"</span>);
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: content }] };
+    }
+    <span class="kw">if</span> (name === <span class="str">"write_file"</span>) {
+      <span class="kw">await</span> fs.<span class="fn">writeFile</span>(<span class="fn">safePath</span>(args.path <span class="kw">as</span> <span class="tp">string</span>), args.content <span class="kw">as</span> <span class="tp">string</span>);
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`✅ Written to ${args.path}`</span> }] };
+    }
+    <span class="kw">if</span> (name === <span class="str">"list_files"</span>) {
+      <span class="kw">const</span> dir = <span class="fn">safePath</span>((args.directory <span class="kw">as</span> <span class="tp">string</span>) ?? <span class="str">"."</span>);
+      <span class="kw">const</span> entries = <span class="kw">await</span> fs.<span class="fn">readdir</span>(dir, { withFileTypes: <span class="kw">true</span> });
+      <span class="kw">const</span> list = entries.<span class="fn">map</span>(e => <span class="str">`${e.isDirectory() ? "📁" : "📄"} ${e.name}`</span>).<span class="fn">join</span>(<span class="str">"\n"</span>);
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: list }] };
+    }
+  } <span class="kw">catch</span> (err: <span class="tp">any</span>) {
+    <span class="cm">// Return errors as content — Claude sees the error and can explain it</span>
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`Error: ${err.message}`</span> }], isError: <span class="kw">true</span> };
+  }
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Unknown tool: ${name}`</span>);
+});
+
+<span class="kw">await</span> server.<span class="fn">connect</span>(<span class="kw">new</span> <span class="fn">StdioServerTransport</span>());</pre></div>
+</section>
+
+<!-- C6 -->
+<section class="module" id="c6">
+  <div class="mod-n" style="color:var(--blue)">Chapter 06</div>
+  <h2 class="mod-title">Resources & Prompts</h2>
+  <p class="mod-desc">Tools are for actions. Resources are for data. Prompts are for reusable templates. Adding all three makes your MCP server a complete context provider for Claude.</p>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">Resources — Static URI-addressable Data</div>
+      <div class="tc-desc">Define a URI scheme (e.g. file://, db://, config://) and expose data under it. Claude can read resources directly into its context window. Perfect for schemas, documentation, configuration files, or database records.</div>
+      <div class="tc-tags"><span class="tag blue">Data Access</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">Resource Templates</div>
+      <div class="tc-desc">Dynamic resources with URI templates: file:///{path}, db://customers/{id}. The client fills in the placeholders. Enables Claude to browse through data structures — "show me customer {id}".</div>
+      <div class="tc-tags"><span class="tag blue">Dynamic</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--blue)">
+      <div class="tc-name">Prompts — Reusable Templates</div>
+      <div class="tc-desc">Pre-defined prompt patterns with arguments. Listed just like tools. Example: a "code_review" prompt that takes language and code arguments and returns a structured system prompt for reviewing code in that language.</div>
+      <div class="tc-tags"><span class="tag green">Templates</span></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">src/resources-example.ts — Adding Resources & Prompts</div><div class="clang">typescript</div></div>
+<pre><span class="cm">// Add resources support to server capabilities:</span>
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">Server</span>(
+  { name: <span class="str">"full-server"</span>, version: <span class="str">"1.0.0"</span> },
+  { capabilities: { tools: {}, resources: {}, prompts: {} } }  <span class="cm">// ← all three</span>
+);
+
+<span class="cm">// ─── Resources ────────────────────────────────────────────</span>
+<span class="kw">import</span> { ListResourcesRequestSchema, ReadResourceRequestSchema,
+         ListPromptsRequestSchema, GetPromptRequestSchema } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/types.js"</span>;
+
+server.<span class="fn">setRequestHandler</span>(ListResourcesRequestSchema, <span class="kw">async</span> () => ({
+  resources: [{
+    uri: <span class="str">"config://app/settings"</span>,
+    name: <span class="str">"Application Settings"</span>,
+    description: <span class="str">"Current app configuration"</span>,
+    mimeType: <span class="str">"application/json"</span>
+  }]
+}));
+
+server.<span class="fn">setRequestHandler</span>(ReadResourceRequestSchema, <span class="kw">async</span> (req) => {
+  <span class="kw">if</span> (req.params.uri === <span class="str">"config://app/settings"</span>) {
+    <span class="kw">return</span> { contents: [{ uri: req.params.uri, mimeType: <span class="str">"application/json"</span>,
+      text: <span class="fn">JSON.stringify</span>({ model: <span class="str">"gemini-2.0-flash"</span>, top_k: <span class="num">5</span>, version: <span class="str">"1.0.0"</span> }, <span class="kw">null</span>, <span class="num">2</span>) }] };
+  }
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Resource not found"</span>);
+});
+
+<span class="cm">// ─── Prompts ──────────────────────────────────────────────</span>
+server.<span class="fn">setRequestHandler</span>(ListPromptsRequestSchema, <span class="kw">async</span> () => ({
+  prompts: [{ name: <span class="str">"summarize"</span>, description: <span class="str">"Summarize a document"</span>,
+    arguments: [{ name: <span class="str">"style"</span>, description: <span class="str">"bullet | paragraph | executive"</span>, required: <span class="kw">false</span> }] }]
+}));
+
+server.<span class="fn">setRequestHandler</span>(GetPromptRequestSchema, <span class="kw">async</span> (req) => {
+  <span class="kw">if</span> (req.params.name === <span class="str">"summarize"</span>) {
+    <span class="kw">const</span> style = req.params.arguments?.style ?? <span class="str">"paragraph"</span>;
+    <span class="kw">return</span> { messages: [{ role: <span class="str">"user"</span>, content: { type: <span class="str">"text"</span>,
+      text: <span class="str">`Please summarize the provided document in ${style} format. Be concise and accurate.`</span> }}] };
+  }
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Prompt not found"</span>);
+});</pre></div>
+</section>
+
+<!-- C7 -->
+<section class="module" id="c7">
+  <div class="mod-n" style="color:var(--green)">Chapter 07</div>
+  <h2 class="mod-title">Database MCP Server</h2>
+  <p class="mod-desc">The most practical MCP server for portfolios and real work: expose a SQLite database to Claude. Claude can then write and run SQL queries, explore schemas, and analyze data — all through natural language.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">src/database-server.ts</div><div class="clang">typescript</div></div>
+<pre><span class="kw">import</span> Database <span class="kw">from</span> <span class="str">"better-sqlite3"</span>;  <span class="cm">// npm install better-sqlite3</span>
+<span class="kw">import</span> { Server } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/index.js"</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/stdio.js"</span>;
+<span class="kw">import</span> { CallToolRequestSchema, ListToolsRequestSchema,
+         ListResourcesRequestSchema, ReadResourceRequestSchema } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/types.js"</span>;
+
+<span class="kw">const</span> db = <span class="kw">new</span> <span class="fn">Database</span>(<span class="str">"./data.db"</span>);
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">Server</span>(
+  { name: <span class="str">"sqlite-server"</span>, version: <span class="str">"1.0.0"</span> },
+  { capabilities: { tools: {}, resources: {} } }
+);
+
+<span class="cm">// Expose database schema as a Resource so Claude can see the structure</span>
+server.<span class="fn">setRequestHandler</span>(ListResourcesRequestSchema, <span class="kw">async</span> () => ({
+  resources: [{ uri: <span class="str">"db://schema"</span>, name: <span class="str">"Database Schema"</span>, mimeType: <span class="str">"text/plain"</span> }]
+}));
+
+server.<span class="fn">setRequestHandler</span>(ReadResourceRequestSchema, <span class="kw">async</span> () => {
+  <span class="kw">const</span> tables = db.<span class="fn">prepare</span>(<span class="str">"SELECT name, sql FROM sqlite_master WHERE type='table'"</span>).<span class="fn">all</span>();
+  <span class="kw">const</span> schema = tables.<span class="fn">map</span>((t: <span class="tp">any</span>) => t.sql).<span class="fn">join</span>(<span class="str">"\n\n"</span>);
+  <span class="kw">return</span> { contents: [{ uri: <span class="str">"db://schema"</span>, mimeType: <span class="str">"text/plain"</span>, text: schema }] };
+});
+
+server.<span class="fn">setRequestHandler</span>(ListToolsRequestSchema, <span class="kw">async</span> () => ({
+  tools: [
+    {
+      name: <span class="str">"query"</span>,
+      description: <span class="str">"Run a SELECT SQL query. Read-only. Use for data retrieval and analysis."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: { sql: { type: <span class="str">"string"</span> } }, required: [<span class="str">"sql"</span>] }
+    },
+    {
+      name: <span class="str">"execute"</span>,
+      description: <span class="str">"Run INSERT, UPDATE, or DELETE SQL. Modifies data — use carefully."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: { sql: { type: <span class="str">"string"</span> } }, required: [<span class="str">"sql"</span>] }
+    }
+  ]
+}));
+
+server.<span class="fn">setRequestHandler</span>(CallToolRequestSchema, <span class="kw">async</span> (req) => {
+  <span class="kw">const</span> { name, arguments: args } = req.params;
+  <span class="kw">const</span> sql = args.sql <span class="kw">as</span> <span class="tp">string</span>;
+  <span class="kw">try</span> {
+    <span class="kw">if</span> (name === <span class="str">"query"</span>) {
+      <span class="kw">if</span> (!sql.<span class="fn">trim</span>().<span class="fn">toUpperCase</span>().<span class="fn">startsWith</span>(<span class="str">"SELECT"</span>)) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">"Only SELECT queries allowed"</span>);
+      <span class="kw">const</span> rows = db.<span class="fn">prepare</span>(sql).<span class="fn">all</span>();
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="fn">JSON.stringify</span>(rows, <span class="kw">null</span>, <span class="num">2</span>) }] };
+    }
+    <span class="kw">if</span> (name === <span class="str">"execute"</span>) {
+      <span class="kw">const</span> result = db.<span class="fn">prepare</span>(sql).<span class="fn">run</span>();
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`Affected ${result.changes} rows`</span> }] };
+    }
+  } <span class="kw">catch</span> (e: <span class="tp">any</span>) {
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`SQL Error: ${e.message}`</span> }], isError: <span class="kw">true</span> };
+  }
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Unknown tool`</span>);
+});
+
+<span class="kw">await</span> server.<span class="fn">connect</span>(<span class="kw">new</span> <span class="fn">StdioServerTransport</span>());</pre></div>
+</section>
+
+<!-- C8 -->
+<section class="module" id="c8">
+  <div class="mod-n" style="color:var(--orange)">Chapter 08</div>
+  <h2 class="mod-title">Connect to Claude Desktop</h2>
+  <p class="mod-desc">Claude Desktop is the fastest way to test your MCP server. Once configured, Claude will automatically discover your tools and use them in conversations.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><div class="step-title">Build your server</div><div class="step-desc">npm run build → produces dist/index.js. This is what Claude Desktop will execute.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><div class="step-title">Find Claude Desktop config</div><div class="step-desc">Mac: ~/Library/Application Support/Claude/claude_desktop_config.json. Windows: %APPDATA%\Claude\claude_desktop_config.json</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><div class="step-title">Add your server to config</div><div class="step-desc">See the JSON config below. The key is your server name, value has command and args pointing to your built file.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><div class="step-title">Restart Claude Desktop</div><div class="step-desc">Fully quit and reopen. You should see your server in Settings → MCP Servers. A green dot means it connected successfully.</div></div>
+    </div>
+    <div class="step-conn"></div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body"><div class="step-title">Test it</div><div class="step-desc">Type a message that should trigger your tool. For the file server: "List the files in my workspace." Claude should call list_files automatically.</div></div>
+    </div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">claude_desktop_config.json</div><div class="clang">json</div></div>
+<pre>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"filesystem"</span>: {
+      <span class="str">"command"</span>: <span class="str">"node"</span>,
+      <span class="str">"args"</span>: [<span class="str">"/absolute/path/to/my-mcp-server/dist/index.js"</span>],
+      <span class="str">"env"</span>: {}
+    },
+    <span class="str">"database"</span>: {
+      <span class="str">"command"</span>: <span class="str">"node"</span>,
+      <span class="str">"args"</span>: [<span class="str">"/absolute/path/to/database-server/dist/index.js"</span>]
+    },
+    <span class="str">"rag-system"</span>: {
+      <span class="str">"command"</span>: <span class="str">"node"</span>,
+      <span class="str">"args"</span>: [<span class="str">"/path/to/rag-mcp/dist/index.js"</span>],
+      <span class="str">"env"</span>: { <span class="str">"RAG_API_URL"</span>: <span class="str">"http://localhost:8000"</span> }
+    }
+  }
+}
+<span class="cm">// ↑ Register as many MCP servers as you want. All run simultaneously.</span></pre></div>
+</section>
+
+<!-- C9 -->
+<section class="module" id="c9">
+  <div class="mod-n" style="color:var(--purple)">Chapter 09</div>
+  <h2 class="mod-title">MCP Wrapper for Your RAG System</h2>
+  <p class="mod-desc">This is where your two projects connect. Build an MCP server that wraps your FastAPI RAG backend — so Claude Desktop can upload documents and ask questions natively, without any UI.</p>
+
+  <div class="callout cw"><div class="cl">💡 The Power Move</div><p>You already have a working RAG system with /upload and /query endpoints. This MCP server is just a thin adapter that calls those endpoints. Claude Desktop users can then say "Upload this document" or "What does my uploaded research say about X?" and Claude handles everything.</p></div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">src/rag-mcp-server.ts — Connects to Your RAG FastAPI Backend</div><div class="clang">typescript</div></div>
+<pre><span class="kw">import</span> { Server } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/index.js"</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/stdio.js"</span>;
+<span class="kw">import</span> { CallToolRequestSchema, ListToolsRequestSchema } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/types.js"</span>;
+<span class="kw">import</span> { readFile } <span class="kw">from</span> <span class="str">"node:fs/promises"</span>;
+
+<span class="kw">const</span> RAG_URL = process.env.RAG_API_URL ?? <span class="str">"http://localhost:8000/api"</span>;
+
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">Server</span>(
+  { name: <span class="str">"rag-system"</span>, version: <span class="str">"1.0.0"</span> },
+  { capabilities: { tools: {} } }
+);
+
+server.<span class="fn">setRequestHandler</span>(ListToolsRequestSchema, <span class="kw">async</span> () => ({
+  tools: [
+    {
+      name: <span class="str">"upload_document"</span>,
+      description: <span class="str">"Upload a local file to the RAG system for indexing. Use when the user wants to add a document for Q&A."</span>,
+      inputSchema: { type: <span class="str">"object"</span>,
+        properties: { file_path: { type: <span class="str">"string"</span>, description: <span class="str">"Absolute path to the file to upload"</span> } },
+        required: [<span class="str">"file_path"</span>] }
+    },
+    {
+      name: <span class="str">"query_documents"</span>,
+      description: <span class="str">"Ask a question about uploaded documents. Returns an AI-generated answer with sources."</span>,
+      inputSchema: { type: <span class="str">"object"</span>,
+        properties: {
+          question: { type: <span class="str">"string"</span>, description: <span class="str">"The question to answer from the documents"</span> },
+          provider: { type: <span class="str">"string"</span>, enum: [<span class="str">"openai"</span>, <span class="str">"gemini"</span>, <span class="str">"puter"</span>], default: <span class="str">"openai"</span> }
+        },
+        required: [<span class="str">"question"</span>] }
+    },
+    {
+      name: <span class="str">"get_stats"</span>,
+      description: <span class="str">"Get information about how many documents and chunks are indexed."</span>,
+      inputSchema: { type: <span class="str">"object"</span>, properties: {} }
+    }
+  ]
+}));
+
+server.<span class="fn">setRequestHandler</span>(CallToolRequestSchema, <span class="kw">async</span> (req) => {
+  <span class="kw">const</span> { name, arguments: args } = req.params;
+
+  <span class="kw">if</span> (name === <span class="str">"upload_document"</span>) {
+    <span class="kw">const</span> filePath = args.file_path <span class="kw">as</span> <span class="tp">string</span>;
+    <span class="kw">const</span> fileContent = <span class="kw">await</span> <span class="fn">readFile</span>(filePath);
+    <span class="kw">const</span> fileName = filePath.<span class="fn">split</span>(<span class="str">"/"</span>).<span class="fn">pop</span>()!;
+    <span class="kw">const</span> form = <span class="kw">new</span> <span class="fn">FormData</span>();
+    form.<span class="fn">append</span>(<span class="str">"file"</span>, <span class="kw">new</span> <span class="fn">Blob</span>([fileContent]), fileName);
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${RAG_URL}/upload`</span>, { method: <span class="str">"POST"</span>, body: form });
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`✅ Uploaded "${fileName}" — ${data.chunks_created} chunks indexed.`</span> }] };
+  }
+
+  <span class="kw">if</span> (name === <span class="str">"query_documents"</span>) {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${RAG_URL}/query`</span>, {
+      method: <span class="str">"POST"</span>, headers: { <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span> },
+      body: <span class="fn">JSON.stringify</span>({ query: args.question, provider: args.provider ?? <span class="str">"openai"</span>, top_k: <span class="num">5</span> })
+    });
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`${data.answer}\n\nSources: ${data.sources?.join(", ")}\nModel: ${data.model} | ${data.processing_time_ms}ms`</span> }] };
+  }
+
+  <span class="kw">if</span> (name === <span class="str">"get_stats"</span>) {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${RAG_URL}/stats`</span>);
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: <span class="str">`RAG System: ${data.total_documents} docs, ${data.total_chunks} chunks indexed.`</span> }] };
+  }
+
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Unknown tool: ${name}`</span>);
+});
+
+<span class="kw">await</span> server.<span class="fn">connect</span>(<span class="kw">new</span> <span class="fn">StdioServerTransport</span>());</pre></div>
+</section>
+
+<!-- C10 -->
+<section class="module" id="c10">
+  <div class="mod-n" style="color:var(--teal)">Chapter 10</div>
+  <h2 class="mod-title">Production, Testing & Portfolio</h2>
+  <p class="mod-desc">Getting your MCP server production-ready, writing tests, and presenting it in your portfolio alongside your RAG system.</p>
+
+  <div class="tgrid">
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">Error Handling Patterns</div>
+      <div class="tc-desc">Always return errors as content with isError:true — don't throw unhandled exceptions. Claude sees the error message and can handle it gracefully. Log errors to stderr (stdout is reserved for JSON-RPC messages).</div>
+      <div class="tc-tags"><span class="tag blue">Production</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">Testing with MCP Inspector</div>
+      <div class="tc-desc">npx @modelcontextprotocol/inspector node dist/index.js opens a web UI where you can call your tools interactively, see request/response JSON, and debug without Claude Desktop. Your first debug tool.</div>
+      <div class="tc-tags"><span class="tag green">Testing</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">HTTP Transport for Production</div>
+      <div class="tc-desc">Switch from StdioServerTransport to SSEServerTransport for a web-accessible server. Enables team access, remote deployment, and integration with any HTTP-capable client. Use with Express.js.</div>
+      <div class="tc-tags"><span class="tag orange">Remote Deploy</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">Portfolio README Structure</div>
+      <div class="tc-desc">Show: what Claude can do with your MCP server (natural language examples). Architecture diagram. Quick start (3 commands). Which tools exist and what they do. Demo GIF of Claude using a tool. Link to your RAG system.</div>
+      <div class="tc-tags"><span class="tag green">Portfolio</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">Tool Descriptions — The Secret to Good MCP</div>
+      <div class="tc-desc">The most important part of any MCP server is the tool description string. Claude decides WHEN to call a tool based entirely on this description. Be explicit: "Use when the user wants to..." and "Returns..." Bad descriptions = Claude never uses your tool.</div>
+      <div class="tc-tags"><span class="tag blue">Critical</span></div>
+    </div>
+    <div class="tcard" style="--cat:var(--teal)">
+      <div class="tc-name">Combine with RAG + ML Models</div>
+      <div class="tc-desc">The portfolio trifecta: RAG system for document Q&A + ML models for analysis (via FastAPI) + MCP server connecting them to Claude Desktop. Three separate projects, all connected. Demonstrates full-stack AI engineering.</div>
+      <div class="tc-tags"><span class="tag orange">Portfolio Goal</span></div>
+    </div>
+  </div>
+
+  <table class="ctable">
+    <thead><tr><th>MCP Server Idea</th><th>Tools</th><th>Connects To</th><th>Portfolio Value</th></tr></thead>
+    <tbody>
+      <tr><td>RAG Wrapper</td><td>upload, query, stats</td><td>Your FastAPI backend</td><td>High — shows full-stack integration</td></tr>
+      <tr><td>File System</td><td>read, write, list</td><td>Local files</td><td>Medium — classic utility</td></tr>
+      <tr><td>SQLite Database</td><td>query, execute, schema</td><td>Local .db file</td><td>High — shows DB + AI</td></tr>
+      <tr><td>GitHub</td><td>get_issues, create_pr, search_code</td><td>GitHub API</td><td>Very High — real DevOps use</td></tr>
+      <tr><td>ML Model API</td><td>predict, explain_prediction</td><td>Your sklearn model API</td><td>Very High — combines everything</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chk">
+    <div class="chk-lbl">🎓 MCP Mastery Checkpoint</div>
+    <h3>You've mastered MCP when you can:</h3>
+    <ul class="chk-list">
+      <li>Explain the difference between Tools, Resources, and Prompts</li>
+      <li>Build an MCP server from scratch in under 30 minutes</li>
+      <li>Connect it to Claude Desktop and test with MCP Inspector</li>
+      <li>Wrap your RAG FastAPI backend as MCP tools</li>
+      <li>Write tool descriptions that Claude reliably uses</li>
+      <li>Handle errors gracefully so Claude can explain them to users</li>
+      <li>Explain MCP vs direct API calls in an interview</li>
+    </ul>
+  </div>
+
+  <div class="iq"><div class="iq-badge">Interview Q</div>
+    <div class="iq-q">"How would you make Claude able to query your company's database safely?"</div>
+    <div class="iq-a">I'd build an MCP server that wraps the database. The server exposes two tools: a read-only query tool (validates that SQL starts with SELECT, parameterizes inputs to prevent injection) and a schema reader (so Claude understands the table structure). The MCP server runs locally with STDIO transport — it never exposes the database to the internet. Claude Desktop connects to it and can now answer natural language questions by writing and executing SQL queries through the MCP layer. The tool description explicitly says read-only, so Claude won't attempt destructive operations.</div>
+  </div>
+</section>
+
+</div><!-- content -->
+<footer>Build MCP servers. Connect them to your RAG system. Add ML model endpoints. That's the <strong>full AI engineering portfolio</strong>.</footer>
+</main>
+
+<script>
+const ms=document.getElementById('ms'),pf=document.getElementById('pf'),pn=document.getElementById('pn');
+const links=document.querySelectorAll('.sb-link');
+ms.addEventListener('scroll',()=>{
+  const p=Math.min(ms.scrollTop/(ms.scrollHeight-ms.clientHeight)*100,100);
+  pf.style.width=p+'%'; pn.textContent=Math.round(p)+'%';
+  document.querySelectorAll('.module').forEach((s,i)=>{
+    const t=s.getBoundingClientRect().top;
+    if(t<200&&t>-s.offsetHeight+200){links.forEach(l=>l.classList.remove('on'));if(links[i])links[i].classList.add('on')}
+  });
+});
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+</script>
+</body>
+</html>

@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML from Scratch — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070e;--surface:#0e0e1a;--card:#13131f;--border:#1e1e30;--accent:#00e5ff;--a2:#a78bfa;--a3:#f472b6;--a4:#34d399;--a5:#fbbf24;--a6:#fb923c;--text:#e2e2f0;--muted:#5a5a80;--code:#060610;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;line-height:1.75;min-height:100vh;}
+/* LAYOUT */
+.app{display:flex;min-height:100vh;}
+.sidebar{width:280px;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:50;padding:0 0 40px;}
+.main{margin-left:280px;flex:1;padding:0 40px 80px;}
+/* SIDEBAR */
+.sidebar-brand{padding:24px 20px 16px;border-bottom:1px solid var(--border);background:var(--bg);}
+.sidebar-brand h1{font-size:1rem;font-weight:800;letter-spacing:-0.3px;}
+.sidebar-brand h1 span{color:var(--accent);}
+.sidebar-brand p{font-size:0.65rem;color:var(--muted);margin-top:4px;letter-spacing:2px;text-transform:uppercase;}
+.search-box{padding:14px 16px;border-bottom:1px solid var(--border);}
+.search-box input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:inherit;font-size:0.8rem;outline:none;}
+.search-box input:focus{border-color:var(--accent);}
+.nav-section{padding:16px 16px 6px;font-size:0.6rem;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:0.82rem;color:var(--muted);transition:all 0.15s;border-left:3px solid transparent;}
+.nav-item:hover{color:var(--text);background:var(--card);}
+.nav-item.active{color:var(--text);background:rgba(0,229,255,0.06);border-left-color:var(--accent);}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* HEADER */
+.page-header{padding:50px 0 30px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+.page-header .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
+.page-header h2{font-size:2.4rem;font-weight:800;letter-spacing:-1px;line-height:1.2;}
+.page-header p{color:var(--muted);font-size:0.95rem;margin-top:10px;max-width:700px;}
+/* SECTION */
+.topic-section{display:none;}
+.topic-section.active{display:block;}
+/* CARDS */
+.cards-grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.card-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.card-title{font-size:0.95rem;font-weight:700;}
+.card-tag{font-size:0.65rem;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;letter-spacing:0.5px;}
+.card-body{padding:18px 20px;}
+.card-body p{font-size:0.83rem;color:var(--muted);margin-bottom:12px;}
+.card-body strong{color:var(--text);}
+/* ANALOGY */
+.analogy{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);border-radius:8px;padding:12px 14px;margin:12px 0;font-size:0.8rem;}
+.analogy::before{content:'💡 Think of it like: ';font-weight:700;color:var(--a2);}
+/* CODE */
+.code-block{background:var(--code);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:12px 0;font-size:0.75rem;}
+.code-header{background:#0d0d20;padding:8px 14px;font-size:0.7rem;color:var(--muted);display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.code-header span:first-child{color:var(--accent);}
+pre{padding:14px;overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.6;}
+.kw{color:#ff79c6;}
+.fn{color:#50fa7b;}
+.str{color:#f1fa8c;}
+.cm{color:#6272a4;font-style:italic;}
+.num{color:#bd93f9;}
+.cls{color:#8be9fd;}
+/* WHEN TO USE */
+.when-box{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:12px 14px;margin:10px 0;}
+.when-box .when-title{font-size:0.7rem;font-weight:700;color:var(--a4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.when-box ul{list-style:none;padding:0;}
+.when-box ul li{font-size:0.78rem;color:var(--muted);padding:2px 0;}
+.when-box ul li::before{content:'→ ';color:var(--a4);}
+/* FORMULA */
+.formula{background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);border-radius:8px;padding:10px 14px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--a5);}
+.formula::before{content:'∑ Formula: ';font-size:0.7rem;color:var(--muted);display:block;margin-bottom:4px;font-family:'Sora',sans-serif;}
+/* PROGRESS */
+.progress-bar{background:var(--border);border-radius:4px;height:4px;margin-bottom:30px;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--a2));transition:width 0.3s;}
+/* OVERVIEW HERO */
+.overview-hero{background:linear-gradient(135deg,rgba(0,229,255,0.06),rgba(167,139,250,0.06));border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:30px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.ov-stat{text-align:center;}
+.ov-stat .num{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ov-stat p{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+.roadmap{display:flex;gap:0;margin:20px 0;flex-wrap:wrap;}
+.rmap-step{background:var(--card);border:1px solid var(--border);padding:12px 16px;position:relative;font-size:0.78rem;min-width:140px;}
+.rmap-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--muted);z-index:1;}
+.rmap-step strong{display:block;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+/* MOBILE */
+.menu-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--text);font-size:1.1rem;}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.main{margin-left:0;padding:60px 20px 60px;}.menu-toggle{display:block;}.overview-hero{grid-template-columns:1fr;}.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="app">
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>ML <span>Guide</span></h1>
+    <p>From Scratch · For Devs</p>
+  </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search topics..." oninput="filterCards()">
+  </div>
+
+  <div class="nav-section">Core</div>
+  <div class="nav-item active" onclick="showSection('overview')" data-section="overview">
+    <span class="nav-dot" style="background:#fff"></span> Overview & Roadmap
+  </div>
+  <div class="nav-item" onclick="showSection('foundations')" data-section="foundations">
+    <span class="nav-dot" style="background:var(--a2)"></span> Math Foundations
+  </div>
+  <div class="nav-item" onclick="showSection('preprocessing')" data-section="preprocessing">
+    <span class="nav-dot" style="background:var(--a4)"></span> Data Preprocessing
+  </div>
+
+  <div class="nav-section">Supervised</div>
+  <div class="nav-item" onclick="showSection('regression')" data-section="regression">
+    <span class="nav-dot" style="background:var(--a5)"></span> Regression
+  </div>
+  <div class="nav-item" onclick="showSection('classification')" data-section="classification">
+    <span class="nav-dot" style="background:var(--accent)"></span> Classification
+  </div>
+
+  <div class="nav-section">Unsupervised</div>
+  <div class="nav-item" onclick="showSection('clustering')" data-section="clustering">
+    <span class="nav-dot" style="background:var(--a3)"></span> Clustering
+  </div>
+  <div class="nav-item" onclick="showSection('anomaly')" data-section="anomaly">
+    <span class="nav-dot" style="background:var(--a6)"></span> Anomaly & Association
+  </div>
+
+  <div class="nav-section">Advanced</div>
+  <div class="nav-item" onclick="showSection('ensemble')" data-section="ensemble">
+    <span class="nav-dot" style="background:#f472b6"></span> Ensemble & Boosting
+  </div>
+  <div class="nav-item" onclick="showSection('evaluation')" data-section="evaluation">
+    <span class="nav-dot" style="background:var(--a4)"></span> Model Evaluation
+  </div>
+  <div class="nav-item" onclick="showSection('hyperparameter')" data-section="hyperparameter">
+    <span class="nav-dot" style="background:var(--a2)"></span> Hyperparameter Tuning
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- =========== OVERVIEW =========== -->
+<section class="topic-section active" id="section-overview">
+  <div class="page-header">
+    <div class="badge">📍 Start Here</div>
+    <h2>Machine Learning<br>from Scratch</h2>
+    <p>You're an Angular dev with 3 years experience. You can read Python. This guide is built for YOU — it connects ML to things you already know, explains the math simply, and shows real code.</p>
+  </div>
+
+  <div class="overview-hero">
+    <div class="ov-stat"><div class="num">45+</div><p>Topics Covered</p></div>
+    <div class="ov-stat"><div class="num">8</div><p>Learning Modules</p></div>
+    <div class="ov-stat"><div class="num">100%</div><p>From Your Syllabus</p></div>
+  </div>
+
+  <h3 style="font-size:1rem;margin-bottom:14px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-size:0.75rem;">Learning Roadmap</h3>
+  <div class="roadmap">
+    <div class="rmap-step" style="border-color:var(--a2)"><strong style="color:var(--a2)">Step 1</strong>Math Foundations</div>
+    <div class="rmap-step" style="border-color:var(--a4)"><strong style="color:var(--a4)">Step 2</strong>Data Preprocessing</div>
+    <div class="rmap-step" style="border-color:var(--a5)"><strong style="color:var(--a5)">Step 3</strong>Regression</div>
+    <div class="rmap-step" style="border-color:var(--accent)"><strong style="color:var(--accent)">Step 4</strong>Classification</div>
+    <div class="rmap-step" style="border-color:var(--a3)"><strong style="color:var(--a3)">Step 5</strong>Clustering</div>
+    <div class="rmap-step" style="border-color:#f472b6"><strong style="color:#f472b6)">Step 6</strong>Ensemble Methods</div>
+    <div class="rmap-step" style="border-color:var(--a4)"><strong style="color:var(--a4)">Step 7</strong>Evaluation</div>
+  </div>
+
+  <div style="margin-top:30px;background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:20px 24px;">
+    <p style="font-size:0.8rem;color:var(--a5);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">⚠️ What the syllabus images don't fully show (you'd need to add):</p>
+    <p style="font-size:0.83rem;color:var(--muted);">The visible slides were cut off before showing: F1-Score, ROC-AUC, Log Loss, R² / Adjusted R², MAE/MSE/RMSE metrics. These are covered in the <strong>Evaluation</strong> section of this guide.</p>
+  </div>
+</section>
+
+<!-- =========== FOUNDATIONS =========== -->
+<section class="topic-section" id="section-foundations">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:var(--a2)">Module 1</div>
+    <h2>Math Foundations</h2>
+    <p>You don't need a math degree. You need to understand 4 things: Linear Algebra, Calculus, Probability, and Statistics. Here's each one in plain English.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Linear Algebra — Matrices & Vectors</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">FOUNDATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Math for working with tables of numbers. A vector is one column of data. A matrix is a whole table. In ML, your entire dataset is a matrix.</p>
+        <div class="analogy">Your Angular component's @Input() properties are like a vector. The full component tree is like a matrix — rows = components, columns = properties.</div>
+        <p><strong>Key concepts:</strong> Dot product (multiplying two vectors = one number), Matrix multiplication (transforming data), Eigenvalues (used in PCA — finding the "most important directions" in data).</p>
+        <div class="formula">dot_product = Σ(a[i] × b[i]) for each index i
+matrix_multiply: C[i][j] = Σ A[i][k] × B[k][j]</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — numpy basics</span><span>numpy</span></div>
+          <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># A vector — one row of your dataset (one sample)</span>
+sample = np.array([<span class="num">28</span>, <span class="num">75000</span>, <span class="num">3</span>])  <span class="cm"># age, salary, years_exp</span>
+
+<span class="cm"># A matrix — your whole dataset</span>
+dataset = np.array([
+    [<span class="num">28</span>, <span class="num">75000</span>, <span class="num">3</span>],
+    [<span class="num">35</span>, <span class="num">90000</span>, <span class="num">8</span>],
+    [<span class="num">22</span>, <span class="num">45000</span>, <span class="num">1</span>]
+])
+
+<span class="cm"># Shape = (rows=samples, cols=features)</span>
+print(dataset.shape)  <span class="cm"># (3, 3)</span>
+
+<span class="cm"># Dot product</span>
+weights = np.array([<span class="num">0.5</span>, <span class="num">0.3</span>, <span class="num">0.2</span>])
+result = np.dot(sample, weights)  <span class="cm"># 14 + 22500 + 0.6</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Calculus — Derivatives & Gradients</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">FOUNDATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> A derivative tells you "if I change X a tiny bit, how much does Y change?" In ML, this is how the model learns — it adjusts its weights in the direction that reduces error.</p>
+        <div class="analogy">Imagine you're lost on a hilly field in fog and want to reach the lowest valley. You feel the slope under your feet (that's the gradient) and take a step downhill. That's exactly how neural networks learn — it's called "Gradient Descent".</div>
+        <p><strong>Gradient Descent:</strong> The core learning algorithm. Move weights in the direction that reduces loss.</p>
+        <div class="formula">new_weight = old_weight - (learning_rate × gradient)
+gradient = dLoss/dWeight  (how much loss changes per weight change)</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Gradient Descent from scratch</span><span>concept</span></div>
+          <pre><span class="cm"># Imagine y = 3x + noise (we want to find w=3)</span>
+w = <span class="num">0.0</span>   <span class="cm"># start guess</span>
+lr = <span class="num">0.01</span>  <span class="cm"># learning rate — step size</span>
+
+<span class="kw">for</span> epoch <span class="kw">in</span> range(<span class="num">100</span>):
+    prediction = w * x
+    error = prediction - y_true
+    gradient = <span class="num">2</span> * np.mean(error * x)  <span class="cm"># dLoss/dw</span>
+    w = w - lr * gradient               <span class="cm"># step downhill</span>
+
+<span class="cm"># After 100 steps, w ≈ 3.0</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Probability & Bayes' Theorem</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">FOUNDATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> P(A|B) = "the probability of A, GIVEN that B is true." This is how Naive Bayes classifiers work — they use conditional probability to classify.</p>
+        <div class="analogy">You get an email with the word "FREE MONEY". What's the probability it's spam given it has those words? That's exactly Bayes' Theorem in action.</div>
+        <div class="formula">P(Spam | "FREE MONEY") = P("FREE MONEY" | Spam) × P(Spam) / P("FREE MONEY")
+                         = Likelihood × Prior / Evidence</div>
+        <p><strong>Why it matters:</strong> Used directly in Naive Bayes. Underlies all probabilistic ML. Understanding priors vs posteriors helps you understand how models update beliefs.</p>
+        <div class="when-box">
+          <div class="when-title">Key Distributions to Know</div>
+          <ul>
+            <li>Normal/Gaussian — bell curve, most natural data</li>
+            <li>Bernoulli — yes/no outcomes (click or no click)</li>
+            <li>Multinomial — multiple categories (Naive Bayes for text)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Descriptive & Inferential Statistics</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">FOUNDATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Descriptive:</strong> Summarizing data you have. Mean, median, mode, variance, standard deviation. These are also used directly in preprocessing (Z-Score needs mean + std).</p>
+        <p><strong>Inferential:</strong> Drawing conclusions about a whole population from a sample. Used in hypothesis testing, A/B tests, and understanding model performance.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Basic stats</span><span>numpy/pandas</span></div>
+          <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.read_csv(<span class="str">'data.csv'</span>)
+
+<span class="cm"># Descriptive stats in one line</span>
+df.describe()  <span class="cm"># count, mean, std, min, max, quartiles</span>
+
+<span class="cm"># Individual stats</span>
+mean = df[<span class="str">'salary'</span>].mean()
+std  = df[<span class="str">'salary'</span>].std()
+med  = df[<span class="str">'salary'</span>].median()
+var  = df[<span class="str">'salary'</span>].var()
+
+<span class="cm"># Correlation matrix — which features relate?</span>
+df.corr()  <span class="cm"># values close to 1 or -1 = strong relationship</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== PREPROCESSING =========== -->
+<section class="topic-section" id="section-preprocessing">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.3);color:var(--a4)">Module 2</div>
+    <h2>Data Preprocessing</h2>
+    <p>Garbage in = garbage out. 80% of real ML work is here. This is where your dev background actually gives you a big advantage — it's mostly data wrangling.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Data Imputation (Handling Missing Values)</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>The problem:</strong> Real data always has missing values. You can't just delete all rows — you'd lose too much data.</p>
+        <div class="analogy">A spreadsheet where some cells are blank. You need to fill them in intelligently, not just put "0" everywhere.</div>
+        <div class="when-box">
+          <div class="when-title">Strategies</div>
+          <ul>
+            <li>Mean imputation — fill with average (for numeric, no outliers)</li>
+            <li>Median imputation — fill with middle value (better when outliers exist)</li>
+            <li>Mode imputation — fill with most frequent (for categorical data)</li>
+            <li>KNN Imputer — fill using k nearest neighbours' values (smartest)</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Imputation methods</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.impute <span class="kw">import</span> <span class="cls">SimpleImputer</span>, <span class="cls">KNNImputer</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.DataFrame({
+    <span class="str">'age'</span>: [<span class="num">25</span>, np.nan, <span class="num">30</span>, <span class="num">22</span>, np.nan],
+    <span class="str">'salary'</span>: [<span class="num">50000</span>, <span class="num">60000</span>, np.nan, <span class="num">45000</span>, <span class="num">70000</span>]
+})
+
+<span class="cm"># Mean imputation</span>
+imputer = <span class="cls">SimpleImputer</span>(strategy=<span class="str">'mean'</span>)
+df_filled = imputer.fit_transform(df)
+
+<span class="cm"># KNN Imputer (uses nearby rows to guess missing value)</span>
+knn_imp = <span class="cls">KNNImputer</span>(n_neighbors=<span class="num">2</span>)
+df_knn = knn_imp.fit_transform(df)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Outlier Detection — Z-Score & IQR</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Outliers are data points so far from the rest that they'd skew your model. Like one employee earning ₹10 Crore in a list of ₹5-15 Lakh salaries.</p>
+        <div class="analogy">Imagine rating a restaurant. 99 people give 4/5. One bitter person gives 0/5. Their score is an outlier that pulls the average down unfairly.</div>
+        <div class="formula">Z-Score: z = (value - mean) / std_dev
+→ |z| > 3 usually means outlier
+
+IQR Method: IQR = Q3 - Q1
+→ Outlier if value &lt; Q1 - 1.5×IQR  OR  value > Q3 + 1.5×IQR</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Outlier Detection</span><span>scipy/pandas</span></div>
+          <pre><span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="cm"># Z-Score method</span>
+z_scores = np.abs(stats.zscore(df[<span class="str">'salary'</span>]))
+df_clean = df[z_scores &lt; <span class="num">3</span>]  <span class="cm"># keep only non-outliers</span>
+
+<span class="cm"># IQR method</span>
+Q1 = df[<span class="str">'salary'</span>].quantile(<span class="num">0.25</span>)
+Q3 = df[<span class="str">'salary'</span>].quantile(<span class="num">0.75</span>)
+IQR = Q3 - Q1
+df_iqr = df[(df[<span class="str">'salary'</span>] >= Q1 - <span class="num">1.5</span>*IQR) &
+            (df[<span class="str">'salary'</span>] &lt;= Q3 + <span class="num">1.5</span>*IQR)]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Feature Scaling — Min-Max & Standard Scaler</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Why it matters:</strong> If age is 0-100 and salary is 0-10,000,000, the model thinks salary is a million times more important. Scaling fixes this.</p>
+        <div class="analogy">Converting all measurements to the same unit. You wouldn't compare a person's height in feet with their weight in grams without converting first.</div>
+        <div class="formula">Min-Max: x_scaled = (x - min) / (max - min)  → range [0, 1]
+Standard Scaler: x_scaled = (x - mean) / std_dev  → mean=0, std=1</div>
+        <p><strong>When to use which:</strong> Min-Max when you know bounds and no big outliers. Standard Scaler (Z-score normalization) when you have outliers or need Gaussian distribution.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Feature Scaling</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">MinMaxScaler</span>, <span class="cls">StandardScaler</span>
+
+X = [[<span class="num">25</span>, <span class="num">50000</span>], [<span class="num">30</span>, <span class="num">90000</span>], [<span class="num">22</span>, <span class="num">30000</span>]]
+
+<span class="cm"># Min-Max: scales to 0-1</span>
+mm = <span class="cls">MinMaxScaler</span>()
+X_mm = mm.fit_transform(X)
+<span class="cm"># age: [0.375, 0.875, 0.0], salary: [0.5, 1.0, 0.0]</span>
+
+<span class="cm"># Standard Scaler: mean=0, std=1</span>
+ss = <span class="cls">StandardScaler</span>()
+X_ss = ss.fit_transform(X)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Feature Transformation — Log & Box-Cox</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Many ML models assume data is normally distributed (bell curve). But real data like salaries, prices, or website visits is skewed. Transformations fix the shape.</p>
+        <div class="analogy">Imagine plotting salaries of 1000 people. Most earn 30k-80k, but a few billionaires make the x-axis stretch to millions. Log transform squishes it back to a readable bell shape.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Log & Box-Cox Transform</span><span>scipy</span></div>
+          <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> boxcox
+
+salaries = [<span class="num">30000</span>, <span class="num">45000</span>, <span class="num">60000</span>, <span class="num">500000</span>, <span class="num">1200000</span>]
+
+<span class="cm"># Log transform — great for right-skewed data</span>
+log_sal = np.log1p(salaries)  <span class="cm"># log1p = log(x+1), handles 0</span>
+
+<span class="cm"># Box-Cox — finds the BEST power transformation automatically</span>
+bc_sal, lambda_ = boxcox(salaries)  <span class="cm"># lambda_ is the optimal power</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Handling Imbalanced Data — SMOTE & Undersampling</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>The problem:</strong> You have 9,900 legit transactions and 100 fraudulent ones. If your model just predicts "not fraud" for everything, it's 99% accurate but totally useless.</p>
+        <div class="analogy">A class with 99 right-handed and 1 left-handed student. If a teacher treats everyone as right-handed, they're "99% accurate" but failing that one student completely.</div>
+        <div class="when-box">
+          <div class="when-title">Solutions</div>
+          <ul>
+            <li>SMOTE — creates synthetic minority samples (oversampling)</li>
+            <li>Random Undersampling — removes majority class samples</li>
+            <li>class_weight='balanced' — tells the model to care more about minority</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — SMOTE</span><span>imbalanced-learn</span></div>
+          <pre><span class="kw">from</span> imblearn.over_sampling <span class="kw">import</span> <span class="cls">SMOTE</span>
+
+sm = <span class="cls">SMOTE</span>(random_state=<span class="num">42</span>)
+X_res, y_res = sm.fit_resample(X_train, y_train)
+<span class="cm"># Now minority class has synthetic samples added</span>
+print(y_res.value_counts())  <span class="cm"># should be balanced now</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Dimensionality Reduction — PCA, LDA, t-SNE</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">PREPROCESSING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Your dataset might have 500 features (columns). Many are redundant. Reduce to 2-10 key dimensions without losing important information.</p>
+        <div class="analogy">A 3D sculpture's shadow on a wall is a 2D projection. You lose the depth, but you still see the shape. PCA finds the "best angle" to project from to keep maximum information.</div>
+        <p><strong>PCA</strong> (Principal Component Analysis) — unsupervised, finds directions of max variance. <strong>LDA</strong> (Linear Discriminant Analysis) — supervised, finds directions that best separate classes. <strong>t-SNE</strong> — great for visualization only (2D/3D plots of high-dim data).</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — PCA</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> <span class="cls">PCA</span>
+
+<span class="cm"># Reduce 500 features → 10 principal components</span>
+pca = <span class="cls">PCA</span>(n_components=<span class="num">10</span>)
+X_reduced = pca.fit_transform(X_scaled)
+
+<span class="cm"># How much variance does each component explain?</span>
+print(pca.explained_variance_ratio_)
+<span class="cm"># [0.32, 0.18, 0.12, ...]  → first 3 explain 62% of info</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== REGRESSION =========== -->
+<section class="topic-section" id="section-regression">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.3);color:var(--a5)">Module 3</div>
+    <h2>Regression</h2>
+    <p>Predicting a continuous number — house prices, salaries, temperatures. Output is a number, not a category.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Simple & Multiple Linear Regression</div>
+        <div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--a5)">REGRESSION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Simple:</strong> One input feature → one output. Draw the best straight line through data points.</p>
+        <p><strong>Multiple:</strong> Many input features → one output. The line becomes a plane (or hyperplane).</p>
+        <div class="analogy">Predicting your electric bill. Simple: bill depends on AC hours. Multiple: bill depends on AC hours + number of people + season + appliances.</div>
+        <div class="formula">y = w0 + w1×x1 + w2×x2 + ... + wn×xn + error
+Goal: minimize SSE (Sum of Squared Errors) = Σ(actual - predicted)²</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Linear Regression</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="cls">LinearRegression</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+model = <span class="cls">LinearRegression</span>()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+print(<span class="str">f"R²: {r2_score(y_test, y_pred):.3f}"</span>)        <span class="cm"># 1.0 = perfect</span>
+print(<span class="str">f"RMSE: {mean_squared_error(y_test, y_pred)**0.5:.2f}"</span>)</pre>
+        </div>
+        <div class="when-box">
+          <div class="when-title">Evaluation Metrics for Regression</div>
+          <ul>
+            <li>MAE — Mean Absolute Error (avg distance from truth, easy to interpret)</li>
+            <li>MSE — Mean Squared Error (punishes big errors more)</li>
+            <li>RMSE — Root MSE (same unit as target, most common)</li>
+            <li>R² — 0 to 1, how much variance the model explains</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Polynomial Regression</div>
+        <div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--a5)">REGRESSION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Linear regression can only fit straight lines. Polynomial regression fits curves by adding x², x³ etc. as features.</p>
+        <div class="analogy">Speed vs fuel efficiency isn't a straight line — it curves. At 40 km/h it's good, at 80 km/h still ok, at 160 km/h it tanks. You need a curve, not a line.</div>
+        <div class="formula">y = w0 + w1×x + w2×x² + w3×x³ + ...
+(Still "linear regression" because the weights w are linear — only x is polynomial)</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Polynomial Regression</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">PolynomialFeatures</span>
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> <span class="cls">Pipeline</span>
+
+<span class="cm"># Degree 2 = add x² features, degree 3 = add x², x³</span>
+poly_model = <span class="cls">Pipeline</span>([
+    (<span class="str">'poly'</span>, <span class="cls">PolynomialFeatures</span>(degree=<span class="num">2</span>)),
+    (<span class="str">'linear'</span>, <span class="cls">LinearRegression</span>())
+])
+poly_model.fit(X_train, y_train)
+
+<span class="cm"># ⚠️ High degree = overfitting risk!</span>
+<span class="cm"># degree=10 fits training data perfectly but fails on new data</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Regularization — L1 Lasso, L2 Ridge, ElasticNet</div>
+        <div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--a5)">REGRESSION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>The problem it solves:</strong> Overfitting — model learns training data too well (memorizes noise) and fails on new data.</p>
+        <div class="analogy">A student who memorizes past exam papers vs one who understands the subject. Regularization penalizes "too much complexity" — like a teacher saying "explain it simply, don't recite 100 rules".</div>
+        <p><strong>L1 (Lasso):</strong> Can reduce some weights to exactly 0 — effectively removes useless features. Good for feature selection.</p>
+        <p><strong>L2 (Ridge):</strong> Shrinks all weights toward 0 but never exactly 0. Good when all features matter a little.</p>
+        <p><strong>ElasticNet:</strong> Mix of both L1 + L2.</p>
+        <div class="formula">Loss(Lasso)  = MSE + α × Σ|weights|       ← L1
+Loss(Ridge)  = MSE + α × Σ(weights²)     ← L2
+Loss(Elastic) = MSE + α×L1 + β×L2</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Regularization</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="cls">Lasso</span>, <span class="cls">Ridge</span>, <span class="cls">ElasticNet</span>
+
+<span class="cm"># alpha = regularization strength (higher = more penalty)</span>
+lasso = <span class="cls">Lasso</span>(alpha=<span class="num">0.1</span>)    <span class="cm"># some weights become exactly 0</span>
+ridge = <span class="cls">Ridge</span>(alpha=<span class="num">1.0</span>)    <span class="cm"># all weights shrink but stay non-zero</span>
+enet  = <span class="cls">ElasticNet</span>(alpha=<span class="num">0.5</span>, l1_ratio=<span class="num">0.5</span>)  <span class="cm"># 50/50 mix</span>
+
+lasso.fit(X_train, y_train)
+print(lasso.coef_)  <span class="cm"># see which features got zero'd out</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Decision Tree & Random Forest Regression</div>
+        <div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--a5)">REGRESSION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Decision Tree Regression:</strong> Instead of fitting a line, it splits data into boxes and predicts the average value in each box.</p>
+        <div class="analogy">A flowchart: "Is it a house or flat? If house → is it > 3 BHK? If yes → predict ₹1.2Cr. If no → predict ₹80L". Each box predicts a number.</div>
+        <p><strong>Random Forest Regression:</strong> 100+ decision trees, each trained on random data subsets. Final prediction = average of all trees. Much more accurate and robust.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Random Forest Regression</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">RandomForestRegressor</span>
+
+rf = <span class="cls">RandomForestRegressor</span>(
+    n_estimators=<span class="num">100</span>,   <span class="cm"># 100 trees</span>
+    max_depth=<span class="num">10</span>,        <span class="cm"># max tree depth</span>
+    random_state=<span class="num">42</span>
+)
+rf.fit(X_train, y_train)
+
+<span class="cm"># Which features matter most?</span>
+importances = pd.Series(rf.feature_importances_, index=feature_names)
+importances.sort_values(ascending=<span class="kw">False</span>).plot.bar()</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Support Vector Regression (SVR)</div>
+        <div class="card-tag" style="background:rgba(251,191,36,0.15);color:var(--a5)">REGRESSION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Find a "tube" (epsilon-tube) around the prediction line. Only data points OUTSIDE the tube contribute to the error. Good for non-linear data with kernel trick.</p>
+        <div class="analogy">You're drawing a pipe through a cloud of points. Points inside the pipe are "fine". Only the ones sticking out matter — those are the "support vectors".</div>
+        <div class="when-box">
+          <div class="when-title">When to use SVR</div>
+          <ul>
+            <li>Small to medium datasets (gets slow on large data)</li>
+            <li>Non-linear relationships (use RBF kernel)</li>
+            <li>When you want robustness to outliers</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — SVR</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> <span class="cls">SVR</span>
+
+<span class="cm"># IMPORTANT: SVR needs scaled features!</span>
+svr = <span class="cls">SVR</span>(kernel=<span class="str">'rbf'</span>, C=<span class="num">100</span>, epsilon=<span class="num">0.1</span>)
+svr.fit(X_train_scaled, y_train)
+y_pred = svr.predict(X_test_scaled)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== CLASSIFICATION =========== -->
+<section class="topic-section" id="section-classification">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(0,229,255,0.1);border-color:rgba(0,229,255,0.3);color:var(--accent)">Module 4</div>
+    <h2>Classification</h2>
+    <p>Predicting a category — spam vs not spam, disease vs healthy, cat vs dog. Output is a class label, not a number.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Logistic Regression</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>⚠️ Confusing name:</strong> Despite "Regression" in the name, this is a CLASSIFIER. It outputs a probability (0-1) and you set a threshold (usually 0.5) to classify.</p>
+        <div class="analogy">You're deciding whether to give a loan. Logistic regression outputs "73% chance they'll repay". You decide: above 60% = approve. It's giving you a probability, not a category directly.</div>
+        <div class="formula">sigmoid(z) = 1 / (1 + e^(-z))     → squishes output to [0,1]
+z = w0 + w1×x1 + w2×x2 + ...
+If sigmoid(z) > 0.5 → class 1, else class 0</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Logistic Regression</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="cls">LogisticRegression</span>
+
+model = <span class="cls">LogisticRegression</span>(C=<span class="num">1.0</span>, max_iter=<span class="num">1000</span>)
+model.fit(X_train, y_train)
+
+<span class="cm"># Probabilities (not just 0/1)</span>
+probs = model.predict_proba(X_test)   <span class="cm"># [[0.27, 0.73], ...]</span>
+preds = model.predict(X_test)         <span class="cm"># [1, 0, 1, 1, ...]</span>
+
+<span class="cm"># Multiclass: set multi_class='multinomial'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Naive Bayes (Gaussian, Multinomial, Bernoulli)</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Uses Bayes' Theorem assuming all features are independent. "Naive" because real features are rarely truly independent, but it still works surprisingly well.</p>
+        <div class="analogy">Spam filter: it checks each word separately — "FREE", "MONEY", "CLICK" each raise the spam probability independently. It ignores that "FREE MONEY" together is more suspicious than each word alone.</div>
+        <p><strong>Gaussian NB:</strong> continuous features (age, salary). <strong>Multinomial NB:</strong> count data (word frequencies). <strong>Bernoulli NB:</strong> binary features (word present/absent).</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Naive Bayes</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.naive_bayes <span class="kw">import</span> <span class="cls">GaussianNB</span>, <span class="cls">MultinomialNB</span>, <span class="cls">BernoulliNB</span>
+
+<span class="cm"># Gaussian: for continuous features like age, salary</span>
+gnb = <span class="cls">GaussianNB</span>()
+
+<span class="cm"># Multinomial: for text classification (word counts)</span>
+mnb = <span class="cls">MultinomialNB</span>(alpha=<span class="num">1.0</span>)  <span class="cm"># alpha = smoothing</span>
+
+<span class="cm"># Bernoulli: for binary features (word present: yes/no)</span>
+bnb = <span class="cls">BernoulliNB</span>()
+
+gnb.fit(X_train, y_train)
+accuracy = gnb.score(X_test, y_test)</pre>
+        </div>
+        <div class="when-box">
+          <div class="when-title">Best for</div>
+          <ul>
+            <li>Text classification (spam, sentiment)</li>
+            <li>Real-time predictions (very fast)</li>
+            <li>Small datasets where it often beats complex models</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">K-Nearest Neighbors (KNN)</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> For a new data point, find the K most similar points in training data. Majority class among those K neighbors = prediction.</p>
+        <div class="analogy">You move to a new city and wonder which restaurant to try. You ask your 5 nearest neighbours (K=5). 3 recommend "Restaurant A", 2 say "B". You go to A. That's KNN.</div>
+        <p><strong>Choosing K:</strong> Low K (1-3) = flexible, may overfit. High K = smooth, may underfit. Usually try K=5, then tune with cross-validation. K should be odd for binary classification to avoid ties.</p>
+        <div class="formula">Distance (Euclidean) = √(Σ(xi - xj)²)
+Predict: majority class among K nearest points</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — KNN Classifier</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> <span class="cls">KNeighborsClassifier</span>
+
+<span class="cm"># MUST scale features! KNN is distance-based</span>
+knn = <span class="cls">KNeighborsClassifier</span>(n_neighbors=<span class="num">5</span>, metric=<span class="str">'euclidean'</span>)
+knn.fit(X_train_scaled, y_train)
+
+<span class="cm"># Find optimal K</span>
+scores = []
+<span class="kw">for</span> k <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">21</span>):
+    knn = <span class="cls">KNeighborsClassifier</span>(n_neighbors=k)
+    knn.fit(X_train_scaled, y_train)
+    scores.append(knn.score(X_test_scaled, y_test))
+<span class="cm"># Pick k with highest score</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Support Vector Machines (SVM) & Kernel SVM</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Find the "best dividing line" (hyperplane) between classes, maximizing the margin (gap) between the line and the nearest points of each class. Those nearest points are the "support vectors".</p>
+        <div class="analogy">Drawing a line between red and blue dots on paper. You want the line that has the maximum "no man's land" gap on either side. The dots right on the edge of each side are the support vectors.</div>
+        <p><strong>Kernel SVM:</strong> When data isn't linearly separable, the kernel trick maps data to a higher dimension where it IS separable — without actually computing that transformation (it's a mathematical shortcut).</p>
+        <div class="when-box">
+          <div class="when-title">Kernels</div>
+          <ul>
+            <li>Linear kernel — for linearly separable data</li>
+            <li>RBF (Radial Basis Function) — most common, works for most non-linear data</li>
+            <li>Polynomial kernel — for polynomial boundaries</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — SVM</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> <span class="cls">SVC</span>
+
+<span class="cm"># C = margin hardness (high C = fewer margin violations)</span>
+<span class="cm"># gamma = RBF influence radius (high = complex boundary)</span>
+svm = <span class="cls">SVC</span>(kernel=<span class="str">'rbf'</span>, C=<span class="num">10</span>, gamma=<span class="str">'scale'</span>, probability=<span class="kw">True</span>)
+svm.fit(X_train_scaled, y_train)
+
+<span class="cm"># probability=True enables predict_proba()</span>
+probs = svm.predict_proba(X_test_scaled)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Decision Tree Classification</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> A flowchart of yes/no questions. At each node, it splits data to maximize "purity" (all one class together). Leaves are final class predictions.</p>
+        <div class="analogy">The game "20 Questions". "Is it alive? → Is it bigger than a dog? → Does it have stripes?" Each question narrows down the answer. The tree learns which questions are most useful.</div>
+        <div class="formula">Gini Impurity = 1 - Σ(pi²)    (0 = pure, 0.5 = max impurity)
+Entropy = -Σ(pi × log2(pi))
+Information Gain = Entropy(parent) - weighted_avg(Entropy(children))</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Decision Tree</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> <span class="cls">DecisionTreeClassifier</span>, export_text
+
+dt = <span class="cls">DecisionTreeClassifier</span>(
+    max_depth=<span class="num">5</span>,          <span class="cm"># prevents overfitting</span>
+    min_samples_leaf=<span class="num">5</span>,   <span class="cm"># min 5 samples per leaf</span>
+    criterion=<span class="str">'gini'</span>
+)
+dt.fit(X_train, y_train)
+
+<span class="cm"># Print the tree rules — interpretable!</span>
+print(export_text(dt, feature_names=feature_names))</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Random Forest Classification</div>
+        <div class="card-tag" style="background:rgba(0,229,255,0.15);color:var(--accent)">CLASSIFICATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> An ensemble of decision trees. Each tree is trained on a random subset of data and features. Final prediction = majority vote of all trees.</p>
+        <div class="analogy">Instead of asking one expert, you ask 100 experts. Each sees slightly different data. You take the majority vote. This "wisdom of crowds" approach is far more accurate than any single tree.</div>
+        <p><strong>Why it's better than one tree:</strong> Reduces overfitting (high variance → low variance), handles missing values, gives feature importances, rarely needs tuning.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Random Forest</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">RandomForestClassifier</span>
+
+rf = <span class="cls">RandomForestClassifier</span>(
+    n_estimators=<span class="num">200</span>,    <span class="cm"># more trees = more stable</span>
+    max_features=<span class="str">'sqrt'</span>, <span class="cm"># each tree sees √(n_features)</span>
+    oob_score=<span class="kw">True</span>,      <span class="cm"># out-of-bag score (free validation)</span>
+    n_jobs=<span class="num">-1</span>            <span class="cm"># use all CPU cores</span>
+)
+rf.fit(X_train, y_train)
+print(<span class="str">f"OOB Score: {rf.oob_score_:.3f}"</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== CLUSTERING =========== -->
+<section class="topic-section" id="section-clustering">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,114,182,0.1);border-color:rgba(244,114,182,0.3);color:var(--a3)">Module 5</div>
+    <h2>Clustering (Unsupervised)</h2>
+    <p>No labels, no supervision. Find natural groups in data. Nobody told the model what groups to look for — it discovers them.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">K-Means Clustering & K-Means++</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--a3)">CLUSTERING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Group data into K clusters. Each point belongs to the cluster with the nearest center (centroid). Centers are updated iteratively until stable.</p>
+        <div class="analogy">You have 1000 customers and want to group them into 3 types. K-Means finds 3 "average customers" and assigns everyone to their closest type. Think of it as finding 3 representative profiles automatically.</div>
+        <p><strong>K-Means++:</strong> Better initialization — centroids start spread out, not random. Converges faster and to better solutions.</p>
+        <div class="formula">Step 1: Place K centroids randomly
+Step 2: Assign each point to nearest centroid
+Step 3: Move each centroid to the mean of its assigned points
+Repeat 2-3 until centroids stop moving</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — K-Means Clustering</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> <span class="cls">KMeans</span>
+
+km = <span class="cls">KMeans</span>(
+    n_clusters=<span class="num">3</span>,
+    init=<span class="str">'k-means++'</span>,  <span class="cm"># smarter init (default)</span>
+    n_init=<span class="num">10</span>,         <span class="cm"># run 10 times, pick best</span>
+    random_state=<span class="num">42</span>
+)
+labels = km.fit_predict(X_scaled)
+centers = km.cluster_centers_
+inertia = km.inertia_  <span class="cm"># sum of squared distances to centers</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Elbow Method & Silhouette Score</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--a3)">CLUSTERING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>The problem:</strong> K-Means needs you to choose K. How do you know the right number of clusters?</p>
+        <div class="analogy">Elbow method: Imagine adding more employees to a team. First 5 reduce workload a lot. Adding employees 6-10 helps less. After 15, it's chaos. The "elbow" is where adding more stops helping much.</div>
+        <p><strong>Silhouette Score:</strong> For each point, measures "how well does it fit its own cluster vs the nearest other cluster". Range: -1 (bad) to +1 (perfect). Higher = better clusters.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Finding optimal K</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+inertias = []
+sil_scores = []
+
+<span class="kw">for</span> k <span class="kw">in</span> range(<span class="num">2</span>, <span class="num">11</span>):
+    km = <span class="cls">KMeans</span>(n_clusters=k, random_state=<span class="num">42</span>)
+    labels = km.fit_predict(X_scaled)
+    inertias.append(km.inertia_)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+<span class="cm"># Plot inertia — look for the "elbow"</span>
+plt.plot(range(<span class="num">2</span>, <span class="num">11</span>), inertias, marker=<span class="str">'o'</span>)
+plt.title(<span class="str">'Elbow Method'</span>)
+
+<span class="cm"># Best K = highest silhouette score</span>
+best_k = range(<span class="num">2</span>, <span class="num">11</span>)[sil_scores.index(max(sil_scores))]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Hierarchical Clustering & Dendrograms</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--a3)">CLUSTERING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Builds a tree (dendrogram) showing how data points merge into clusters at different scales. You don't need to specify K upfront.</p>
+        <div class="analogy">Think of evolution's family tree. Individual species → subspecies → species → genus → family → order. You can "cut" the tree at any level to get any number of clusters.</div>
+        <p><strong>Agglomerative (bottom-up):</strong> Start with every point as its own cluster, merge closest pairs repeatedly. <strong>Divisive (top-down):</strong> Start with one big cluster, split repeatedly.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Hierarchical Clustering</span><span>sklearn/scipy</span></div>
+          <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> <span class="cls">AgglomerativeClustering</span>
+<span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> dendrogram, linkage
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Draw the dendrogram to see natural clusters</span>
+Z = linkage(X_scaled, method=<span class="str">'ward'</span>)
+dendrogram(Z, truncate_mode=<span class="str">'level'</span>, p=<span class="num">5</span>)
+plt.title(<span class="str">'Dendrogram'</span>)
+plt.show()
+
+<span class="cm"># Cut at K=3 clusters</span>
+hc = <span class="cls">AgglomerativeClustering</span>(n_clusters=<span class="num">3</span>, linkage=<span class="str">'ward'</span>)
+labels = hc.fit_predict(X_scaled)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">DBSCAN (Density-Based Clustering)</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--a3)">CLUSTERING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Clusters are "dense regions" of points. Works on any cluster shape (not just circles). Automatically identifies outliers as noise (label = -1).</p>
+        <div class="analogy">Imagine people standing in a park. Groups of people close together are clusters. Lone people standing far away from any group are "noise points" — outliers.</div>
+        <p><strong>Parameters:</strong> eps = max distance between neighbors, min_samples = min points to form a cluster core.</p>
+        <div class="when-box">
+          <div class="when-title">DBSCAN vs K-Means</div>
+          <ul>
+            <li>DBSCAN: no need to specify K, finds arbitrary shapes, handles noise</li>
+            <li>K-Means: faster, works better on spherical clusters, needs K upfront</li>
+            <li>Use DBSCAN when clusters are irregular or you have many outliers</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — DBSCAN</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> <span class="cls">DBSCAN</span>
+
+db = <span class="cls">DBSCAN</span>(eps=<span class="num">0.5</span>, min_samples=<span class="num">5</span>)
+labels = db.fit_predict(X_scaled)
+
+n_clusters = len(set(labels)) - (<span class="num">1</span> <span class="kw">if</span> <span class="num">-1</span> <span class="kw">in</span> labels <span class="kw">else</span> <span class="num">0</span>)
+n_noise = list(labels).count(<span class="num">-1</span>)  <span class="cm"># -1 = outlier/noise</span>
+print(<span class="str">f"Clusters: {n_clusters}, Noise points: {n_noise}"</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Gaussian Mixture Models (GMM)</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:var(--a3)">CLUSTERING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Assumes data comes from a mix of K Gaussian (normal) distributions. "Soft clustering" — each point gets a probability of belonging to each cluster, not a hard assignment.</p>
+        <div class="analogy">K-Means is like forcing everyone into exactly one political party. GMM is like saying "this voter is 60% party A, 30% party B, 10% party C" — they might switch depending on context.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Gaussian Mixture Model</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.mixture <span class="kw">import</span> <span class="cls">GaussianMixture</span>
+
+gmm = <span class="cls">GaussianMixture</span>(n_components=<span class="num">3</span>, covariance_type=<span class="str">'full'</span>)
+gmm.fit(X_scaled)
+
+<span class="cm"># Hard labels</span>
+labels = gmm.predict(X_scaled)
+
+<span class="cm"># Soft probabilities — unique to GMM!</span>
+probs = gmm.predict_proba(X_scaled)
+<span class="cm"># Each row sums to 1.0, shows cluster membership probability</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== ANOMALY & ASSOCIATION =========== -->
+<section class="topic-section" id="section-anomaly">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(251,146,60,0.1);border-color:rgba(251,146,60,0.3);color:var(--a6)">Module 6</div>
+    <h2>Anomaly Detection & Association Rules</h2>
+    <p>Finding the unusual. Finding what happens together. Two different but powerful unsupervised techniques.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Anomaly Detection</div>
+        <div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--a6)">UNSUPERVISED</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Find data points that don't fit the normal pattern. Used for fraud detection, network intrusion, manufacturing defects, medical anomalies.</p>
+        <div class="analogy">Security camera watching a parking lot. Every day 50 cars park normally. One day a car parks backwards and stays for 12 hours at 3am. That's an anomaly — it stands out from normal behavior.</div>
+        <div class="when-box">
+          <div class="when-title">Common Methods</div>
+          <ul>
+            <li>Isolation Forest — isolates anomalies with random splits (fast, scalable)</li>
+            <li>One-Class SVM — learns the "normal" boundary, flags outside it</li>
+            <li>Statistical: flag Z-score > 3 as anomaly</li>
+            <li>Autoencoders (deep learning) — high reconstruction error = anomaly</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Isolation Forest</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">IsolationForest</span>
+
+iso = <span class="cls">IsolationForest</span>(
+    contamination=<span class="num">0.05</span>,  <span class="cm"># expect ~5% anomalies</span>
+    random_state=<span class="num">42</span>
+)
+iso.fit(X_train)
+predictions = iso.predict(X_test)
+<span class="cm"># Returns: 1 = normal, -1 = anomaly</span>
+anomalies = X_test[predictions == <span class="num">-1</span>]</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Association Rule Learning — Apriori & Eclat</div>
+        <div class="card-tag" style="background:rgba(251,146,60,0.15);color:var(--a6)">UNSUPERVISED</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Find which items appear together frequently. Classic use case: Market Basket Analysis — "customers who buy diapers also buy beer on Fridays".</p>
+        <div class="analogy">You run a supermarket. You look at thousands of receipts and notice: 73% of people who buy bread also buy butter in the same trip. That's an association rule. You move butter next to bread → sales increase.</div>
+        <div class="formula">Support    = (transactions with {A and B}) / (total transactions)
+Confidence = support({A,B}) / support({A})
+Lift       = Confidence / support({B})
+→ Lift > 1 means buying A INCREASES chance of buying B</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Apriori Algorithm</span><span>mlxtend</span></div>
+          <pre><span class="kw">from</span> mlxtend.frequent_patterns <span class="kw">import</span> apriori, association_rules
+
+<span class="cm"># data = one-hot encoded: rows=transactions, cols=items</span>
+<span class="cm"># e.g. df[['bread','butter','milk','eggs']] = True/False</span>
+
+frequent_items = apriori(df, min_support=<span class="num">0.05</span>, use_colnames=<span class="kw">True</span>)
+rules = association_rules(frequent_items, metric=<span class="str">'confidence'</span>, min_threshold=<span class="num">0.5</span>)
+
+<span class="cm"># Top rules by lift</span>
+rules.sort_values(<span class="str">'lift'</span>, ascending=<span class="kw">False</span>).head(<span class="num">10</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== ENSEMBLE =========== -->
+<section class="topic-section" id="section-ensemble">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(244,114,182,0.1);border-color:rgba(244,114,182,0.3);color:#f472b6">Module 7</div>
+    <h2>Ensemble Methods & Boosting</h2>
+    <p>Combining many weak models to build a powerful one. These are the techniques that win Kaggle competitions and dominate real-world ML benchmarks.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Bagging (Bootstrap Aggregating) & Pasting</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">ENSEMBLE</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Bagging:</strong> Train multiple models on different random SAMPLES (with replacement) of training data. Combine with voting/averaging. Reduces variance (overfitting).</p>
+        <p><strong>Pasting:</strong> Same idea but sampling WITHOUT replacement. Less diversity but sometimes better.</p>
+        <div class="analogy">You want to predict election results. Instead of one giant poll, you run 100 small independent polls in random samples of voters. You average all results → more reliable than any single poll.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — BaggingClassifier</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">BaggingClassifier</span>
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> <span class="cls">DecisionTreeClassifier</span>
+
+bag = <span class="cls">BaggingClassifier</span>(
+    base_estimator=<span class="cls">DecisionTreeClassifier</span>(),
+    n_estimators=<span class="num">100</span>,
+    max_samples=<span class="num">0.8</span>,       <span class="cm"># 80% of data per tree</span>
+    bootstrap=<span class="kw">True</span>,        <span class="cm"># False = Pasting</span>
+    oob_score=<span class="kw">True</span>
+)
+bag.fit(X_train, y_train)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Random Patches & Random Subspaces</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">ENSEMBLE</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Random Subspaces:</strong> Each model is trained on all samples but only a random subset of features. Reduces feature correlation between trees.</p>
+        <p><strong>Random Patches:</strong> Each model sees random subset of BOTH samples AND features. Maximum diversity.</p>
+        <div class="analogy">Random Subspaces: Each expert sees the full patient list but only some of the symptoms. Random Patches: Each expert sees only some patients AND only some symptoms. Both force diversity.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Random Subspaces/Patches</span><span>sklearn</span></div>
+          <pre><span class="cm"># Random Subspaces: full samples, subset of features</span>
+rs = <span class="cls">BaggingClassifier</span>(bootstrap=<span class="kw">False</span>, max_features=<span class="num">0.5</span>)
+
+<span class="cm"># Random Patches: subset of both samples AND features</span>
+rp = <span class="cls">BaggingClassifier</span>(bootstrap=<span class="kw">True</span>, max_features=<span class="num">0.5</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Voting Classifier / Regressor</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">ENSEMBLE</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Combine fundamentally different models (SVM + Random Forest + Logistic Regression) and take majority vote (hard) or average probabilities (soft).</p>
+        <div class="analogy">Asking 3 doctors — a GP, a specialist, and a radiologist — for a diagnosis. Each sees from a different angle. If all 3 agree, you're probably right. Even when they disagree, the majority vote is usually better than any one alone.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — VotingClassifier</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">VotingClassifier</span>
+
+voting = <span class="cls">VotingClassifier</span>(
+    estimators=[
+        (<span class="str">'lr'</span>, <span class="cls">LogisticRegression</span>()),
+        (<span class="str">'rf'</span>, <span class="cls">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>)),
+        (<span class="str">'svm'</span>, <span class="cls">SVC</span>(probability=<span class="kw">True</span>))
+    ],
+    voting=<span class="str">'soft'</span>  <span class="cm"># 'soft' averages probabilities (better)</span>
+)
+voting.fit(X_train, y_train)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Gradient Boosting (GBM)</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">BOOSTING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Trees are built SEQUENTIALLY. Each new tree corrects the errors of the previous. The model "boosts" by focusing on where it was wrong before.</p>
+        <div class="analogy">A teacher gives a test. After marking, they identify the hardest questions. Next class, they focus ONLY on those hard questions. Next test: focus on the new weak spots. Each iteration targets remaining weaknesses.</div>
+        <div class="formula">F_m(x) = F_{m-1}(x) + η × h_m(x)
+where h_m = new tree fitted to RESIDUALS of previous model
+η = learning rate (how much to trust each new tree)</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — GradientBoosting</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">GradientBoostingClassifier</span>
+
+gbm = <span class="cls">GradientBoostingClassifier</span>(
+    n_estimators=<span class="num">200</span>,
+    learning_rate=<span class="num">0.05</span>,  <span class="cm"># smaller = more trees needed but better</span>
+    max_depth=<span class="num">3</span>,          <span class="cm"># shallow trees work best for boosting</span>
+    subsample=<span class="num">0.8</span>         <span class="cm"># stochastic gradient boosting</span>
+)
+gbm.fit(X_train, y_train)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">XGBoost — Extreme Gradient Boosting</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">BOOSTING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> XGBoost = GBM + regularization + parallelization + hardware optimization. Dominated ML competitions for years. Still one of the best algorithms for tabular data.</p>
+        <div class="when-box">
+          <div class="when-title">XGBoost extras vs vanilla GBM</div>
+          <ul>
+            <li>Built-in L1 + L2 regularization (prevents overfitting)</li>
+            <li>Parallel tree building (fast even on large data)</li>
+            <li>Handles missing values automatically</li>
+            <li>Early stopping (stop when validation score stops improving)</li>
+          </ul>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — XGBoost</span><span>xgboost</span></div>
+          <pre><span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+
+model = xgb.<span class="cls">XGBClassifier</span>(
+    n_estimators=<span class="num">500</span>,
+    learning_rate=<span class="num">0.05</span>,
+    max_depth=<span class="num">6</span>,
+    subsample=<span class="num">0.8</span>,
+    colsample_bytree=<span class="num">0.8</span>,  <span class="cm"># random feature subset per tree</span>
+    reg_alpha=<span class="num">0.1</span>,         <span class="cm"># L1 regularization</span>
+    reg_lambda=<span class="num">1.0</span>,        <span class="cm"># L2 regularization</span>
+    early_stopping_rounds=<span class="num">50</span>,
+    eval_metric=<span class="str">'logloss'</span>,
+    use_label_encoder=<span class="kw">False</span>
+)
+model.fit(X_train, y_train,
+          eval_set=[(X_test, y_test)],
+          verbose=<span class="num">100</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">LightGBM & CatBoost</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">BOOSTING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>LightGBM:</strong> Microsoft's GBM. Grows trees leaf-wise (not level-wise) → faster, more accurate for large datasets. Great when you have millions of rows.</p>
+        <p><strong>CatBoost:</strong> Yandex's GBM. Handles categorical features natively without encoding. Reduces overfitting on small datasets. Very easy to use.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — LightGBM & CatBoost</span><span>lgb/catboost</span></div>
+          <pre><span class="kw">import</span> lightgbm <span class="kw">as</span> lgb
+<span class="kw">from</span> catboost <span class="kw">import</span> <span class="cls">CatBoostClassifier</span>
+
+<span class="cm"># LightGBM</span>
+lgbm = lgb.<span class="cls">LGBMClassifier</span>(
+    n_estimators=<span class="num">500</span>, learning_rate=<span class="num">0.05</span>,
+    num_leaves=<span class="num">31</span>  <span class="cm"># key param: controls complexity</span>
+)
+
+<span class="cm"># CatBoost — no encoding needed for categorical columns!</span>
+cat_features = [<span class="str">'city'</span>, <span class="str">'category'</span>, <span class="str">'brand'</span>]  <span class="cm"># column names</span>
+cb = <span class="cls">CatBoostClassifier</span>(
+    iterations=<span class="num">500</span>, learning_rate=<span class="num">0.05</span>,
+    cat_features=cat_features,  <span class="cm"># just tell it which are categorical</span>
+    verbose=<span class="num">100</span>
+)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">AdaBoost</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">BOOSTING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> The original boosting algorithm. Misclassified samples get higher weights in the next iteration. Each new model focuses more on hard cases.</p>
+        <div class="analogy">A quiz where wrong answers get 2x points in the next round. You'd study harder for questions you got wrong. AdaBoost does the same — increases the importance of data points the model keeps getting wrong.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — AdaBoost</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">AdaBoostClassifier</span>
+
+ada = <span class="cls">AdaBoostClassifier</span>(
+    n_estimators=<span class="num">200</span>,
+    learning_rate=<span class="num">0.5</span>,
+    algorithm=<span class="str">'SAMME.R'</span>  <span class="cm"># uses probabilities</span>
+)
+ada.fit(X_train, y_train)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Stacking & Blending</div>
+        <div class="card-tag" style="background:rgba(244,114,182,0.15);color:#f472b6">ENSEMBLE</div>
+      </div>
+      <div class="card-body">
+        <p><strong>Stacking:</strong> Train Level-1 models. Their predictions become features for a Level-2 "meta-model". The meta-model learns how to best combine Level-1 predictions.</p>
+        <p><strong>Blending:</strong> Simpler version — Level-1 models predict on a holdout set, meta-model trains on those predictions.</p>
+        <div class="analogy">You ask 5 specialist doctors (Level-1) for their diagnosis. Then a senior consultant (meta-model/Level-2) reviews all 5 opinions and makes the final call — knowing each doctor's strengths and biases.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — StackingClassifier</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">StackingClassifier</span>
+
+level1 = [
+    (<span class="str">'rf'</span>, <span class="cls">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>)),
+    (<span class="str">'xgb'</span>, xgb.<span class="cls">XGBClassifier</span>()),
+    (<span class="str">'svm'</span>, <span class="cls">SVC</span>(probability=<span class="kw">True</span>))
+]
+meta_model = <span class="cls">LogisticRegression</span>()
+
+stacking = <span class="cls">StackingClassifier</span>(
+    estimators=level1,
+    final_estimator=meta_model,
+    cv=<span class="num">5</span>  <span class="cm"># cross-validation to avoid overfitting</span>
+)
+stacking.fit(X_train, y_train)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== EVALUATION =========== -->
+<section class="topic-section" id="section-evaluation">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.3);color:var(--a4)">Module 8</div>
+    <h2>Model Evaluation</h2>
+    <p>How do you know if your model is actually good? This is what separates real ML engineers from people who just run code. These metrics are heavily asked in interviews.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Confusion Matrix — TP, TN, FP, FN</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">EVALUATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> A 2×2 table showing the 4 types of predictions. The foundation of ALL classification metrics.</p>
+        <div style="background:var(--code);border:1px solid var(--border);border-radius:8px;padding:14px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:0.75rem;">
+          <div style="color:var(--muted);margin-bottom:8px;">               Predicted YES    Predicted NO</div>
+          <div style="color:var(--a4);">Actual YES  →   TP (True Pos)    FN (False Neg)</div>
+          <div style="color:var(--a2);">Actual NO   →   FP (False Pos)   TN (True Neg)</div>
+        </div>
+        <div class="analogy">Pregnancy test: TP = test says pregnant, IS pregnant. TN = test says not pregnant, is NOT pregnant. FP = test says pregnant but is NOT (false alarm). FN = test says not pregnant but IS (missed!). In medical tests, FN is usually more dangerous than FP.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Confusion Matrix</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix, classification_report
+
+cm = confusion_matrix(y_test, y_pred)
+<span class="cm"># [[TN, FP],</span>
+<span class="cm">#  [FN, TP]]</span>
+
+<span class="cm"># Full report in one line!</span>
+print(classification_report(y_test, y_pred))</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Accuracy, Precision, Recall, F1-Score</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">EVALUATION</div>
+      </div>
+      <div class="card-body">
+        <div class="formula">Accuracy  = (TP + TN) / Total         ← overall correct
+Precision = TP / (TP + FP)            ← of all predicted YES, how many actually YES?
+Recall    = TP / (TP + FN)            ← of all actual YES, how many did we catch?
+F1-Score  = 2 × (Precision × Recall) / (Precision + Recall)</div>
+        <div class="analogy" style="margin-top:10px;">Email spam filter: Precision = "of emails I flagged as spam, how many actually were?" (don't want to flag real emails). Recall = "of all actual spam emails, how many did I catch?" (don't want spam getting through). F1 = balance of both when you can't maximize one without hurting the other.</div>
+        <div class="when-box">
+          <div class="when-title">When to use which metric</div>
+          <ul>
+            <li>Accuracy — balanced classes, general purpose</li>
+            <li>Precision — when FP is costly (spam filter, false police alerts)</li>
+            <li>Recall — when FN is costly (cancer detection, fraud)</li>
+            <li>F1 — imbalanced classes, need balance of P & R</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">ROC-AUC Curve</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">EVALUATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>ROC:</strong> Receiver Operating Characteristic curve — plots True Positive Rate vs False Positive Rate at every threshold. <strong>AUC:</strong> Area Under the Curve. AUC=1.0 is perfect, AUC=0.5 is random (useless).</p>
+        <div class="analogy">You have a sorting machine separating apples from oranges. Lower the sensitivity → catches more apples but also mislabels oranges. ROC-AUC measures how well you can separate both across ALL sensitivity levels — not just one threshold.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — ROC AUC</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, roc_curve
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Get probabilities, not binary predictions</span>
+y_proba = model.predict_proba(X_test)[:, <span class="num">1</span>]
+
+auc = roc_auc_score(y_test, y_proba)
+print(<span class="str">f"AUC: {auc:.3f}"</span>)  <span class="cm"># 0.5=random, 1.0=perfect</span>
+
+fpr, tpr, thresholds = roc_curve(y_test, y_proba)
+plt.plot(fpr, tpr, label=<span class="str">f'AUC={auc:.2f}'</span>)
+plt.plot([<span class="num">0</span>,<span class="num">1</span>],[<span class="num">0</span>,<span class="num">1</span>],<span class="str">'--'</span>)  <span class="cm"># random baseline</span>
+plt.xlabel(<span class="str">'False Positive Rate'</span>)
+plt.ylabel(<span class="str">'True Positive Rate'</span>)
+plt.legend()</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">K-Fold & Stratified K-Fold Cross Validation</div>
+        <div class="card-tag" style="background:rgba(52,211,153,0.15);color:var(--a4)">EVALUATION</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Instead of one train/test split, use K different splits. Each slice gets to be the test set once. Average K scores = more reliable estimate of real performance.</p>
+        <div class="analogy">Testing a new medicine on patients. Instead of using the same 20% as test group every time (which might be unusual patients), you rotate — everyone gets to be in the test group once across 5 trials. Much fairer estimate of how the medicine works overall.</div>
+        <p><strong>Stratified K-Fold:</strong> Each fold maintains the same class ratio as the original data. Essential for imbalanced datasets.</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Cross Validation</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score, <span class="cls">StratifiedKFold</span>
+
+<span class="cm"># Simple K-Fold (5 folds)</span>
+scores = cross_val_score(model, X, y, cv=<span class="num">5</span>, scoring=<span class="str">'f1'</span>)
+print(<span class="str">f"CV F1: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+
+<span class="cm"># Stratified (preserves class ratio per fold)</span>
+skf = <span class="cls">StratifiedKFold</span>(n_splits=<span class="num">5</span>, shuffle=<span class="kw">True</span>, random_state=<span class="num">42</span>)
+scores = cross_val_score(model, X, y, cv=skf, scoring=<span class="str">'roc_auc'</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========== HYPERPARAMETER =========== -->
+<section class="topic-section" id="section-hyperparameter">
+  <div class="page-header">
+    <div class="badge" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.3);color:var(--a2)">Module 9</div>
+    <h2>Hyperparameter Tuning</h2>
+    <p>Model parameters are learned from data. Hyperparameters are settings YOU choose before training. Tuning them is the difference between a decent model and a great one.</p>
+  </div>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">GridSearchCV</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">TUNING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Try every single combination of hyperparameters you specify. Guaranteed to find the best within the grid, but SLOW for large grids.</p>
+        <div class="analogy">Buying a new phone: you try every combination of brand × color × storage → brand(3) × color(4) × storage(3) = 36 combinations. GridSearch is that exhaustive — it tries them all.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — GridSearchCV</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="cls">GridSearchCV</span>
+
+param_grid = {
+    <span class="str">'n_estimators'</span>: [<span class="num">100</span>, <span class="num">200</span>, <span class="num">300</span>],
+    <span class="str">'max_depth'</span>: [<span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>, <span class="kw">None</span>],
+    <span class="str">'min_samples_split'</span>: [<span class="num">2</span>, <span class="num">5</span>, <span class="num">10</span>]
+}
+<span class="cm"># 3 × 4 × 3 = 36 combinations × 5 CV folds = 180 fits</span>
+
+gs = <span class="cls">GridSearchCV</span>(
+    <span class="cls">RandomForestClassifier</span>(), param_grid,
+    cv=<span class="num">5</span>, scoring=<span class="str">'f1'</span>, n_jobs=<span class="num">-1</span>, verbose=<span class="num">1</span>
+)
+gs.fit(X_train, y_train)
+
+print(gs.best_params_)   <span class="cm"># {'max_depth': 7, 'n_estimators': 200, ...}</span>
+print(gs.best_score_)    <span class="cm"># 0.923</span>
+best_model = gs.best_estimator_</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">RandomizedSearchCV</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">TUNING</div>
+      </div>
+      <div class="card-body">
+        <p><strong>What it is:</strong> Instead of trying every combination, randomly sample N combinations. Faster than GridSearch and often just as good — or better — because it explores more of the space.</p>
+        <div class="analogy">Same phone buying but instead of testing all 36 combinations, you randomly try 15. You'll likely find something great much faster, and often the extra 21 tests wouldn't change your pick anyway.</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — RandomizedSearchCV</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="cls">RandomizedSearchCV</span>
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> randint, uniform
+
+<span class="cm"># Can use distributions, not just lists!</span>
+param_dist = {
+    <span class="str">'n_estimators'</span>: randint(<span class="num">100</span>, <span class="num">500</span>),       <span class="cm"># random int 100-500</span>
+    <span class="str">'max_depth'</span>: randint(<span class="num">3</span>, <span class="num">15</span>),
+    <span class="str">'learning_rate'</span>: uniform(<span class="num">0.01</span>, <span class="num">0.2</span>),     <span class="cm"># random float</span>
+    <span class="str">'subsample'</span>: uniform(<span class="num">0.6</span>, <span class="num">0.4</span>)
+}
+
+rs = <span class="cls">RandomizedSearchCV</span>(
+    xgb.<span class="cls">XGBClassifier</span>(), param_dist,
+    n_iter=<span class="num">50</span>,   <span class="cm"># try 50 random combinations (vs 36 exhaustive)</span>
+    cv=<span class="num">5</span>, scoring=<span class="str">'roc_auc'</span>, n_jobs=<span class="num">-1</span>
+)
+rs.fit(X_train, y_train)
+print(rs.best_params_)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Model Selection & Evaluation Pipeline</div>
+        <div class="card-tag" style="background:rgba(167,139,250,0.15);color:var(--a2)">PIPELINE</div>
+      </div>
+      <div class="card-body">
+        <p><strong>The right workflow:</strong> Never tune on your test set. Use train → validation → test. Pipeline prevents data leakage by ensuring preprocessing is learned from train data only.</p>
+        <div class="formula">CORRECT:
+  Train set  → fit scaler, fit model
+  Val set    → tune hyperparameters  (never touch test set here!)
+  Test set   → final evaluation only (use ONCE at the very end)</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — Full Pipeline</span><span>sklearn</span></div>
+          <pre><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> <span class="cls">Pipeline</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">StandardScaler</span>
+
+<span class="cm"># ✅ Scaler is INSIDE the pipeline → no leakage!</span>
+pipeline = <span class="cls">Pipeline</span>([
+    (<span class="str">'scaler'</span>, <span class="cls">StandardScaler</span>()),
+    (<span class="str">'model'</span>, <span class="cls">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>))
+])
+
+<span class="cm"># GridSearch the whole pipeline</span>
+param_grid = {
+    <span class="str">'model__n_estimators'</span>: [<span class="num">100</span>, <span class="num">200</span>],  <span class="cm"># prefix = pipeline step name</span>
+    <span class="str">'model__max_depth'</span>: [<span class="num">5</span>, <span class="num">10</span>]
+}
+gs = <span class="cls">GridSearchCV</span>(pipeline, param_grid, cv=<span class="num">5</span>)
+gs.fit(X_train, y_train)
+
+<span class="cm"># Final test set evaluation — only done ONCE</span>
+final_score = gs.score(X_test, y_test)</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function showSection(name) {
+  document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelector(`[data-section="${name}"]`).classList.add('active');
+  window.scrollTo(0, 0);
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function filterCards() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? '' : 'none';
+  });
+  if (query.length > 2) {
+    document.querySelectorAll('.topic-section').forEach(s => s.classList.add('active'));
+    document.querySelectorAll('.topic-section').forEach(s => {
+      const visible = s.querySelectorAll('.card[style=""]').length + s.querySelectorAll('.card:not([style])').length;
+      if (query.length > 2) s.style.display = '';
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA — Zero to Interview Ready</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030507;--s1:#070a0f;--s2:#0b0f18;--s3:#101520;
+  --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.11);
+  --tx:#eef4ff;--mt:rgba(238,244,255,.5);--dm:rgba(238,244,255,.24);
+  --gd:#00f5a0;--gd2:rgba(0,245,160,.14);--gd3:rgba(0,245,160,.07);
+  --cy:#38bdf8;--pu:#a78bfa;--or:#fb923c;--pk:#f472b6;--ye:#fbbf24;--re:#f87171;
+  --sw:268px;--hf:'DM Sans',sans-serif;--mf:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--hf);background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex;font-size:14.5px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(0,245,160,.2);border-radius:2px}
+.sb{width:var(--sw);min-width:var(--sw);height:100vh;overflow-y:auto;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.sb-brand{padding:18px 15px 12px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--s1);z-index:9}
+.sb-logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;background:linear-gradient(135deg,rgba(0,245,160,.35),rgba(0,245,160,.1));border:1px solid rgba(0,245,160,.4);font-size:18px}
+.sb-title{font-size:14.5px;font-weight:800;color:var(--tx)}
+.sb-sub{font-size:10px;color:var(--dm);margin-top:2px;font-family:var(--mf)}
+.sb-sec{font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.18em;color:var(--dm);padding:11px 15px 2px}
+.sb-a{display:flex;align-items:center;gap:7px;padding:5px 15px;font-size:12px;font-weight:500;color:var(--mt);border:none;background:none;cursor:pointer;width:100%;text-align:left;border-left:2px solid transparent;transition:all .12s}
+.sb-a:hover{color:var(--tx);background:var(--gd3);border-left-color:rgba(0,245,160,.25)}
+.sb-a.on{color:var(--gd);border-left-color:var(--gd);background:var(--gd3)}
+.sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sb-prog{padding:10px 15px;border-top:1px solid var(--bd);margin-top:auto}
+.pl{font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--dm);margin-bottom:4px}
+.pb{height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--gd),var(--cy));width:0%;transition:width .4s;border-radius:2px}
+.pn{font-family:var(--mf);font-size:8px;color:var(--dm);margin-top:3px;text-align:right}
+.main{flex:1;overflow-y:auto;min-width:0}
+.hero{padding:44px 52px 36px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;left:-60px;width:340px;height:340px;background:radial-gradient(circle,rgba(0,245,160,.08) 0%,transparent 65%);pointer-events:none}
+.hero-ey{font-family:var(--mf);font-size:10px;color:var(--gd);text-transform:uppercase;letter-spacing:.2em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hero-ey::before{content:'';width:20px;height:1px;background:var(--gd)}
+.hero-h1{font-size:clamp(24px,3.5vw,44px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:10px}
+.hero-h1 .g{color:var(--gd)}.hero-h1 .d{color:var(--mt)}
+.hero-p{max-width:560px;font-size:13.5px;color:var(--mt);line-height:1.78;margin-bottom:20px}
+.hero-pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{padding:4px 11px;border-radius:50px;font-family:var(--mf);font-size:10px;border:1px solid var(--bd2);color:var(--mt);background:rgba(255,255,255,.03)}
+.pill.g{border-color:rgba(0,245,160,.35);color:var(--gd);background:var(--gd3)}
+.ct{max-width:900px;padding:0 52px;margin:0 auto}
+.sec{padding:42px 0 18px;border-top:1px solid var(--bd)}
+.sec:first-child{border-top:none}
+.sec-n{font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sec-n::after{content:'';height:1px;flex:1;max-width:28px;opacity:.3;background:currentColor}
+.sec-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:7px}
+.sec-desc{font-size:13.5px;color:var(--mt);line-height:1.78;margin-bottom:18px;max-width:700px}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:9px;margin-bottom:16px}
+.tc{background:var(--s2);border:1px solid var(--bd);border-radius:11px;padding:14px 16px;transition:all .15s;position:relative;overflow:hidden}
+.tc::after{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:var(--cat,var(--gd));opacity:0;transition:opacity .15s}
+.tc:hover{border-color:var(--bd2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.5)}.tc:hover::after{opacity:1}
+.tc-n{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--tx);font-family:var(--hf)}
+.tc-d{font-size:12px;color:var(--mt);line-height:1.62}
+.tc-t{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tag{font-family:var(--mf);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:rgba(255,255,255,.04);color:var(--dm)}
+.tag.g{background:var(--gd3);color:var(--gd);border-color:rgba(0,245,160,.3)}
+.tag.c{background:rgba(56,189,248,.1);color:var(--cy);border-color:rgba(56,189,248,.3)}
+.tag.p{background:rgba(167,139,250,.1);color:var(--pu);border-color:rgba(167,139,250,.3)}
+.tag.o{background:rgba(251,146,60,.1);color:var(--or);border-color:rgba(251,146,60,.3)}
+.tag.r{background:rgba(248,113,113,.1);color:var(--re);border-color:rgba(248,113,113,.3)}
+.tag.y{background:rgba(251,191,36,.1);color:var(--ye);border-color:rgba(251,191,36,.3)}
+.cb{background:#050810;border:1px solid var(--bd2);border-radius:10px;overflow:hidden;margin:10px 0}
+.ch{background:rgba(255,255,255,.03);padding:6px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
+.cdots{display:flex;gap:5px}
+.cd{width:9px;height:9px;border-radius:50%}
+.cd:nth-child(1){background:#ff5f57}.cd:nth-child(2){background:#febc2e}.cd:nth-child(3){background:#28c840}
+.cf{font-family:var(--mf);font-size:10px;color:rgba(0,245,160,.6)}
+.clg{font-family:var(--mf);font-size:9px;color:var(--dm);text-transform:uppercase}
+pre{padding:13px 16px;overflow-x:auto;font-family:var(--mf);font-size:12px;line-height:1.82;color:#c8d8f8;tab-size:2}
+.k{color:#f48fb1}.s{color:#a5d6a7}.n{color:#b39ddb}.f{color:#80deea}.cm{color:#455a64;font-style:italic}.t{color:#e6db74}
+.cl{border-radius:10px;padding:12px 16px;margin:9px 0 16px;font-size:13px;line-height:1.65}
+.cll{font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.15em;margin-bottom:5px;font-weight:700}
+.cl p{color:var(--mt)}
+.ci{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2)}.ci .cll{color:var(--cy)}
+.cg{background:rgba(0,245,160,.06);border:1px solid rgba(0,245,160,.2)}.cg .cll{color:var(--gd)}
+.cw{background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2)}.cw .cll{color:var(--or)}
+.cr{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2)}.cr .cll{color:var(--re)}
+.iq{border:1px solid rgba(251,191,36,.18);border-radius:10px;padding:14px 16px;margin:10px 0;background:rgba(251,191,36,.04);position:relative}
+.iq-badge{position:absolute;top:-8px;left:13px;background:var(--ye);color:#080808;font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:3px;font-weight:700}
+.iq-q{font-size:13px;font-weight:700;margin-bottom:7px;color:var(--tx)}
+.iq-a{font-size:12.5px;color:var(--mt);line-height:1.68}
+.iq-a code{font-family:var(--mf);font-size:11px;background:rgba(255,255,255,.07);padding:2px 5px;border-radius:3px;color:var(--gd)}
+.ctab{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+.ctab th{background:var(--s3);padding:8px 12px;text-align:left;font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--mt)}
+.ctab td{padding:8px 12px;border-bottom:1px solid var(--bd);color:var(--mt);line-height:1.5;vertical-align:top}
+.ctab tr:hover td{background:rgba(255,255,255,.012)}
+.ctab th:first-child,.ctab td:first-child{color:var(--gd);font-family:var(--mf);font-size:11px}
+.lvl{display:inline-flex;align-items:center;gap:5px;font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:3px 9px;border-radius:50px;margin-bottom:10px}
+.easy{background:rgba(0,245,160,.1);color:var(--gd);border:1px solid rgba(0,245,160,.3)}
+.med{background:rgba(251,146,60,.1);color:var(--or);border:1px solid rgba(251,146,60,.3)}
+.hard{background:rgba(248,113,113,.1);color:var(--re);border:1px solid rgba(248,113,113,.3)}
+.formula{background:var(--s3);border-radius:7px;padding:10px 15px;font-family:var(--mf);font-size:11px;color:#c8d8f8;margin:8px 0;border-left:2px solid var(--gd);line-height:1.9}
+.viz{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:18px;margin:14px 0;overflow:hidden}
+.viz-t{font-size:12px;font-weight:700;color:var(--mt);margin-bottom:12px;display:flex;align-items:center;gap:8px;font-family:var(--mf)}
+.viz-t span{font-size:9px;text-transform:uppercase;letter-spacing:.1em;padding:2px 7px;border-radius:4px;background:rgba(0,245,160,.08);color:rgba(0,245,160,.6)}
+.hdiv{display:flex;align-items:center;gap:12px;margin:18px 0 8px;font-family:var(--mf);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--dm)}
+.hdiv::before,.hdiv::after{content:'';flex:1;height:1px;background:var(--bd)}
+.chk{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--bd2);border-radius:11px;padding:17px 20px;margin:18px 0}
+.chk-l{font-family:var(--mf);font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:rgba(251,191,36,.7);margin-bottom:8px}
+.chk h3{font-size:14px;font-weight:700;margin-bottom:9px}
+.chk-li{list-style:none;display:flex;flex-direction:column;gap:5px}
+.chk-li li{font-size:12.5px;color:var(--mt);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.chk-li li::before{content:'□';color:rgba(251,191,36,.5);flex-shrink:0;font-family:var(--mf)}
+footer{background:var(--s1);border-top:1px solid var(--bd);padding:18px 52px;text-align:center;font-size:11.5px;color:var(--dm);font-family:var(--mf)}
+footer strong{color:var(--gd)}
+</style>
+</head>
+<body>
+<nav class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">📊</div>
+    <div class="sb-title">DSA — Zero to Interview</div>
+    <div class="sb-sub">Scratch → FAANG Ready · India 2025</div>
+  </div>
+  <div class="sb-sec">Foundations</div>
+  <button class="sb-a on" onclick="go('d1')"><span class="sb-dot" style="background:var(--gd)"></span>01 · Big O & Complexity</button>
+  <button class="sb-a" onclick="go('d2')"><span class="sb-dot" style="background:var(--gd)"></span>02 · Arrays & Strings</button>
+  <button class="sb-a" onclick="go('d3')"><span class="sb-dot" style="background:var(--gd)"></span>03 · Linked Lists</button>
+  <button class="sb-a" onclick="go('d4')"><span class="sb-dot" style="background:var(--gd)"></span>04 · Stacks & Queues</button>
+  <button class="sb-a" onclick="go('d5')"><span class="sb-dot" style="background:var(--gd)"></span>05 · Hash Maps & Sets</button>
+  <div class="sb-sec">Trees & Graphs</div>
+  <button class="sb-a" onclick="go('d6')"><span class="sb-dot" style="background:var(--cy)"></span>06 · Binary Trees & BST</button>
+  <button class="sb-a" onclick="go('d7')"><span class="sb-dot" style="background:var(--cy)"></span>07 · Heaps & Priority Queue</button>
+  <button class="sb-a" onclick="go('d8')"><span class="sb-dot" style="background:var(--cy)"></span>08 · Graphs & BFS/DFS</button>
+  <div class="sb-sec">Algorithms</div>
+  <button class="sb-a" onclick="go('d9')"><span class="sb-dot" style="background:var(--pu)"></span>09 · Sorting Algorithms</button>
+  <button class="sb-a" onclick="go('d10')"><span class="sb-dot" style="background:var(--pu)"></span>10 · Binary Search</button>
+  <button class="sb-a" onclick="go('d11')"><span class="sb-dot" style="background:var(--pu)"></span>11 · Two Pointers & Sliding Window</button>
+  <button class="sb-a" onclick="go('d12')"><span class="sb-dot" style="background:var(--pu)"></span>12 · Recursion & Backtracking</button>
+  <button class="sb-a" onclick="go('d13')"><span class="sb-dot" style="background:var(--or)"></span>13 · Dynamic Programming</button>
+  <button class="sb-a" onclick="go('d14')"><span class="sb-dot" style="background:var(--or)"></span>14 · Greedy Algorithms</button>
+  <button class="sb-a" onclick="go('d15')"><span class="sb-dot" style="background:var(--ye)"></span>15 · Patterns & Interview Sheet</button>
+  <div class="sb-prog">
+    <div class="pl">Progress</div>
+    <div class="pb"><div class="pf" id="pf"></div></div>
+    <div class="pn" id="pn">0%</div>
+  </div>
+</nav>
+
+<main class="main" id="ms">
+<div class="hero">
+  <div class="hero-ey">Startup to FAANG · Coding Rounds · India 2025</div>
+  <h1 class="hero-h1"><span class="g">DSA</span> —<br><span class="d">Zero to Interview</span><br>Ready</h1>
+  <p class="hero-p">Every data structure and algorithm topic that appears in Indian tech interviews — from basic arrays to dynamic programming. Covers every pattern asked at Amazon, Google, Flipkart, Swiggy, and 1-10 year experience rounds. With complexity analysis, templates, and problem patterns.</p>
+  <div class="hero-pills">
+    <div class="pill g">15 Modules</div>
+    <div class="pill">Big O to DP</div>
+    <div class="pill">Code Templates</div>
+    <div class="pill">Problem Patterns</div>
+    <div class="pill">Complexity Tables</div>
+    <div class="pill">Startup → FAANG</div>
+  </div>
+</div>
+
+<div class="ct">
+
+<!-- D1: BIG O -->
+<section class="sec" id="d1">
+  <div class="sec-n" style="color:var(--gd)">Module 01 · Foundations</div>
+  <div class="lvl easy">● Beginner — Must Know</div>
+  <h2 class="sec-title">Big O Notation & Complexity Analysis</h2>
+  <p class="sec-desc">Big O describes how an algorithm's time or space grows as input size (n) grows. Every single interview requires you to state the complexity of your solution. This is non-negotiable.</p>
+
+  <div class="viz">
+    <div class="viz-t">Growth Rate Comparison <span>Visual</span></div>
+    <canvas id="bigoC" height="200"></canvas>
+  </div>
+
+  <table class="ctab">
+    <thead><tr><th>Complexity</th><th>Name</th><th>Example</th><th>n=1000</th></tr></thead>
+    <tbody>
+      <tr><td>O(1)</td><td>Constant</td><td>Array index access, HashMap get/set</td><td>1 op</td></tr>
+      <tr><td>O(log n)</td><td>Logarithmic</td><td>Binary search, balanced BST operations</td><td>~10 ops</td></tr>
+      <tr><td>O(n)</td><td>Linear</td><td>Array scan, linked list traversal</td><td>1,000 ops</td></tr>
+      <tr><td>O(n log n)</td><td>Linearithmic</td><td>Merge sort, heap sort, good sorting</td><td>~10,000 ops</td></tr>
+      <tr><td>O(n²)</td><td>Quadratic</td><td>Bubble/insertion sort, nested loops</td><td>1,000,000 ops</td></tr>
+      <tr><td>O(2ⁿ)</td><td>Exponential</td><td>Recursive Fibonacci, subset generation</td><td>10³⁰¹ ops — avoid!</td></tr>
+      <tr><td>O(n!)</td><td>Factorial</td><td>Permutations, TSP brute force</td><td>astronomical — never</td></tr>
+    </tbody>
+  </table>
+
+  <div class="formula">
+Drop constants: O(3n) → O(n)   |   O(n/2) → O(n)
+Drop smaller terms: O(n² + n) → O(n²)   |   O(n + log n) → O(n)
+Nested loops MULTIPLY: two nested O(n) loops = O(n²)
+Sequential operations ADD: O(n) + O(n) = O(n) (not O(2n))</div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">01_complexity_examples.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// O(1) — constant, no matter size of input</span>
+<span class="k">const</span> <span class="f">get</span> = (arr, i) =&gt; arr[i];
+<span class="k">const</span> <span class="f">setMap</span> = (map, k, v) =&gt; map.<span class="f">set</span>(k, v);
+
+<span class="cm">// O(n) — one pass through array</span>
+<span class="k">const</span> <span class="f">sum</span> = (arr) =&gt; arr.<span class="f">reduce</span>((a, b) =&gt; a + b, <span class="n">0</span>);
+
+<span class="cm">// O(n²) — nested loops over same input</span>
+<span class="k">function</span> <span class="f">hasDupe</span>(arr) {
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; arr.length; i++)         <span class="cm">// n</span>
+    <span class="k">for</span> (<span class="k">let</span> j = i + <span class="n">1</span>; j &lt; arr.length; j++)   <span class="cm">// n-1, n-2...</span>
+      <span class="k">if</span> (arr[i] === arr[j]) <span class="k">return true</span>;        <span class="cm">// → O(n²)</span>
+  <span class="k">return false</span>;
+}
+<span class="cm">// Better: O(n) with HashSet</span>
+<span class="k">const</span> <span class="f">hasDupeO1</span> = (arr) =&gt; arr.length !== <span class="k">new</span> <span class="f">Set</span>(arr).size;
+
+<span class="cm">// O(log n) — halving the input each step</span>
+<span class="k">function</span> <span class="f">binarySearch</span>(arr, target) {
+  <span class="k">let</span> lo = <span class="n">0</span>, hi = arr.length - <span class="n">1</span>;
+  <span class="k">while</span> (lo &lt;= hi) {
+    <span class="k">const</span> mid = lo + ((hi - lo) &gt;&gt; <span class="n">1</span>);     <span class="cm">// avoid overflow</span>
+    <span class="k">if</span> (arr[mid] === target) <span class="k">return</span> mid;
+    arr[mid] &lt; target ? lo = mid + <span class="n">1</span> : hi = mid - <span class="n">1</span>;
+  }
+  <span class="k">return</span> -<span class="n">1</span>;
+}                                               <span class="cm">// → O(log n) time, O(1) space</span>
+
+<span class="cm">// Space complexity — memory used</span>
+<span class="cm">// O(1): variables only. O(n): array/map proportional to input.</span>
+<span class="cm">// Recursive calls use O(depth) stack space!</span></pre></div>
+</section>
+
+<!-- D2: ARRAYS & STRINGS -->
+<section class="sec" id="d2">
+  <div class="sec-n" style="color:var(--gd)">Module 02 · Foundations</div>
+  <div class="lvl easy">● Beginner</div>
+  <h2 class="sec-title">Arrays & Strings</h2>
+  <p class="sec-desc">Arrays are the most tested data structure. Almost every problem involves arrays. Master these operations, patterns, and built-in methods cold.</p>
+
+  <table class="ctab">
+    <thead><tr><th>Operation</th><th>Array Time</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td>Access arr[i]</td><td>O(1)</td><td>Direct memory offset calculation</td></tr>
+      <tr><td>Search (unsorted)</td><td>O(n)</td><td>Must check every element</td></tr>
+      <tr><td>Search (sorted)</td><td>O(log n)</td><td>Binary search possible</td></tr>
+      <tr><td>Insert at end</td><td>O(1) amortized</td><td>Dynamic array may resize occasionally</td></tr>
+      <tr><td>Insert at start/mid</td><td>O(n)</td><td>Must shift all elements right</td></tr>
+      <tr><td>Delete at end</td><td>O(1)</td><td>Just decrement length</td></tr>
+      <tr><td>Delete at start/mid</td><td>O(n)</td><td>Must shift all elements left</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">02_arrays_patterns.js — Most common patterns</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Prefix Sum — range query in O(1) after O(n) prep ─────</span>
+<span class="k">function</span> <span class="f">buildPrefix</span>(arr) {
+  <span class="k">const</span> prefix = [<span class="n">0</span>];
+  <span class="k">for</span> (<span class="k">const</span> n <span class="k">of</span> arr) prefix.<span class="f">push</span>(prefix.at(-<span class="n">1</span>) + n);
+  <span class="k">return</span> prefix;
+}
+<span class="cm">// rangeSum(i, j) = prefix[j+1] - prefix[i]  → O(1) per query!</span>
+
+<span class="cm">// ─── Kadane's Algorithm — Maximum Subarray Sum O(n) ───────</span>
+<span class="k">function</span> <span class="f">maxSubarray</span>(nums) {
+  <span class="k">let</span> maxSum = -Infinity, curr = <span class="n">0</span>;
+  <span class="k">for</span> (<span class="k">const</span> n <span class="k">of</span> nums) {
+    curr = Math.<span class="f">max</span>(n, curr + n);      <span class="cm">// extend or restart</span>
+    maxSum = Math.<span class="f">max</span>(maxSum, curr);
+  }
+  <span class="k">return</span> maxSum;
+}
+
+<span class="cm">// ─── Dutch National Flag — sort 0,1,2 in O(n) one pass ────</span>
+<span class="k">function</span> <span class="f">sortColors</span>(nums) {
+  <span class="k">let</span> lo = <span class="n">0</span>, mid = <span class="n">0</span>, hi = nums.length - <span class="n">1</span>;
+  <span class="k">while</span> (mid &lt;= hi) {
+    <span class="k">if</span> (nums[mid] === <span class="n">0</span>) [nums[lo++], nums[mid++]] = [nums[mid], nums[lo]];
+    <span class="k">else if</span> (nums[mid] === <span class="n">2</span>) [nums[mid], nums[hi--]] = [nums[hi], nums[mid]];
+    <span class="k">else</span> mid++;
+  }
+}
+
+<span class="cm">// ─── String: Anagram check O(n) ───────────────────────────</span>
+<span class="k">function</span> <span class="f">isAnagram</span>(s, t) {
+  <span class="k">if</span> (s.length !== t.length) <span class="k">return false</span>;
+  <span class="k">const</span> count = <span class="k">new</span> <span class="f">Array</span>(<span class="n">26</span>).<span class="f">fill</span>(<span class="n">0</span>);
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; s.length; i++) {
+    count[s.charCodeAt(i) - <span class="n">97</span>]++;
+    count[t.charCodeAt(i) - <span class="n">97</span>]--;
+  }
+  <span class="k">return</span> count.<span class="f">every</span>(c =&gt; c === <span class="n">0</span>);
+}</pre></div>
+</section>
+
+<!-- D3: LINKED LISTS -->
+<section class="sec" id="d3">
+  <div class="sec-n" style="color:var(--gd)">Module 03 · Foundations</div>
+  <div class="lvl easy">● Beginner → Mid</div>
+  <h2 class="sec-title">Linked Lists</h2>
+  <p class="sec-desc">Linked lists test pointer manipulation under pressure. The classic interview questions (reverse, detect cycle, find middle, merge sorted lists) follow predictable patterns. Learn the patterns, not the problems.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">03_linked_list.js — All classic patterns</div><div class="clg">js</div></div>
+<pre><span class="k">class</span> <span class="t">ListNode</span> { <span class="f">constructor</span>(val, next=<span class="k">null</span>) { <span class="k">this</span>.val=val; <span class="k">this</span>.next=next; } }
+
+<span class="cm">// ─── Reverse Linked List O(n) ─────────────────────────────</span>
+<span class="k">function</span> <span class="f">reverse</span>(head) {
+  <span class="k">let</span> prev = <span class="k">null</span>, curr = head;
+  <span class="k">while</span> (curr) {
+    <span class="k">const</span> next = curr.next;  <span class="cm">// save</span>
+    curr.next = prev;         <span class="cm">// reverse pointer</span>
+    prev = curr;              <span class="cm">// advance prev</span>
+    curr = next;              <span class="cm">// advance curr</span>
+  }
+  <span class="k">return</span> prev;
+}
+
+<span class="cm">// ─── Detect Cycle — Floyd's Tortoise & Hare O(n) O(1) ────</span>
+<span class="k">function</span> <span class="f">hasCycle</span>(head) {
+  <span class="k">let</span> slow = head, fast = head;
+  <span class="k">while</span> (fast?.next) {
+    slow = slow.next;          <span class="cm">// 1 step</span>
+    fast = fast.next.next;     <span class="cm">// 2 steps</span>
+    <span class="k">if</span> (slow === fast) <span class="k">return true</span>;   <span class="cm">// they meet → cycle!</span>
+  }
+  <span class="k">return false</span>;
+}
+
+<span class="cm">// ─── Find Middle — slow/fast pointers ────────────────────</span>
+<span class="k">function</span> <span class="f">findMiddle</span>(head) {
+  <span class="k">let</span> slow = head, fast = head;
+  <span class="k">while</span> (fast?.next) { slow = slow.next; fast = fast.next.next; }
+  <span class="k">return</span> slow;  <span class="cm">// slow is at middle when fast reaches end</span>
+}
+
+<span class="cm">// ─── Merge Two Sorted Lists O(n+m) ───────────────────────</span>
+<span class="k">function</span> <span class="f">mergeSorted</span>(l1, l2) {
+  <span class="k">const</span> dummy = <span class="k">new</span> <span class="f">ListNode</span>(<span class="n">0</span>);  <span class="cm">// dummy head trick</span>
+  <span class="k">let</span> curr = dummy;
+  <span class="k">while</span> (l1 &amp;&amp; l2) {
+    <span class="k">if</span> (l1.val &lt;= l2.val) { curr.next = l1; l1 = l1.next; }
+    <span class="k">else</span> { curr.next = l2; l2 = l2.next; }
+    curr = curr.next;
+  }
+  curr.next = l1 ?? l2;
+  <span class="k">return</span> dummy.next;
+}
+
+<span class="cm">// ─── Remove Nth From End — two-pointer gap trick ──────────</span>
+<span class="k">function</span> <span class="f">removeNthFromEnd</span>(head, n) {
+  <span class="k">const</span> dummy = <span class="k">new</span> <span class="f">ListNode</span>(<span class="n">0</span>, head);
+  <span class="k">let</span> fast = dummy, slow = dummy;
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt;= n; i++) fast = fast.next;  <span class="cm">// gap of n+1</span>
+  <span class="k">while</span> (fast) { fast = fast.next; slow = slow.next; }
+  slow.next = slow.next.next;          <span class="cm">// skip the nth node</span>
+  <span class="k">return</span> dummy.next;
+}</pre></div>
+</section>
+
+<!-- D4: STACKS & QUEUES -->
+<section class="sec" id="d4">
+  <div class="sec-n" style="color:var(--gd)">Module 04 · Foundations</div>
+  <div class="lvl easy">● Beginner → Mid</div>
+  <h2 class="sec-title">Stacks & Queues</h2>
+  <p class="sec-desc">Stack: Last In First Out (LIFO). Queue: First In First Out (FIFO). Monotonic stack is the most powerful pattern for "next greater element" family of problems — very common in interviews.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">04_stack_queue.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Valid Parentheses — classic stack problem ────────────</span>
+<span class="k">function</span> <span class="f">isValid</span>(s) {
+  <span class="k">const</span> stack = [], map = { ')': '(', ']': '[', '}': '{' };
+  <span class="k">for</span> (<span class="k">const</span> ch <span class="k">of</span> s) {
+    <span class="k">if</span> (<span class="s">'([{'</span>.<span class="f">includes</span>(ch)) stack.<span class="f">push</span>(ch);
+    <span class="k">else if</span> (stack.<span class="f">pop</span>() !== map[ch]) <span class="k">return false</span>;
+  }
+  <span class="k">return</span> stack.length === <span class="n">0</span>;
+}
+
+<span class="cm">// ─── Monotonic Stack — Next Greater Element O(n) ──────────</span>
+<span class="cm">// TEMPLATE: maintains stack in decreasing order</span>
+<span class="k">function</span> <span class="f">nextGreater</span>(nums) {
+  <span class="k">const</span> result = <span class="k">new</span> <span class="f">Array</span>(nums.length).<span class="f">fill</span>(-<span class="n">1</span>);
+  <span class="k">const</span> stack = [];    <span class="cm">// stores INDICES</span>
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+    <span class="k">while</span> (stack.length &amp;&amp; nums[i] &gt; nums[stack.at(-<span class="n">1</span>)]) {
+      result[stack.<span class="f">pop</span>()] = nums[i];   <span class="cm">// current is next greater for popped</span>
+    }
+    stack.<span class="f">push</span>(i);
+  }
+  <span class="k">return</span> result;
+}
+<span class="cm">// Same pattern: Largest Rectangle in Histogram, Daily Temperatures, Stock Span</span>
+
+<span class="cm">// ─── Queue with two stacks (implement queue using stacks) ─</span>
+<span class="k">class</span> <span class="t">MyQueue</span> {
+  in = []; out = [];
+  <span class="f">push</span>(x) { <span class="k">this</span>.in.<span class="f">push</span>(x); }
+  <span class="f">pop</span>() {
+    <span class="k">if</span> (!<span class="k">this</span>.out.length) <span class="k">while</span> (<span class="k">this</span>.in.length) <span class="k">this</span>.out.<span class="f">push</span>(<span class="k">this</span>.in.<span class="f">pop</span>());
+    <span class="k">return this</span>.out.<span class="f">pop</span>();
+  }
+}
+
+<span class="cm">// ─── Sliding Window Maximum — deque O(n) ─────────────────</span>
+<span class="k">function</span> <span class="f">maxSlidingWindow</span>(nums, k) {
+  <span class="k">const</span> deque = [], result = [];
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+    <span class="k">if</span> (deque[<span class="n">0</span>] &lt; i - k + <span class="n">1</span>) deque.<span class="f">shift</span>();  <span class="cm">// remove out-of-window</span>
+    <span class="k">while</span> (deque.length &amp;&amp; nums[deque.at(-<span class="n">1</span>)] &lt; nums[i]) deque.<span class="f">pop</span>();
+    deque.<span class="f">push</span>(i);
+    <span class="k">if</span> (i &gt;= k - <span class="n">1</span>) result.<span class="f">push</span>(nums[deque[<span class="n">0</span>]]);
+  }
+  <span class="k">return</span> result;
+}</pre></div>
+</section>
+
+<!-- D5: HASH MAPS -->
+<section class="sec" id="d5">
+  <div class="sec-n" style="color:var(--gd)">Module 05 · Foundations</div>
+  <div class="lvl easy">● Beginner</div>
+  <h2 class="sec-title">Hash Maps & Sets</h2>
+  <p class="sec-desc">Hash maps are the most powerful tool for reducing time complexity. If you see an O(n²) solution, the fix is usually a HashMap. Every "two-sum" style problem uses this pattern.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">05_hashmaps.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Two Sum — the canonical HashMap problem O(n) ─────────</span>
+<span class="k">function</span> <span class="f">twoSum</span>(nums, target) {
+  <span class="k">const</span> seen = <span class="k">new</span> Map();   <span class="cm">// value → index</span>
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+    <span class="k">const</span> complement = target - nums[i];
+    <span class="k">if</span> (seen.<span class="f">has</span>(complement)) <span class="k">return</span> [seen.<span class="f">get</span>(complement), i];
+    seen.<span class="f">set</span>(nums[i], i);
+  }
+}
+<span class="cm">// Key insight: store what you've SEEN, look for what you NEED</span>
+
+<span class="cm">// ─── Frequency counting — group anagrams O(n*k) ──────────</span>
+<span class="k">function</span> <span class="f">groupAnagrams</span>(strs) {
+  <span class="k">const</span> map = <span class="k">new</span> Map();
+  <span class="k">for</span> (<span class="k">const</span> s <span class="k">of</span> strs) {
+    <span class="k">const</span> key = [...s].<span class="f">sort</span>().<span class="f">join</span>(<span class="s">''</span>);   <span class="cm">// sorted string = canonical form</span>
+    <span class="k">if</span> (!map.<span class="f">has</span>(key)) map.<span class="f">set</span>(key, []);
+    map.<span class="f">get</span>(key).<span class="f">push</span>(s);
+  }
+  <span class="k">return</span> [...map.<span class="f">values</span>()];
+}
+
+<span class="cm">// ─── LRU Cache — HashMap + Doubly Linked List O(1) ────────</span>
+<span class="k">class</span> <span class="t">LRUCache</span> {
+  <span class="f">constructor</span>(capacity) {
+    <span class="k">this</span>.cap = capacity;
+    <span class="k">this</span>.map = <span class="k">new</span> Map();  <span class="cm">// Map preserves INSERTION ORDER in JS!</span>
+  }
+  <span class="f">get</span>(key) {
+    <span class="k">if</span> (!<span class="k">this</span>.map.<span class="f">has</span>(key)) <span class="k">return</span> -<span class="n">1</span>;
+    <span class="k">const</span> val = <span class="k">this</span>.map.<span class="f">get</span>(key);
+    <span class="k">this</span>.map.<span class="f">delete</span>(key); <span class="k">this</span>.map.<span class="f">set</span>(key, val); <span class="cm">// move to end = most recent</span>
+    <span class="k">return</span> val;
+  }
+  <span class="f">put</span>(key, value) {
+    <span class="k">this</span>.map.<span class="f">delete</span>(key);
+    <span class="k">if</span> (<span class="k">this</span>.map.size === <span class="k">this</span>.cap) <span class="k">this</span>.map.<span class="f">delete</span>(<span class="k">this</span>.map.<span class="f">keys</span>().<span class="f">next</span>().value);
+    <span class="k">this</span>.map.<span class="f">set</span>(key, value);
+  }
+}</pre></div>
+</section>
+
+<!-- D6: TREES -->
+<section class="sec" id="d6">
+  <div class="sec-n" style="color:var(--cy)">Module 06 · Trees & Graphs</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Binary Trees & BST</h2>
+  <p class="sec-desc">Tree problems make up 25-30% of coding interview questions. DFS (pre/in/post-order), BFS (level-order), and BST properties are the core patterns. Learn the recursive template and apply it to any tree problem.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">06_trees.js — All traversals + classic problems</div><div class="clg">js</div></div>
+<pre><span class="k">class</span> <span class="t">TreeNode</span> { <span class="f">constructor</span>(val, left=<span class="k">null</span>, right=<span class="k">null</span>) { <span class="k">this</span>.val=val; <span class="k">this</span>.left=left; <span class="k">this</span>.right=right; } }
+
+<span class="cm">// ─── DFS Traversals (recursive) ───────────────────────────</span>
+<span class="k">const</span> <span class="f">preorder</span>  = node =&gt; node ? [node.val, ...<span class="f">preorder</span>(node.left), ...<span class="f">preorder</span>(node.right)] : [];
+<span class="k">const</span> <span class="f">inorder</span>   = node =&gt; node ? [...<span class="f">inorder</span>(node.left), node.val, ...<span class="f">inorder</span>(node.right)] : [];
+<span class="k">const</span> <span class="f">postorder</span> = node =&gt; node ? [...<span class="f">postorder</span>(node.left), ...<span class="f">postorder</span>(node.right), node.val] : [];
+<span class="cm">// BST inorder = SORTED array (crucial property!)</span>
+
+<span class="cm">// ─── BFS / Level Order Traversal ──────────────────────────</span>
+<span class="k">function</span> <span class="f">levelOrder</span>(root) {
+  <span class="k">if</span> (!root) <span class="k">return</span> [];
+  <span class="k">const</span> result = [], queue = [root];
+  <span class="k">while</span> (queue.length) {
+    <span class="k">const</span> level = [], size = queue.length;
+    <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; size; i++) {
+      <span class="k">const</span> node = queue.<span class="f">shift</span>();
+      level.<span class="f">push</span>(node.val);
+      <span class="k">if</span> (node.left) queue.<span class="f">push</span>(node.left);
+      <span class="k">if</span> (node.right) queue.<span class="f">push</span>(node.right);
+    }
+    result.<span class="f">push</span>(level);
+  }
+  <span class="k">return</span> result;
+}
+
+<span class="cm">// ─── Height / Depth O(n) ──────────────────────────────────</span>
+<span class="k">const</span> <span class="f">height</span> = node =&gt; node ? <span class="n">1</span> + Math.<span class="f">max</span>(<span class="f">height</span>(node.left), <span class="f">height</span>(node.right)) : <span class="n">0</span>;
+
+<span class="cm">// ─── Lowest Common Ancestor (LCA) ────────────────────────</span>
+<span class="k">function</span> <span class="f">lca</span>(root, p, q) {
+  <span class="k">if</span> (!root || root === p || root === q) <span class="k">return</span> root;
+  <span class="k">const</span> left = <span class="f">lca</span>(root.left, p, q);
+  <span class="k">const</span> right = <span class="f">lca</span>(root.right, p, q);
+  <span class="k">return</span> left &amp;&amp; right ? root : left ?? right;  <span class="cm">// both found = LCA</span>
+}
+
+<span class="cm">// ─── Validate BST ─────────────────────────────────────────</span>
+<span class="k">function</span> <span class="f">isValidBST</span>(node, min=-Infinity, max=Infinity) {
+  <span class="k">if</span> (!node) <span class="k">return true</span>;
+  <span class="k">if</span> (node.val &lt;= min || node.val &gt;= max) <span class="k">return false</span>;
+  <span class="k">return</span> <span class="f">isValidBST</span>(node.left, min, node.val) &amp;&amp;
+         <span class="f">isValidBST</span>(node.right, node.val, max);
+}
+
+<span class="cm">// ─── Diameter of Binary Tree ──────────────────────────────</span>
+<span class="k">function</span> <span class="f">diameterOfBinaryTree</span>(root) {
+  <span class="k">let</span> max = <span class="n">0</span>;
+  <span class="k">function</span> <span class="f">depth</span>(node) {
+    <span class="k">if</span> (!node) <span class="k">return</span> <span class="n">0</span>;
+    <span class="k">const</span> l = <span class="f">depth</span>(node.left), r = <span class="f">depth</span>(node.right);
+    max = Math.<span class="f">max</span>(max, l + r);   <span class="cm">// path through this node</span>
+    <span class="k">return</span> <span class="n">1</span> + Math.<span class="f">max</span>(l, r);    <span class="cm">// height from this node</span>
+  }
+  <span class="f">depth</span>(root); <span class="k">return</span> max;
+}</pre></div>
+</section>
+
+<!-- D7: HEAPS -->
+<section class="sec" id="d7">
+  <div class="sec-n" style="color:var(--cy)">Module 07 · Trees & Graphs</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Heaps & Priority Queue</h2>
+  <p class="sec-desc">A heap is a complete binary tree where parent is always greater (max-heap) or smaller (min-heap) than children. Used for: Kth largest/smallest, Top K elements, Merge K sorted lists, Median of stream.</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--cy)"><div class="tc-n">Min Heap Properties</div><div class="tc-d">Root is the SMALLEST element. Parent ≤ children. Insert: O(log n). Extract min: O(log n). Peek min: O(1). Building from array: O(n). Used for: "Kth smallest", scheduling, Dijkstra's shortest path.</div><div class="tc-t"><span class="tag c">O(log n) insert</span><span class="tag c">O(1) peek</span></div></div>
+    <div class="tc" style="--cat:var(--cy)"><div class="tc-n">Max Heap Properties</div><div class="tc-d">Root is the LARGEST element. Children ≤ parent. Same complexities as min-heap. Used for: "Kth largest", heap sort, priority scheduling. Most "top K" problems use a MIN-heap of size K (counterintuitively).</div><div class="tc-t"><span class="tag c">O(log n) insert</span></div></div>
+    <div class="tc" style="--cat:var(--cy)"><div class="tc-n">JavaScript Heap (manual)</div><div class="tc-d">JS has no built-in PriorityQueue. In interviews: simulate with sorted array for small inputs, or implement min-heap. Many interviewers accept pseudocode for heap operations — ask first.</div><div class="tc-t"><span class="tag o">No built-in in JS</span></div></div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">07_heap_patterns.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Kth Largest — min-heap of size k ─────────────────────</span>
+<span class="cm">// Keep a min-heap. If size > k, pop the min.</span>
+<span class="cm">// After all elements, root = kth largest.</span>
+<span class="cm">// O(n log k) time — better than sort O(n log n) for small k</span>
+
+<span class="cm">// ─── Top K Frequent Elements O(n log k) ───────────────────</span>
+<span class="k">function</span> <span class="f">topKFrequent</span>(nums, k) {
+  <span class="k">const</span> freq = <span class="k">new</span> Map();
+  <span class="k">for</span> (<span class="k">const</span> n <span class="k">of</span> nums) freq.<span class="f">set</span>(n, (freq.<span class="f">get</span>(n) ?? <span class="n">0</span>) + <span class="n">1</span>);
+  <span class="cm">// Bucket sort by frequency — O(n) approach!</span>
+  <span class="k">const</span> buckets = <span class="k">new</span> <span class="f">Array</span>(nums.length + <span class="n">1</span>).<span class="f">fill</span>(<span class="k">null</span>).<span class="f">map</span>(() =&gt; []);
+  freq.<span class="f">forEach</span>((count, num) =&gt; buckets[count].<span class="f">push</span>(num));
+  <span class="k">const</span> result = [];
+  <span class="k">for</span> (<span class="k">let</span> i = buckets.length - <span class="n">1</span>; i &gt;= <span class="n">0</span> &amp;&amp; result.length &lt; k; i--)
+    result.<span class="f">push</span>(...buckets[i]);
+  <span class="k">return</span> result.<span class="f">slice</span>(<span class="n">0</span>, k);
+}
+
+<span class="cm">// ─── Median of Data Stream — two heaps trick ──────────────</span>
+<span class="cm">// Lower half: max-heap (top = max of lower)  </span>
+<span class="cm">// Upper half: min-heap (top = min of upper)</span>
+<span class="cm">// Balance sizes: |lowerHeap| - |upperHeap| ≤ 1</span>
+<span class="cm">// Median = avg of tops (even) or top of larger heap (odd)</span></pre></div>
+</section>
+
+<!-- D8: GRAPHS -->
+<section class="sec" id="d8">
+  <div class="sec-n" style="color:var(--cy)">Module 08 · Trees & Graphs</div>
+  <div class="lvl med">◆ Mid → Senior</div>
+  <h2 class="sec-title">Graphs, BFS & DFS</h2>
+  <p class="sec-desc">Graphs are networks of nodes and edges. Real-world applications: social networks, maps, dependencies. BFS for shortest paths, DFS for exploring all paths. Union-Find for connected components. Topological sort for dependencies.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">08_graphs.js — All templates</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Graph representation ─────────────────────────────────</span>
+<span class="k">const</span> graph = <span class="k">new</span> Map();  <span class="cm">// adjacency list — most common</span>
+graph.<span class="f">set</span>(<span class="s">'A'</span>, [<span class="s">'B'</span>, <span class="s">'C'</span>]);
+graph.<span class="f">set</span>(<span class="s">'B'</span>, [<span class="s">'A'</span>, <span class="s">'D'</span>]);
+
+<span class="cm">// ─── BFS — shortest path in UNWEIGHTED graph O(V+E) ───────</span>
+<span class="k">function</span> <span class="f">bfs</span>(graph, start) {
+  <span class="k">const</span> visited = <span class="k">new</span> Set([start]);
+  <span class="k">const</span> queue = [start];
+  <span class="k">while</span> (queue.length) {
+    <span class="k">const</span> node = queue.<span class="f">shift</span>();
+    <span class="k">for</span> (<span class="k">const</span> neighbor <span class="k">of</span> graph.<span class="f">get</span>(node) ?? []) {
+      <span class="k">if</span> (!visited.<span class="f">has</span>(neighbor)) {
+        visited.<span class="f">add</span>(neighbor);
+        queue.<span class="f">push</span>(neighbor);
+      }
+    }
+  }
+}
+
+<span class="cm">// ─── DFS — iterative ──────────────────────────────────────</span>
+<span class="k">function</span> <span class="f">dfs</span>(graph, start) {
+  <span class="k">const</span> visited = <span class="k">new</span> Set(), stack = [start];
+  <span class="k">while</span> (stack.length) {
+    <span class="k">const</span> node = stack.<span class="f">pop</span>();
+    <span class="k">if</span> (visited.<span class="f">has</span>(node)) <span class="k">continue</span>;
+    visited.<span class="f">add</span>(node);
+    <span class="k">for</span> (<span class="k">const</span> n <span class="k">of</span> graph.<span class="f">get</span>(node) ?? []) stack.<span class="f">push</span>(n);
+  }
+}
+
+<span class="cm">// ─── Number of Islands — DFS on grid O(m*n) ──────────────</span>
+<span class="k">function</span> <span class="f">numIslands</span>(grid) {
+  <span class="k">let</span> count = <span class="n">0</span>;
+  <span class="k">function</span> <span class="f">dfs</span>(r, c) {
+    <span class="k">if</span> (r&lt;<span class="n">0</span>||c&lt;<span class="n">0</span>||r&gt;=grid.length||c&gt;=grid[<span class="n">0</span>].length||grid[r][c]!==<span class="s">'1'</span>) <span class="k">return</span>;
+    grid[r][c] = <span class="s">'0'</span>;   <span class="cm">// mark visited by mutating</span>
+    [[<span class="n">1</span>,<span class="n">0</span>],[-<span class="n">1</span>,<span class="n">0</span>],[<span class="n">0</span>,<span class="n">1</span>],[<span class="n">0</span>,-<span class="n">1</span>]].<span class="f">forEach</span>(([dr,dc]) =&gt; <span class="f">dfs</span>(r+dr, c+dc));
+  }
+  <span class="k">for</span> (<span class="k">let</span> r=<span class="n">0</span>; r&lt;grid.length; r++)
+    <span class="k">for</span> (<span class="k">let</span> c=<span class="n">0</span>; c&lt;grid[<span class="n">0</span>].length; c++)
+      <span class="k">if</span> (grid[r][c]===<span class="s">'1'</span>) { <span class="f">dfs</span>(r,c); count++; }
+  <span class="k">return</span> count;
+}
+
+<span class="cm">// ─── Topological Sort (Kahn's BFS) — for DAG dependencies ─</span>
+<span class="k">function</span> <span class="f">topoSort</span>(n, edges) {
+  <span class="k">const</span> adj = <span class="k">Array</span>.<span class="f">from</span>({length: n}, () =&gt; []);
+  <span class="k">const</span> inDegree = <span class="k">new</span> <span class="f">Array</span>(n).<span class="f">fill</span>(<span class="n">0</span>);
+  edges.<span class="f">forEach</span>(([u,v]) =&gt; { adj[u].<span class="f">push</span>(v); inDegree[v]++; });
+  <span class="k">const</span> queue = [], result = [];
+  <span class="k">for</span> (<span class="k">let</span> i=<span class="n">0</span>; i&lt;n; i++) <span class="k">if</span> (!inDegree[i]) queue.<span class="f">push</span>(i);
+  <span class="k">while</span> (queue.length) {
+    <span class="k">const</span> node = queue.<span class="f">shift</span>(); result.<span class="f">push</span>(node);
+    <span class="k">for</span> (<span class="k">const</span> next <span class="k">of</span> adj[node]) <span class="k">if</span> (!--inDegree[next]) queue.<span class="f">push</span>(next);
+  }
+  <span class="k">return</span> result.length === n ? result : [];  <span class="cm">// empty = cycle exists</span>
+}</pre></div>
+</section>
+
+<!-- D9: SORTING -->
+<section class="sec" id="d9">
+  <div class="sec-n" style="color:var(--pu)">Module 09 · Algorithms</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Sorting Algorithms</h2>
+
+  <table class="ctab">
+    <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr></thead>
+    <tbody>
+      <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td></tr>
+      <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>No</td></tr>
+      <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes — good for small/nearly sorted</td></tr>
+      <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes — stable, predictable</td></tr>
+      <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>No — fastest in practice</td></tr>
+      <tr><td>Heap Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>No — guaranteed O(n log n)</td></tr>
+      <tr><td>Counting Sort</td><td>O(n+k)</td><td>O(n+k)</td><td>O(n+k)</td><td>O(k)</td><td>Yes — only for integers in range</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">09_sorting.js — Merge + Quick (must know both)</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Merge Sort — stable, O(n log n) guaranteed ───────────</span>
+<span class="k">function</span> <span class="f">mergeSort</span>(arr) {
+  <span class="k">if</span> (arr.length &lt;= <span class="n">1</span>) <span class="k">return</span> arr;
+  <span class="k">const</span> mid = arr.length &gt;&gt; <span class="n">1</span>;
+  <span class="k">const</span> left = <span class="f">mergeSort</span>(arr.<span class="f">slice</span>(<span class="n">0</span>, mid));
+  <span class="k">const</span> right = <span class="f">mergeSort</span>(arr.<span class="f">slice</span>(mid));
+  <span class="k">return</span> <span class="f">merge</span>(left, right);
+}
+<span class="k">function</span> <span class="f">merge</span>(l, r) {
+  <span class="k">const</span> result = []; <span class="k">let</span> i = <span class="n">0</span>, j = <span class="n">0</span>;
+  <span class="k">while</span> (i &lt; l.length &amp;&amp; j &lt; r.length)
+    result.<span class="f">push</span>(l[i] &lt;= r[j] ? l[i++] : r[j++]);
+  <span class="k">return</span> [...result, ...l.<span class="f">slice</span>(i), ...r.<span class="f">slice</span>(j)];
+}
+
+<span class="cm">// ─── Quick Sort — fastest in practice, O(n log n) avg ─────</span>
+<span class="k">function</span> <span class="f">quickSort</span>(arr, lo=<span class="n">0</span>, hi=arr.length-<span class="n">1</span>) {
+  <span class="k">if</span> (lo &lt; hi) {
+    <span class="k">const</span> pi = <span class="f">partition</span>(arr, lo, hi);
+    <span class="f">quickSort</span>(arr, lo, pi-<span class="n">1</span>);
+    <span class="f">quickSort</span>(arr, pi+<span class="n">1</span>, hi);
+  }
+  <span class="k">return</span> arr;
+}
+<span class="k">function</span> <span class="f">partition</span>(arr, lo, hi) {
+  <span class="k">const</span> pivot = arr[hi]; <span class="k">let</span> i = lo;
+  <span class="k">for</span> (<span class="k">let</span> j = lo; j &lt; hi; j++)
+    <span class="k">if</span> (arr[j] &lt; pivot) [arr[i++], arr[j]] = [arr[j], arr[i]];
+  [arr[i], arr[hi]] = [arr[hi], arr[i]];
+  <span class="k">return</span> i;
+}</pre></div>
+</section>
+
+<!-- D10: BINARY SEARCH -->
+<section class="sec" id="d10">
+  <div class="sec-n" style="color:var(--pu)">Module 10 · Algorithms</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Binary Search — All Variants</h2>
+  <p class="sec-desc">Binary search is not just for "find element in sorted array." The pattern extends to: find first/last occurrence, search in rotated array, find answer in a range of values (minimization problems). Master all variants.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">10_binary_search.js — All templates</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Template 1: Basic — find exact target ────────────────</span>
+<span class="k">function</span> <span class="f">search</span>(arr, target) {
+  <span class="k">let</span> lo = <span class="n">0</span>, hi = arr.length - <span class="n">1</span>;
+  <span class="k">while</span> (lo &lt;= hi) {
+    <span class="k">const</span> mid = lo + ((hi - lo) &gt;&gt; <span class="n">1</span>);
+    <span class="k">if</span> (arr[mid] === target) <span class="k">return</span> mid;
+    arr[mid] &lt; target ? lo = mid + <span class="n">1</span> : hi = mid - <span class="n">1</span>;
+  }
+  <span class="k">return</span> -<span class="n">1</span>;
+}
+
+<span class="cm">// ─── Template 2: Find first position satisfying condition ─</span>
+<span class="k">function</span> <span class="f">firstTrue</span>(arr, condition) {
+  <span class="k">let</span> lo = <span class="n">0</span>, hi = arr.length - <span class="n">1</span>, ans = -<span class="n">1</span>;
+  <span class="k">while</span> (lo &lt;= hi) {
+    <span class="k">const</span> mid = lo + ((hi - lo) &gt;&gt; <span class="n">1</span>);
+    <span class="k">if</span> (<span class="f">condition</span>(arr[mid])) { ans = mid; hi = mid - <span class="n">1</span>; }  <span class="cm">// found, go left for first</span>
+    <span class="k">else</span> lo = mid + <span class="n">1</span>;
+  }
+  <span class="k">return</span> ans;
+}
+
+<span class="cm">// ─── Search in Rotated Sorted Array ──────────────────────</span>
+<span class="k">function</span> <span class="f">searchRotated</span>(nums, target) {
+  <span class="k">let</span> lo = <span class="n">0</span>, hi = nums.length - <span class="n">1</span>;
+  <span class="k">while</span> (lo &lt;= hi) {
+    <span class="k">const</span> mid = lo + ((hi - lo) &gt;&gt; <span class="n">1</span>);
+    <span class="k">if</span> (nums[mid] === target) <span class="k">return</span> mid;
+    <span class="k">if</span> (nums[lo] &lt;= nums[mid]) {   <span class="cm">// left half is sorted</span>
+      nums[lo] &lt;= target &amp;&amp; target &lt; nums[mid] ? hi = mid-<span class="n">1</span> : lo = mid+<span class="n">1</span>;
+    } <span class="k">else</span> {                        <span class="cm">// right half is sorted</span>
+      nums[mid] &lt; target &amp;&amp; target &lt;= nums[hi] ? lo = mid+<span class="n">1</span> : hi = mid-<span class="n">1</span>;
+    }
+  }
+  <span class="k">return</span> -<span class="n">1</span>;
+}
+
+<span class="cm">// ─── Binary search on ANSWER — minimize max / maximize min</span>
+<span class="cm">// "What is the minimum capacity to ship packages in D days?"</span>
+<span class="cm">// lo = max(packages), hi = sum(packages)</span>
+<span class="cm">// Binary search on capacity, check if feasible in D days</span>
+<span class="cm">// Pattern: can(mid) → search in answer space, not array space!</span></pre></div>
+
+  <div class="iq"><div class="iq-badge">🎯 Very common — Google, Amazon, Flipkart</div>
+    <div class="iq-q">When can you apply binary search to a problem that isn't "find in sorted array"?</div>
+    <div class="iq-a">Any time the answer space is monotonic — "if X works, then X+1 also works" (or vice versa). Examples: minimum speed to arrive on time, minimum days to make m bouquets, koko eating bananas. The pattern: define the answer range [lo, hi], define a feasibility function <code>canDo(mid)</code>, binary search on the answer, find the smallest/largest valid answer. This pattern appears in 30%+ of hard problems.</div>
+  </div>
+</section>
+
+<!-- D11: TWO POINTERS / SLIDING WINDOW -->
+<section class="sec" id="d11">
+  <div class="sec-n" style="color:var(--pu)">Module 11 · Algorithms</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Two Pointers & Sliding Window</h2>
+  <p class="sec-desc">Two of the most powerful O(n) patterns. Two pointers works when elements are sorted or you need to find pairs. Sliding window finds optimal subarrays/substrings with a constraint.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">11_two_pointer_sliding.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Two Pointers — sorted array pair sum ─────────────────</span>
+<span class="k">function</span> <span class="f">twoSumSorted</span>(nums, target) {
+  <span class="k">let</span> lo = <span class="n">0</span>, hi = nums.length - <span class="n">1</span>;
+  <span class="k">while</span> (lo &lt; hi) {
+    <span class="k">const</span> sum = nums[lo] + nums[hi];
+    <span class="k">if</span> (sum === target) <span class="k">return</span> [lo, hi];
+    sum &lt; target ? lo++ : hi--;
+  }
+}
+
+<span class="cm">// ─── 3Sum — reduce to 2Sum with outer loop O(n²) ─────────</span>
+<span class="k">function</span> <span class="f">threeSum</span>(nums) {
+  nums.<span class="f">sort</span>((a,b) =&gt; a-b); <span class="k">const</span> result = [];
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length - <span class="n">2</span>; i++) {
+    <span class="k">if</span> (i &gt; <span class="n">0</span> &amp;&amp; nums[i] === nums[i-<span class="n">1</span>]) <span class="k">continue</span>;  <span class="cm">// skip duplicates</span>
+    <span class="k">let</span> lo = i+<span class="n">1</span>, hi = nums.length-<span class="n">1</span>;
+    <span class="k">while</span> (lo &lt; hi) {
+      <span class="k">const</span> sum = nums[i] + nums[lo] + nums[hi];
+      <span class="k">if</span> (sum === <span class="n">0</span>) { result.<span class="f">push</span>([nums[i],nums[lo++],nums[hi--]]); }
+      <span class="k">else if</span> (sum &lt; <span class="n">0</span>) lo++; <span class="k">else</span> hi--;
+    }
+  }
+  <span class="k">return</span> result;
+}
+
+<span class="cm">// ─── Sliding Window TEMPLATE — variable size ──────────────</span>
+<span class="k">function</span> <span class="f">slidingWindow</span>(s, target) {
+  <span class="k">let</span> lo = <span class="n">0</span>, best = Infinity;
+  <span class="k">const</span> window = {};  <span class="cm">// track window state</span>
+
+  <span class="k">for</span> (<span class="k">let</span> hi = <span class="n">0</span>; hi &lt; s.length; hi++) {
+    <span class="cm">// 1. Expand: add s[hi] to window</span>
+    window[s[hi]] = (window[s[hi]] ?? <span class="n">0</span>) + <span class="n">1</span>;
+
+    <span class="cm">// 2. Shrink: while condition violated, remove s[lo] and advance lo</span>
+    <span class="k">while</span> (<span class="cm">/* condition violated */</span> <span class="k">false</span>) {
+      window[s[lo]]--;
+      <span class="k">if</span> (!window[s[lo]]) <span class="k">delete</span> window[s[lo]];
+      lo++;
+    }
+    <span class="cm">// 3. Update answer</span>
+    best = Math.<span class="f">min</span>(best, hi - lo + <span class="n">1</span>);
+  }
+  <span class="k">return</span> best;
+}
+<span class="cm">// Apply to: Minimum Window Substring, Longest Without Repeating,</span>
+<span class="cm">//           Longest Repeating After Replacement, Fruit Into Baskets</span></pre></div>
+</section>
+
+<!-- D12: RECURSION & BACKTRACKING -->
+<section class="sec" id="d12">
+  <div class="sec-n" style="color:var(--pu)">Module 12 · Algorithms</div>
+  <div class="lvl hard">◈ Senior Level</div>
+  <h2 class="sec-title">Recursion & Backtracking</h2>
+  <p class="sec-desc">Backtracking = recursion + pruning. For every "generate all X" problem: choose, explore, unchoose. The template is the same for all problems — permutations, combinations, subsets, N-Queens, Sudoku.</p>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">12_backtracking.js — Universal template</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── BACKTRACKING TEMPLATE ────────────────────────────────</span>
+<span class="k">function</span> <span class="f">backtrack</span>(result, current, ...params) {
+  <span class="k">if</span> (baseCaseReached) { result.<span class="f">push</span>([...current]); <span class="k">return</span>; }
+  <span class="k">for</span> (<span class="k">const</span> choice <span class="k">of</span> choices) {
+    current.<span class="f">push</span>(choice);     <span class="cm">// CHOOSE</span>
+    <span class="f">backtrack</span>(result, current, ...newParams);  <span class="cm">// EXPLORE</span>
+    current.<span class="f">pop</span>();             <span class="cm">// UNCHOOSE (backtrack)</span>
+  }
+}
+
+<span class="cm">// ─── Permutations — O(n * n!) ─────────────────────────────</span>
+<span class="k">function</span> <span class="f">permute</span>(nums) {
+  <span class="k">const</span> result = [];
+  <span class="k">const</span> bt = (curr, used) =&gt; {
+    <span class="k">if</span> (curr.length === nums.length) { result.<span class="f">push</span>([...curr]); <span class="k">return</span>; }
+    <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+      <span class="k">if</span> (used.<span class="f">has</span>(i)) <span class="k">continue</span>;
+      curr.<span class="f">push</span>(nums[i]); used.<span class="f">add</span>(i);
+      <span class="f">bt</span>(curr, used);
+      curr.<span class="f">pop</span>(); used.<span class="f">delete</span>(i);
+    }
+  };
+  <span class="f">bt</span>([], <span class="k">new</span> Set()); <span class="k">return</span> result;
+}
+
+<span class="cm">// ─── Subsets — O(n * 2ⁿ) ─────────────────────────────────</span>
+<span class="k">function</span> <span class="f">subsets</span>(nums) {
+  <span class="k">const</span> result = [];
+  <span class="k">const</span> bt = (start, curr) =&gt; {
+    result.<span class="f">push</span>([...curr]);
+    <span class="k">for</span> (<span class="k">let</span> i = start; i &lt; nums.length; i++) {
+      curr.<span class="f">push</span>(nums[i]);
+      <span class="f">bt</span>(i + <span class="n">1</span>, curr);
+      curr.<span class="f">pop</span>();
+    }
+  };
+  <span class="f">bt</span>(<span class="n">0</span>, []); <span class="k">return</span> result;
+}
+
+<span class="cm">// ─── Combination Sum — O(n^(target/min)) ─────────────────</span>
+<span class="k">function</span> <span class="f">combinationSum</span>(candidates, target) {
+  <span class="k">const</span> result = [];
+  <span class="k">const</span> bt = (start, curr, remaining) =&gt; {
+    <span class="k">if</span> (remaining === <span class="n">0</span>) { result.<span class="f">push</span>([...curr]); <span class="k">return</span>; }
+    <span class="k">for</span> (<span class="k">let</span> i = start; i &lt; candidates.length; i++) {
+      <span class="k">if</span> (candidates[i] &gt; remaining) <span class="k">continue</span>;  <span class="cm">// prune!</span>
+      curr.<span class="f">push</span>(candidates[i]);
+      <span class="f">bt</span>(i, curr, remaining - candidates[i]);    <span class="cm">// can reuse same index</span>
+      curr.<span class="f">pop</span>();
+    }
+  };
+  candidates.<span class="f">sort</span>((a,b) =&gt; a-b);  <span class="cm">// sort enables pruning</span>
+  <span class="f">bt</span>(<span class="n">0</span>, [], target); <span class="k">return</span> result;
+}</pre></div>
+</section>
+
+<!-- D13: DYNAMIC PROGRAMMING -->
+<section class="sec" id="d13">
+  <div class="sec-n" style="color:var(--or)">Module 13 · Dynamic Programming</div>
+  <div class="lvl hard">◈ Senior — Most Asked</div>
+  <h2 class="sec-title">Dynamic Programming</h2>
+  <p class="sec-desc">DP = breaking problems into overlapping subproblems + caching. Every DP problem follows two approaches: Top-Down (memoization/recursion) and Bottom-Up (tabulation/iteration). Learn the patterns — there are only a few dozen canonical DP problems.</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">When to use DP?</div><div class="tc-d">1. Optimal substructure: optimal solution built from optimal subproblems. 2. Overlapping subproblems: same subproblems solved multiple times. 3. Problem asks for: count, min, max, yes/no over all possibilities.</div><div class="tc-t"><span class="tag o">Recognition</span></div></div>
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">Top-Down (Memoization)</div><div class="tc-d">Write recursive solution first. Add a cache (Map/array). Before computing, check cache. After computing, store in cache. Same time complexity as bottom-up. Easier to think about, harder to see space optimization.</div><div class="tc-t"><span class="tag o">Recursive + cache</span></div></div>
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">Bottom-Up (Tabulation)</div><div class="tc-d">Fill a table iteratively from base cases up to target. No recursion stack. Can often optimize space (rolling array). Slightly harder to derive but more common in interviews for cleanliness and space optimization.</div><div class="tc-t"><span class="tag o">Iterative + table</span></div></div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">13_dp.js — Core DP patterns + problems</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Fibonacci — both approaches ─────────────────────────</span>
+<span class="cm">// Top-down:</span>
+<span class="k">const</span> memo = <span class="k">new</span> Map();
+<span class="k">const</span> <span class="f">fib</span> = n =&gt; n &lt;= <span class="n">1</span> ? n : (memo.<span class="f">get</span>(n) ?? memo.<span class="f">set</span>(n, <span class="f">fib</span>(n-<span class="n">1</span>) + <span class="f">fib</span>(n-<span class="n">2</span>)) &amp;&amp; memo.<span class="f">get</span>(n));
+<span class="cm">// Bottom-up O(n) time O(1) space:</span>
+<span class="k">function</span> <span class="f">fibDP</span>(n) {
+  <span class="k">if</span> (n&lt;=<span class="n">1</span>) <span class="k">return</span> n; <span class="k">let</span> [a,b] = [<span class="n">0</span>,<span class="n">1</span>];
+  <span class="k">for</span> (<span class="k">let</span> i=<span class="n">2</span>; i&lt;=n; i++) [a,b] = [b, a+b];
+  <span class="k">return</span> b;
+}
+
+<span class="cm">// ─── 0/1 Knapsack — O(n*W) ───────────────────────────────</span>
+<span class="k">function</span> <span class="f">knapsack</span>(weights, values, W) {
+  <span class="k">const</span> n = weights.length;
+  <span class="k">const</span> dp = <span class="k">new</span> <span class="f">Array</span>(W+<span class="n">1</span>).<span class="f">fill</span>(<span class="n">0</span>);          <span class="cm">// space optimized to 1D</span>
+  <span class="k">for</span> (<span class="k">let</span> i=<span class="n">0</span>; i&lt;n; i++)
+    <span class="k">for</span> (<span class="k">let</span> w=W; w&gt;=weights[i]; w--)           <span class="cm">// iterate BACKWARDS for 0/1</span>
+      dp[w] = Math.<span class="f">max</span>(dp[w], dp[w-weights[i]] + values[i]);
+  <span class="k">return</span> dp[W];
+}
+
+<span class="cm">// ─── Longest Common Subsequence O(m*n) ───────────────────</span>
+<span class="k">function</span> <span class="f">lcs</span>(s1, s2) {
+  <span class="k">const</span> m=s1.length, n=s2.length;
+  <span class="k">const</span> dp = <span class="f">Array</span>.<span class="f">from</span>({length:m+<span class="n">1</span>}, () =&gt; <span class="k">new</span> <span class="f">Array</span>(n+<span class="n">1</span>).<span class="f">fill</span>(<span class="n">0</span>));
+  <span class="k">for</span> (<span class="k">let</span> i=<span class="n">1</span>; i&lt;=m; i++)
+    <span class="k">for</span> (<span class="k">let</span> j=<span class="n">1</span>; j&lt;=n; j++)
+      dp[i][j] = s1[i-<span class="n">1</span>]===s2[j-<span class="n">1</span>] ? dp[i-<span class="n">1</span>][j-<span class="n">1</span>]+<span class="n">1</span> : Math.<span class="f">max</span>(dp[i-<span class="n">1</span>][j],dp[i][j-<span class="n">1</span>]);
+  <span class="k">return</span> dp[m][n];
+}
+
+<span class="cm">// ─── Coin Change — minimum coins O(amount * coins) ────────</span>
+<span class="k">function</span> <span class="f">coinChange</span>(coins, amount) {
+  <span class="k">const</span> dp = <span class="k">new</span> <span class="f">Array</span>(amount+<span class="n">1</span>).<span class="f">fill</span>(Infinity);
+  dp[<span class="n">0</span>] = <span class="n">0</span>;
+  <span class="k">for</span> (<span class="k">const</span> coin <span class="k">of</span> coins)
+    <span class="k">for</span> (<span class="k">let</span> i=coin; i&lt;=amount; i++)
+      dp[i] = Math.<span class="f">min</span>(dp[i], dp[i-coin]+<span class="n">1</span>);
+  <span class="k">return</span> dp[amount] === Infinity ? -<span class="n">1</span> : dp[amount];
+}</pre></div>
+
+  <div class="formula">DP Categories — know them all:
+1D DP: Climbing Stairs, House Robber, Jump Game, Word Break
+2D DP: LCS, Edit Distance, Unique Paths, Interleaving String
+Interval DP: Burst Balloons, Matrix Chain Multiplication
+Tree DP: Diameter, Max Path Sum, House Robber III
+Bitmask DP: Shortest Path (TSP), Assign Work to K Workers</div>
+</section>
+
+<!-- D14: GREEDY -->
+<section class="sec" id="d14">
+  <div class="sec-n" style="color:var(--or)">Module 14 · Algorithms</div>
+  <div class="lvl med">◆ Mid Level</div>
+  <h2 class="sec-title">Greedy Algorithms</h2>
+  <p class="sec-desc">Greedy makes the locally optimal choice at each step hoping to reach the global optimum. Proving a greedy works requires an exchange argument. Classic greedy problems appear in every interview.</p>
+
+  <div class="tg">
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">When Greedy Works</div><div class="tc-d">Greedy works when: a locally optimal choice never needs to be undone (optimal substructure + greedy choice property). Common signals: "minimum cost", "maximum profit", "schedule tasks", "interval problems." Always prove (or at least state) why it works.</div><div class="tc-t"><span class="tag o">Verify first</span></div></div>
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">Interval Scheduling</div><div class="tc-d">Sort by end time. Greedily pick intervals that end earliest (leave room for more). Non-overlapping intervals → O(n log n). Meeting Rooms → check if sorted end times never overlap with next start.</div><div class="tc-t"><span class="tag o">Sort by end</span></div></div>
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">Jump Game Pattern</div><div class="tc-d">Track maximum reachable index. At each position, update max reach. If current index > max reach, unreachable. This O(n) greedy beats the O(n²) DP approach and is the expected answer.</div><div class="tc-t"><span class="tag o">Reach tracking</span></div></div>
+  </div>
+
+  <div class="cb"><div class="ch"><div class="cdots"><div class="cd"></div><div class="cd"></div><div class="cd"></div></div><div class="cf">14_greedy.js</div><div class="clg">js</div></div>
+<pre><span class="cm">// ─── Activity Selection / Non-overlapping Intervals ───────</span>
+<span class="k">function</span> <span class="f">eraseOverlapIntervals</span>(intervals) {
+  intervals.<span class="f">sort</span>((a,b) =&gt; a[<span class="n">1</span>]-b[<span class="n">1</span>]);  <span class="cm">// sort by END time</span>
+  <span class="k">let</span> removed = <span class="n">0</span>, prevEnd = -Infinity;
+  <span class="k">for</span> (<span class="k">const</span> [start, end] <span class="k">of</span> intervals) {
+    <span class="k">if</span> (start &lt; prevEnd) removed++;   <span class="cm">// overlap → remove</span>
+    <span class="k">else</span> prevEnd = end;               <span class="cm">// no overlap → keep</span>
+  }
+  <span class="k">return</span> removed;
+}
+
+<span class="cm">// ─── Jump Game II — minimum jumps O(n) ───────────────────</span>
+<span class="k">function</span> <span class="f">jump</span>(nums) {
+  <span class="k">let</span> jumps = <span class="n">0</span>, curEnd = <span class="n">0</span>, farthest = <span class="n">0</span>;
+  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; i &lt; nums.length - <span class="n">1</span>; i++) {
+    farthest = Math.<span class="f">max</span>(farthest, i + nums[i]);
+    <span class="k">if</span> (i === curEnd) { jumps++; curEnd = farthest; }
+  }
+  <span class="k">return</span> jumps;
+}
+
+<span class="cm">// ─── Task Scheduler — greedy with counting ────────────────</span>
+<span class="cm">// Sort tasks by frequency. Most frequent fills the "frames".</span>
+<span class="cm">// Answer = max(tasks.length, (maxFreq-1) * (n+1) + tasksWithMaxFreq)</span></pre></div>
+</section>
+
+<!-- D15: PATTERNS & MASTERSHEET -->
+<section class="sec" id="d15">
+  <div class="sec-n" style="color:var(--ye)">Module 15 · Interview Mastersheet</div>
+  <h2 class="sec-title">Problem Patterns & Recognition Guide</h2>
+
+  <div class="hdiv">Pattern Recognition — Given the problem, which technique?</div>
+
+  <table class="ctab">
+    <thead><tr><th>If the problem says...</th><th>Think...</th><th>Complexity target</th></tr></thead>
+    <tbody>
+      <tr><td>Find pair that sums to X</td><td>HashMap / Two Pointers (sorted)</td><td>O(n)</td></tr>
+      <tr><td>Subarray with max/min sum</td><td>Kadane's / Prefix Sum / Sliding Window</td><td>O(n)</td></tr>
+      <tr><td>Find duplicates / unique</td><td>HashSet / XOR trick</td><td>O(n)</td></tr>
+      <tr><td>Search in sorted array</td><td>Binary Search</td><td>O(log n)</td></tr>
+      <tr><td>Kth largest/smallest</td><td>Min-Heap of size k / QuickSelect</td><td>O(n log k)</td></tr>
+      <tr><td>All permutations/subsets</td><td>Backtracking</td><td>O(n! or 2ⁿ)</td></tr>
+      <tr><td>Count ways / min steps</td><td>Dynamic Programming</td><td>O(n²) typical</td></tr>
+      <tr><td>Tree path / structure</td><td>DFS recursion</td><td>O(n)</td></tr>
+      <tr><td>Shortest path (unweighted)</td><td>BFS</td><td>O(V+E)</td></tr>
+      <tr><td>Shortest path (weighted)</td><td>Dijkstra's (min-heap)</td><td>O(E log V)</td></tr>
+      <tr><td>Next greater element</td><td>Monotonic Stack</td><td>O(n)</td></tr>
+      <tr><td>Longest substring with K chars</td><td>Sliding Window</td><td>O(n)</td></tr>
+      <tr><td>Connected components</td><td>Union-Find / BFS/DFS</td><td>O(n α(n))</td></tr>
+      <tr><td>Schedule tasks / ordering</td><td>Topological Sort</td><td>O(V+E)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="hdiv">Most Asked Problems by Company Level</div>
+  <div class="tg">
+    <div class="tc" style="--cat:var(--gd)"><div class="tc-n">Must-Know 20 Problems</div><div class="tc-d">Two Sum, Valid Parentheses, Merge Intervals, Best Time to Buy Stock, Maximum Subarray, Reverse Linked List, Binary Tree Inorder, Number of Islands, Climbing Stairs, Coin Change, LCS, Word Break, LRU Cache, Meeting Rooms, Jump Game, Top K Frequent, Valid Anagram, Product Except Self, Container With Most Water, 3Sum</div><div class="tc-t"><span class="tag g">All levels</span></div></div>
+    <div class="tc" style="--cat:var(--cy)"><div class="tc-n">FAANG Favorites</div><div class="tc-d">Serialize/Deserialize Binary Tree, Trapping Rain Water, Minimum Window Substring, Sliding Window Maximum, Word Ladder, Alien Dictionary, Burst Balloons, Regular Expression Matching, Largest Rectangle in Histogram, N-Queens, Median of Stream</div><div class="tc-t"><span class="tag c">Hard</span></div></div>
+    <div class="tc" style="--cat:var(--or)"><div class="tc-n">Indian Product Co. Favorites</div><div class="tc-d">Flipkart: Rotting Oranges, Course Schedule. Swiggy: Shortest Path in Grid. Razorpay: LRU Cache, Design HashMap. Meesho: Two Sum variations, Group Anagrams. Zepto: Merge K Sorted Lists, K Closest Points.</div><div class="tc-t"><span class="tag o">Mid-Senior</span></div></div>
+  </div>
+
+  <div class="chk">
+    <div class="chk-l">🎯 DSA Interview Readiness</div>
+    <h3>You're ready when you can solve these in 20-30 minutes:</h3>
+    <ul class="chk-li">
+      <li>State time AND space complexity for every solution you write</li>
+      <li>Two Sum in O(n) with HashMap (not brute force O(n²))</li>
+      <li>Reverse a linked list, detect a cycle, find middle node</li>
+      <li>BFS/DFS on a graph, count islands (grid problem)</li>
+      <li>Binary search on sorted array AND on answer space</li>
+      <li>Maximum subarray using Kadane's algorithm</li>
+      <li>Valid parentheses and next greater element (monotonic stack)</li>
+      <li>Write both top-down and bottom-up DP for coin change / climbing stairs</li>
+      <li>Generate all subsets and permutations using backtracking</li>
+      <li>Sliding window for longest substring without repeating chars</li>
+      <li>Level-order traversal of binary tree using BFS</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+<footer>📊 DSA Zero to Interview Ready · Arrays · Trees · Graphs · DP · Backtracking · <strong>India 2025</strong></footer>
+</main>
+
+<script>
+const ms=document.getElementById('ms'),pf=document.getElementById('pf'),pn=document.getElementById('pn');
+ms.addEventListener('scroll',()=>{
+  const p=Math.min(ms.scrollTop/(ms.scrollHeight-ms.clientHeight)*100,100);
+  pf.style.width=p+'%';pn.textContent=Math.round(p)+'%';
+  const links=document.querySelectorAll('.sb-a');
+  document.querySelectorAll('.sec').forEach((s,i)=>{
+    const t=s.getBoundingClientRect().top;
+    if(t<220&&t>-s.offsetHeight){links.forEach(l=>l.classList.remove('on'));if(links[i])links[i].classList.add('on')}
+  });
+});
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+
+// Big O visualization
+const bC=document.getElementById('bigoC'),bCtx=bC.getContext('2d');
+function drawBigO(){
+  bC.width=bC.parentElement.offsetWidth;bC.height=200;
+  const w=bC.width,h=bC.height,pad=40,gw=w-pad*2,gh=h-pad*2;
+  bCtx.clearRect(0,0,w,h);
+  const N=50,fns=[
+    {f:()=>1,label:'O(1)',col:'#00f5a0'},
+    {f:n=>Math.log2(n+1),label:'O(log n)',col:'#38bdf8'},
+    {f:n=>n,label:'O(n)',col:'#a78bfa'},
+    {f:n=>n*Math.log2(n+1),label:'O(n log n)',col:'#fb923c'},
+    {f:n=>n*n,label:'O(n²)',col:'#f87171'},
+  ];
+  const maxVal=N*N;
+  bCtx.strokeStyle='rgba(255,255,255,.07)';bCtx.lineWidth=1;
+  for(let i=0;i<=5;i++){const y=pad+gh-gh/5*i;bCtx.beginPath();bCtx.moveTo(pad,y);bCtx.lineTo(pad+gw,y);bCtx.stroke();}
+  fns.forEach(({f,label,col})=>{
+    bCtx.strokeStyle=col;bCtx.lineWidth=2;bCtx.beginPath();
+    for(let i=0;i<=N;i++){
+      const x=pad+gw/N*i,y=pad+gh-Math.min(f(i)/maxVal,1)*gh;
+      i===0?bCtx.moveTo(x,y):bCtx.lineTo(x,y);
+    }
+    bCtx.stroke();
+    const ex=pad+gw,ey=pad+gh-Math.min(f(N)/maxVal,1)*gh;
+    bCtx.fillStyle=col;bCtx.font='bold 10px DM Mono';bCtx.textAlign='left';
+    bCtx.fillText(label,Math.min(ex+4,w-60),Math.max(ey,pad+10));
+  });
+  bCtx.fillStyle='rgba(255,255,255,.3)';bCtx.font='9px DM Mono';bCtx.textAlign='center';
+  bCtx.fillText('n (input size) →',pad+gw/2,h-8);
+  bCtx.textAlign='left';
+}
+setTimeout(drawBigO,100);window.addEventListener('resize',drawBigO);
+</script>
+</body>
+</html>

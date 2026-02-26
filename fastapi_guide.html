@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastAPI — Complete Guide From Scratch</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04060a;
+  --s1: #070d14;
+  --s2: #0a1220;
+  --card: #0c1525;
+  --border: #112035;
+  --hi: #00d4aa;
+  --hi2: #0096ff;
+  --hi3: #ff6b35;
+  --hi4: #c084fc;
+  --hi5: #fbbf24;
+  --hi6: #f43f5e;
+  --text: #bcd4f0;
+  --muted: #2c4a68;
+  --code: #030710;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; line-height: 1.8; }
+
+/* LAYOUT */
+.wrap { display: flex; min-height: 100vh; }
+.sb { width: 275px; background: var(--s1); border-right: 1px solid var(--border); position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
+.sb::-webkit-scrollbar { width: 4px; } .sb::-webkit-scrollbar-track { background: transparent; } .sb::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.content { margin-left: 275px; padding: 0 48px 100px; }
+
+/* SIDEBAR */
+.sb-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+.sb-logo h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px; }
+.sb-logo h1 span { color: var(--hi); }
+.sb-logo p { font-size: 0.6rem; color: var(--muted); margin-top: 3px; letter-spacing: 2.5px; text-transform: uppercase; }
+.sb-search { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.sb-search input { width: 100%; background: var(--s2); border: 1px solid var(--border); color: var(--text); padding: 8px 11px; border-radius: 7px; font-family: inherit; font-size: 0.8rem; outline: none; transition: border-color 0.2s; }
+.sb-search input:focus { border-color: var(--hi); }
+.sg { padding: 14px 16px 5px; font-size: 0.58rem; font-weight: 600; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; }
+.si { display: flex; align-items: center; gap: 9px; padding: 7px 16px; cursor: pointer; font-size: 0.8rem; color: var(--muted); transition: all 0.15s; border-left: 2px solid transparent; }
+.si:hover { color: var(--text); background: var(--s2); }
+.si.active { color: var(--text); border-left-color: var(--hi); background: rgba(0,212,170,0.06); }
+.si .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* PAGE HEADER */
+.ph { padding: 52px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
+.bdg { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+.ph h2 { font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; line-height: 1.15; }
+.ph p { color: var(--muted); font-size: 0.9rem; margin-top: 10px; max-width: 680px; line-height: 1.7; }
+
+/* SECTIONS */
+.sec { display: none; }
+.sec.active { display: block; }
+
+/* CARDS */
+.grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.15s; }
+.card:hover { border-color: rgba(0,212,170,0.3); transform: translateY(-2px); }
+.card-full { grid-column: 1 / -1; }
+.ch { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.ct { font-size: 0.92rem; font-weight: 700; }
+.ctag { font-size: 0.62rem; font-weight: 700; padding: 3px 8px; border-radius: 10px; white-space: nowrap; letter-spacing: 0.5px; }
+.cb { padding: 16px 18px; }
+.cb p { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+.cb strong { color: var(--text); }
+
+/* ANALOGY */
+.ana { background: rgba(192,132,252,0.06); border: 1px solid rgba(192,132,252,0.2); border-radius: 8px; padding: 10px 13px; margin: 10px 0; font-size: 0.79rem; color: var(--text); }
+.ana::before { content: '💡 '; }
+
+/* CODE */
+.code-wrap { background: var(--code); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 10px 0; }
+.code-hdr { background: #050e1a; padding: 7px 14px; font-size: 0.68rem; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.code-hdr .file { color: var(--hi); font-family: 'JetBrains Mono', monospace; }
+.code-hdr .lang { color: var(--muted); }
+pre { padding: 14px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; line-height: 1.65; font-size: 0.74rem; }
+.kw { color: #ff79c6; } .fn { color: #50fa7b; } .str { color: #f1fa8c; } .cm { color: #1d3a58; font-style: italic; }
+.num { color: #bd93f9; } .cls { color: #8be9fd; } .dec { color: #ff9580; } .op { color: #ff79c6; }
+
+/* TIPS / WARNINGS */
+.tip { background: rgba(0,212,170,0.06); border: 1px solid rgba(0,212,170,0.2); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+.tip-t { font-size: 0.67rem; font-weight: 700; color: var(--hi); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+.tip ul { list-style: none; } .tip ul li { font-size: 0.78rem; color: var(--muted); padding: 2px 0; }
+.tip ul li::before { content: '→ '; color: var(--hi); }
+.warn { background: rgba(244,63,94,0.06); border: 1px solid rgba(244,63,94,0.18); border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 0.79rem; color: var(--muted); }
+.warn::before { content: '⚠️ '; }
+.info { background: rgba(0,150,255,0.06); border: 1px solid rgba(0,150,255,0.2); border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 0.79rem; color: var(--muted); }
+.info::before { content: 'ℹ️ '; }
+
+/* MOBILE */
+.mob-btn { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; cursor: pointer; color: var(--text); font-size: 1rem; }
+@media(max-width: 768px) {
+  .sb { transform: translateX(-100%); transition: transform 0.3s; }
+  .sb.open { transform: translateX(0); }
+  .content { margin-left: 0; padding: 56px 18px 60px; }
+  .mob-btn { display: block; }
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<button class="mob-btn" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
+<div class="wrap">
+
+<!-- SIDEBAR -->
+<nav class="sb" id="sb">
+  <div class="sb-logo">
+    <h1>Fast<span>API</span></h1>
+    <p>Complete Guide · From Scratch</p>
+  </div>
+  <div class="sb-search">
+    <input type="text" id="srch" placeholder="Search topics..." oninput="filterCards()">
+  </div>
+
+  <div class="sg">Foundations</div>
+  <div class="si active" onclick="show('intro')" data-s="intro"><span class="dot" style="background:#fff"></span>What & Why FastAPI</div>
+  <div class="si" onclick="show('setup')" data-s="setup"><span class="dot" style="background:var(--hi)"></span>Setup & Project Structure</div>
+  <div class="si" onclick="show('basics')" data-s="basics"><span class="dot" style="background:var(--hi2)"></span>Routes & HTTP Methods</div>
+  <div class="si" onclick="show('pydantic')" data-s="pydantic"><span class="dot" style="background:var(--hi4)"></span>Pydantic Models & Validation</div>
+
+  <div class="sg">Core Features</div>
+  <div class="si" onclick="show('params')" data-s="params"><span class="dot" style="background:var(--hi5)"></span>Path, Query & Body Params</div>
+  <div class="si" onclick="show('responses')" data-s="responses"><span class="dot" style="background:var(--hi)"></span>Responses & Status Codes</div>
+  <div class="si" onclick="show('deps')" data-s="deps"><span class="dot" style="background:var(--hi2)"></span>Dependency Injection</div>
+  <div class="si" onclick="show('middleware')" data-s="middleware"><span class="dot" style="background:var(--hi3)"></span>Middleware & CORS</div>
+
+  <div class="sg">Database & Auth</div>
+  <div class="si" onclick="show('database')" data-s="database"><span class="dot" style="background:var(--hi4)"></span>Database with SQLAlchemy</div>
+  <div class="si" onclick="show('auth')" data-s="auth"><span class="dot" style="background:var(--hi6)"></span>JWT Authentication</div>
+  <div class="si" onclick="show('async')" data-s="async"><span class="dot" style="background:var(--hi)"></span>Async / Await Deep Dive</div>
+
+  <div class="sg">Production</div>
+  <div class="si" onclick="show('errors')" data-s="errors"><span class="dot" style="background:var(--hi6)"></span>Error Handling</div>
+  <div class="si" onclick="show('testing')" data-s="testing"><span class="dot" style="background:var(--hi5)"></span>Testing with Pytest</div>
+  <div class="si" onclick="show('deploy')" data-s="deploy"><span class="dot" style="background:var(--hi3)"></span>Docker & Deployment</div>
+  <div class="si" onclick="show('patterns')" data-s="patterns"><span class="dot" style="background:var(--hi2)"></span>Real-World Patterns</div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+<!-- INTRO -->
+<section class="sec active" id="sec-intro">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.25);color:var(--hi)">⚡ Start Here</div>
+    <h2>FastAPI from<br>Absolute Zero</h2>
+    <p>You can read Python. You build Angular APIs. This guide teaches you FastAPI the way a developer thinks — not a data scientist. Fast, modern, async Python web framework.</p>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">What Is FastAPI and Why It's Exceptional</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">CORE</div></div>
+      <div class="cb">
+        <div class="ana">FastAPI is to Python what Angular is to JavaScript — a structured, opinionated, production-ready framework. But for building REST APIs. It's built on top of Starlette (for web) and Pydantic (for data validation).</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;">
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:800;color:var(--hi)">🚀</div>
+            <div style="font-size:0.78rem;font-weight:700;margin:4px 0;">Fastest Python Framework</div>
+            <div style="font-size:0.7rem;color:var(--muted);">On par with NodeJS/Go. Async by default.</div>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:800;color:var(--hi2)">📖</div>
+            <div style="font-size:0.78rem;font-weight:700;margin:4px 0;">Auto Docs</div>
+            <div style="font-size:0.7rem;color:var(--muted);">Swagger UI + ReDoc generated automatically.</div>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+            <div style="font-size:1.6rem;font-weight:800;color:var(--hi4)">🛡️</div>
+            <div style="font-size:0.78rem;font-weight:700;margin:4px 0;">Type Safety</div>
+            <div style="font-size:0.7rem;color:var(--muted);">Pydantic validates all data in + out.</div>
+          </div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">FastAPI vs Flask vs Django</div>
+          <ul>
+            <li><strong>Flask</strong> — micro, minimal, no validation, sync only. Simple scripts, not production APIs</li>
+            <li><strong>Django</strong> — full stack with ORM, admin, templates. More than you need for just an API</li>
+            <li><strong>FastAPI</strong> — API-first, async, validation built-in, typed, auto-documented. Best for modern APIs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section class="sec" id="sec-setup">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.25);color:var(--hi)">Module 1</div>
+    <h2>Setup & Project<br>Structure</h2>
+    <p>Get a production-ready project structure from day one — not just a single main.py file.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Installation & Virtual Environment</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">SETUP</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">terminal</span><span class="lang">bash</span></div>
+          <pre><span class="cm"># Create project folder</span>
+mkdir myapi && cd myapi
+
+<span class="cm"># Create virtual environment (ALWAYS do this)</span>
+python -m venv venv
+
+<span class="cm"># Activate it</span>
+source venv/bin/activate          <span class="cm"># Mac/Linux</span>
+venv\Scripts\activate             <span class="cm"># Windows</span>
+
+<span class="cm"># Install FastAPI + Uvicorn (ASGI server)</span>
+pip install fastapi uvicorn[standard]
+
+<span class="cm"># Install all common extras upfront</span>
+pip install sqlalchemy alembic python-jose[cryptography] \
+  passlib[bcrypt] python-multipart httpx pytest
+
+<span class="cm"># Save dependencies</span>
+pip freeze > requirements.txt
+
+<span class="cm"># Run the server</span>
+uvicorn main:app --reload   <span class="cm"># main = filename, app = FastAPI instance</span></pre>
+        </div>
+        <div class="info">--reload makes the server restart automatically when you save a file. Like Angular's ng serve. Never use it in production.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Production Project Structure</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">STRUCTURE</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">project layout</span><span class="lang">structure</span></div>
+          <pre>myapi/
+├── app/
+│   ├── __init__.py
+│   ├── main.py           <span class="cm"># FastAPI app creation + routers</span>
+│   ├── config.py         <span class="cm"># Settings (env vars, secrets)</span>
+│   ├── database.py       <span class="cm"># DB connection + session</span>
+│   ├── models/           <span class="cm"># SQLAlchemy ORM models</span>
+│   │   ├── __init__.py
+│   │   └── user.py
+│   ├── schemas/          <span class="cm"># Pydantic request/response models</span>
+│   │   ├── __init__.py
+│   │   └── user.py
+│   ├── routers/          <span class="cm"># Route handlers (like Angular modules)</span>
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   └── users.py
+│   ├── services/         <span class="cm"># Business logic (like Angular services)</span>
+│   │   └── user_service.py
+│   └── dependencies.py   <span class="cm"># Shared dependencies (auth, db session)</span>
+├── tests/
+│   ├── __init__.py
+│   └── test_users.py
+├── alembic/              <span class="cm"># DB migrations</span>
+├── .env
+├── requirements.txt
+└── Dockerfile</pre>
+        </div>
+        <div class="ana">This mirrors Angular's structure: routers = components/pages, schemas = interfaces/types, services = Angular services, models = database entities.</div>
+      </div>
+    </div>
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">main.py — App Entry Point</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">CORE</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/main.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+<span class="kw">from</span> app.routers <span class="kw">import</span> users, auth, products
+
+<span class="cm"># Create the app — like Angular's AppModule bootstrap</span>
+app = FastAPI(
+    title=<span class="str">"My API"</span>,
+    description=<span class="str">"A production FastAPI app"</span>,
+    version=<span class="str">"1.0.0"</span>,
+    docs_url=<span class="str">"/docs"</span>,       <span class="cm"># Swagger UI — visit this in browser!</span>
+    redoc_url=<span class="str">"/redoc"</span>,     <span class="cm"># ReDoc alternative docs</span>
+)
+
+<span class="cm"># CORS — allow your Angular frontend to call this API</span>
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[<span class="str">"http://localhost:4200"</span>, <span class="str">"https://myapp.com"</span>],
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="str">"*"</span>],
+    allow_headers=[<span class="str">"*"</span>],
+)
+
+<span class="cm"># Mount routers (like Angular RouterModule.forChild)</span>
+app.include_router(auth.router, prefix=<span class="str">"/auth"</span>, tags=[<span class="str">"Authentication"</span>])
+app.include_router(users.router, prefix=<span class="str">"/users"</span>, tags=[<span class="str">"Users"</span>])
+app.include_router(products.router, prefix=<span class="str">"/products"</span>, tags=[<span class="str">"Products"</span>])
+
+<span class="cm"># Startup / Shutdown events</span>
+<span class="dec">@app.on_event</span>(<span class="str">"startup"</span>)
+<span class="kw">async def</span> <span class="fn">startup</span>():
+    print(<span class="str">"🚀 API starting..."</span>)
+    <span class="cm"># connect to DB, warm up ML model, etc.</span>
+
+<span class="dec">@app.on_event</span>(<span class="str">"shutdown"</span>)
+<span class="kw">async def</span> <span class="fn">shutdown</span>():
+    print(<span class="str">"👋 API shutting down..."</span>)
+
+<span class="cm"># Health check endpoint</span>
+<span class="dec">@app.get</span>(<span class="str">"/"</span>)
+<span class="kw">async def</span> <span class="fn">root</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"healthy"</span>, <span class="str">"version"</span>: <span class="str">"1.0.0"</span>}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- BASICS -->
+<section class="sec" id="sec-basics">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,150,255,0.1);border:1px solid rgba(0,150,255,0.25);color:var(--hi2)">Module 2</div>
+    <h2>Routes &<br>HTTP Methods</h2>
+    <p>Every HTTP method, route organisation, routers and how decorators work.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">All HTTP Methods + Route Decorator</div><div class="ctag" style="background:rgba(0,150,255,0.12);color:var(--hi2)">ROUTING</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/routers/items.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, HTTPException, status
+<span class="kw">from</span> app.schemas.item <span class="kw">import</span> ItemCreate, ItemUpdate, ItemResponse
+
+<span class="cm"># Router = like Angular's RouterModule.forChild() routes array</span>
+router = APIRouter()
+
+<span class="cm"># GET — fetch all (list)</span>
+<span class="dec">@router.get</span>(<span class="str">"/"</span>, response_model=list[ItemResponse])
+<span class="kw">async def</span> <span class="fn">get_items</span>():
+    <span class="kw">return</span> [...]  <span class="cm"># return list from DB</span>
+
+<span class="cm"># GET — fetch one by ID</span>
+<span class="dec">@router.get</span>(<span class="str">"/{item_id}"</span>, response_model=ItemResponse)
+<span class="kw">async def</span> <span class="fn">get_item</span>(item_id: int):
+    item = db.get(item_id)
+    <span class="kw">if not</span> item:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">404</span>, detail=<span class="str">"Item not found"</span>)
+    <span class="kw">return</span> item
+
+<span class="cm"># POST — create new</span>
+<span class="dec">@router.post</span>(<span class="str">"/"</span>, response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
+<span class="kw">async def</span> <span class="fn">create_item</span>(item: ItemCreate):
+    <span class="kw">return</span> db.create(item)
+
+<span class="cm"># PUT — full update (replace everything)</span>
+<span class="dec">@router.put</span>(<span class="str">"/{item_id}"</span>, response_model=ItemResponse)
+<span class="kw">async def</span> <span class="fn">update_item</span>(item_id: int, item: ItemCreate):
+    <span class="kw">return</span> db.replace(item_id, item)
+
+<span class="cm"># PATCH — partial update (only change some fields)</span>
+<span class="dec">@router.patch</span>(<span class="str">"/{item_id}"</span>, response_model=ItemResponse)
+<span class="kw">async def</span> <span class="fn">partial_update_item</span>(item_id: int, item: ItemUpdate):
+    <span class="kw">return</span> db.update(item_id, item)
+
+<span class="cm"># DELETE</span>
+<span class="dec">@router.delete</span>(<span class="str">"/{item_id}"</span>, status_code=status.HTTP_204_NO_CONTENT)
+<span class="kw">async def</span> <span class="fn">delete_item</span>(item_id: int):
+    db.delete(item_id)
+    <span class="cm"># Return nothing — 204 No Content</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PYDANTIC -->
+<section class="sec" id="sec-pydantic">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.25);color:var(--hi4)">Module 3</div>
+    <h2>Pydantic Models<br>& Validation</h2>
+    <p>Pydantic is FastAPI's superpower. Every request body and response is a Pydantic model — automatically validated, serialized, and documented.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Pydantic v2 — Complete Reference</div><div class="ctag" style="background:rgba(192,132,252,0.12);color:var(--hi4)">PYDANTIC</div></div>
+      <div class="cb">
+        <div class="ana">Pydantic models are like TypeScript interfaces + Angular Validators in one. You define the shape AND the validation rules, and FastAPI enforces them on every request automatically.</div>
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/schemas/user.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr, Field, field_validator, model_validator
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+<span class="kw">class</span> <span class="cls">RoleEnum</span>(str, Enum):
+    admin = <span class="str">"admin"</span>
+    user = <span class="str">"user"</span>
+    viewer = <span class="str">"viewer"</span>
+
+<span class="cm"># Request body: what the client SENDS to create a user</span>
+<span class="kw">class</span> <span class="cls">UserCreate</span>(BaseModel):
+    name: str = Field(..., min_length=<span class="num">2</span>, max_length=<span class="num">50</span>, example=<span class="str">"Ravi Kumar"</span>)
+    email: EmailStr                 <span class="cm"># validates it's a real email format</span>
+    password: str = Field(..., min_length=<span class="num">8</span>)
+    age: Optional[int] = Field(<span class="kw">None</span>, ge=<span class="num">0</span>, le=<span class="num">120</span>)  <span class="cm"># ge=gte, le=lte</span>
+    role: RoleEnum = RoleEnum.user
+
+    <span class="cm"># Custom field validator</span>
+    <span class="dec">@field_validator</span>(<span class="str">"name"</span>)
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">name_must_not_have_numbers</span>(cls, v: str) -> str:
+        <span class="kw">if</span> any(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> v):
+            <span class="kw">raise</span> ValueError(<span class="str">"Name cannot contain numbers"</span>)
+        <span class="kw">return</span> v.strip().title()  <span class="cm"># also transform: "ravi kumar" → "Ravi Kumar"</span>
+
+<span class="cm"># Partial update: ALL fields optional (PATCH requests)</span>
+<span class="kw">class</span> <span class="cls">UserUpdate</span>(BaseModel):
+    name: Optional[str] = Field(<span class="kw">None</span>, min_length=<span class="num">2</span>)
+    email: Optional[EmailStr] = <span class="kw">None</span>
+    age: Optional[int] = <span class="kw">None</span>
+
+<span class="cm"># Response: what the server RETURNS (NEVER include password!)</span>
+<span class="kw">class</span> <span class="cls">UserResponse</span>(BaseModel):
+    id: int
+    name: str
+    email: str
+    role: RoleEnum
+    created_at: datetime
+
+    <span class="kw">class</span> <span class="cls">Config</span>:
+        from_attributes = <span class="kw">True</span>  <span class="cm"># allows creating from SQLAlchemy ORM object</span>
+
+<span class="cm"># Nested models</span>
+<span class="kw">class</span> <span class="cls">AddressCreate</span>(BaseModel):
+    street: str
+    city: str
+    pincode: str = Field(pattern=<span class="str">r"^\d{6}$"</span>)  <span class="cm"># regex validation</span>
+
+<span class="kw">class</span> <span class="cls">UserWithAddressCreate</span>(UserCreate):
+    address: AddressCreate  <span class="cm"># nested Pydantic model</span>
+
+<span class="cm"># Cross-field validation</span>
+<span class="kw">class</span> <span class="cls">PasswordChange</span>(BaseModel):
+    old_password: str
+    new_password: str
+    confirm_password: str
+
+    <span class="dec">@model_validator</span>(mode=<span class="str">"after"</span>)
+    <span class="kw">def</span> <span class="fn">passwords_match</span>(self):
+        <span class="kw">if</span> self.new_password != self.confirm_password:
+            <span class="kw">raise</span> ValueError(<span class="str">"Passwords do not match"</span>)
+        <span class="kw">return</span> self</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PARAMS -->
+<section class="sec" id="sec-params">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);color:var(--hi5)">Module 4</div>
+    <h2>Path, Query &<br>Body Parameters</h2>
+    <p>Three ways data comes into your API. FastAPI knows which is which from type hints alone.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">All Parameter Types — Full Reference</div><div class="ctag" style="background:rgba(251,191,36,0.12);color:var(--hi5)">PARAMS</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/routers/examples.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, Path, Query, Body, Header, Cookie, File, UploadFile
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated, Optional
+
+router = APIRouter()
+
+<span class="cm"># PATH PARAMETER — /users/{user_id}</span>
+<span class="dec">@router.get</span>(<span class="str">"/users/{user_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_user</span>(
+    user_id: Annotated[int, Path(title=<span class="str">"User ID"</span>, ge=<span class="num">1</span>)]
+):
+    <span class="kw">return</span> {<span class="str">"user_id"</span>: user_id}
+
+<span class="cm"># QUERY PARAMETERS — /items?skip=0&limit=10&search=phone</span>
+<span class="dec">@router.get</span>(<span class="str">"/items"</span>)
+<span class="kw">async def</span> <span class="fn">list_items</span>(
+    skip: int = <span class="num">0</span>,                         <span class="cm"># optional, default 0</span>
+    limit: Annotated[int, Query(le=<span class="num">100</span>)] = <span class="num">10</span>,  <span class="cm"># max 100</span>
+    search: Optional[str] = <span class="kw">None</span>,          <span class="cm"># completely optional</span>
+    active: bool = <span class="kw">True</span>                      <span class="cm"># bool: ?active=true or ?active=1</span>
+):
+    <span class="kw">return</span> {<span class="str">"skip"</span>: skip, <span class="str">"limit"</span>: limit, <span class="str">"search"</span>: search}
+
+<span class="cm"># REQUEST BODY — JSON in request body (POST/PUT)</span>
+<span class="kw">class</span> <span class="cls">Item</span>(BaseModel):
+    name: str
+    price: float
+
+<span class="dec">@router.post</span>(<span class="str">"/items"</span>)
+<span class="kw">async def</span> <span class="fn">create_item</span>(item: Item):  <span class="cm"># Pydantic model = request body</span>
+    <span class="kw">return</span> item
+
+<span class="cm"># MULTIPLE BODIES — when you need more than one model</span>
+<span class="dec">@router.post</span>(<span class="str">"/order"</span>)
+<span class="kw">async def</span> <span class="fn">create_order</span>(
+    item: Item,
+    user: UserCreate,              <span class="cm"># Expects: {"item": {...}, "user": {...}}</span>
+    discount: Annotated[float, Body(ge=<span class="num">0</span>, le=<span class="num">1</span>)] = <span class="num">0</span>
+):
+    <span class="kw">return</span> {<span class="str">"item"</span>: item, <span class="str">"user"</span>: user}
+
+<span class="cm"># HEADERS — read HTTP headers</span>
+<span class="dec">@router.get</span>(<span class="str">"/headers"</span>)
+<span class="kw">async def</span> <span class="fn">read_headers</span>(
+    user_agent: Annotated[Optional[str], Header()] = <span class="kw">None</span>,
+    x_custom_header: Annotated[Optional[str], Header()] = <span class="kw">None</span>
+):
+    <span class="kw">return</span> {<span class="str">"user_agent"</span>: user_agent}
+
+<span class="cm"># FILE UPLOAD</span>
+<span class="dec">@router.post</span>(<span class="str">"/upload"</span>)
+<span class="kw">async def</span> <span class="fn">upload_file</span>(file: UploadFile):
+    contents = <span class="kw">await</span> file.read()
+    <span class="kw">return</span> {
+        <span class="str">"filename"</span>: file.filename,
+        <span class="str">"size"</span>: len(contents),
+        <span class="str">"content_type"</span>: file.content_type
+    }
+
+<span class="cm"># MULTIPLE FILES</span>
+<span class="dec">@router.post</span>(<span class="str">"/uploads"</span>)
+<span class="kw">async def</span> <span class="fn">upload_files</span>(files: list[UploadFile]):
+    <span class="kw">return</span> [{<span class="str">"filename"</span>: f.filename} <span class="kw">for</span> f <span class="kw">in</span> files]</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RESPONSES -->
+<section class="sec" id="sec-responses">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.25);color:var(--hi)">Module 5</div>
+    <h2>Responses &<br>Status Codes</h2>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Response Types — All Patterns</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">RESPONSES</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">response patterns</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Response, status
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse, HTMLResponse, FileResponse, StreamingResponse
+<span class="kw">from</span> typing <span class="kw">import</span> Union
+
+<span class="cm"># 1. Return a dict — FastAPI serializes it to JSON automatically</span>
+<span class="dec">@app.get</span>(<span class="str">"/simple"</span>)
+<span class="kw">async def</span> <span class="fn">simple</span>():
+    <span class="kw">return</span> {<span class="str">"message"</span>: <span class="str">"hello"</span>}
+
+<span class="cm"># 2. response_model — filter what fields are returned</span>
+<span class="dec">@app.get</span>(<span class="str">"/users/{id}"</span>, response_model=UserResponse)
+<span class="kw">async def</span> <span class="fn">get_user</span>(id: int):
+    user = get_from_db(id)   <span class="cm"># has password field</span>
+    <span class="kw">return</span> user              <span class="cm"># UserResponse omits password automatically!</span>
+
+<span class="cm"># 3. Multiple possible response models</span>
+<span class="dec">@app.get</span>(<span class="str">"/items/{id}"</span>, response_model=Union[ItemResponse, ErrorResponse])
+<span class="kw">async def</span> <span class="fn">get_item</span>(id: int):
+    ...
+
+<span class="cm"># 4. Custom status codes</span>
+<span class="dec">@app.post</span>(<span class="str">"/items"</span>, status_code=<span class="num">201</span>)          <span class="cm"># 201 Created</span>
+<span class="dec">@app.delete</span>(<span class="str">"/items/{id}"</span>, status_code=<span class="num">204</span>)   <span class="cm"># 204 No Content</span>
+
+<span class="cm"># 5. JSONResponse with custom headers</span>
+<span class="dec">@app.get</span>(<span class="str">"/custom"</span>)
+<span class="kw">async def</span> <span class="fn">custom</span>():
+    <span class="kw">return</span> JSONResponse(
+        content={<span class="str">"data"</span>: <span class="str">"value"</span>},
+        status_code=<span class="num">200</span>,
+        headers={<span class="str">"X-Custom-Header"</span>: <span class="str">"my-value"</span>}
+    )
+
+<span class="cm"># 6. Stream large files (ML models, CSV downloads)</span>
+<span class="dec">@app.get</span>(<span class="str">"/download"</span>)
+<span class="kw">async def</span> <span class="fn">download</span>():
+    <span class="kw">async def</span> <span class="fn">generate</span>():
+        <span class="kw">for</span> chunk <span class="kw">in</span> read_large_file():
+            <span class="kw">yield</span> chunk
+    <span class="kw">return</span> StreamingResponse(generate(), media_type=<span class="str">"text/csv"</span>,
+        headers={<span class="str">"Content-Disposition"</span>: <span class="str">'attachment; filename="data.csv"'</span>})
+
+<span class="cm"># 7. File response (static file from disk)</span>
+<span class="dec">@app.get</span>(<span class="str">"/report"</span>)
+<span class="kw">async def</span> <span class="fn">get_report</span>():
+    <span class="kw">return</span> FileResponse(<span class="str">"reports/report.pdf"</span>, media_type=<span class="str">"application/pdf"</span>)
+
+<span class="cm"># 8. Background tasks (return response, then do something)</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> BackgroundTasks
+
+<span class="dec">@app.post</span>(<span class="str">"/send-email"</span>)
+<span class="kw">async def</span> <span class="fn">send_email</span>(email: str, bg: BackgroundTasks):
+    bg.add_task(send_email_async, email)  <span class="cm"># runs AFTER response sent</span>
+    <span class="kw">return</span> {<span class="str">"message"</span>: <span class="str">"Email queued"</span>}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEPS -->
+<section class="sec" id="sec-deps">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,150,255,0.1);border:1px solid rgba(0,150,255,0.25);color:var(--hi2)">Module 6</div>
+    <h2>Dependency Injection</h2>
+    <p>FastAPI's DI system is like Angular's — inject shared logic (DB sessions, auth, rate limiting) into any route function.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Dependency Injection — All Patterns</div><div class="ctag" style="background:rgba(0,150,255,0.12);color:var(--hi2)">DI</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/dependencies.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> Depends, HTTPException, status, Security
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer
+<span class="kw">from</span> app.database <span class="kw">import</span> SessionLocal
+<span class="kw">from</span> typing <span class="kw">import</span> Annotated
+
+<span class="cm"># ── DEPENDENCY 1: Database Session ─────────────────</span>
+<span class="cm"># Opens a DB session, passes it to route, closes when done</span>
+<span class="kw">def</span> <span class="fn">get_db</span>():
+    db = SessionLocal()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> db             <span class="cm"># yield = give to route function</span>
+    <span class="kw">finally</span>:
+        db.close()           <span class="cm"># ALWAYS close, even if error occurs</span>
+
+<span class="cm"># Use in route — db is automatically provided</span>
+<span class="dec">@router.get</span>(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">get_users</span>(db: Annotated[Session, Depends(get_db)]):
+    <span class="kw">return</span> db.query(User).all()
+
+<span class="cm"># ── DEPENDENCY 2: Current User (Auth) ──────────────</span>
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="str">"auth/token"</span>)
+
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)]
+) -> User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=<span class="str">"Invalid credentials"</span>,
+        headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>}
+    )
+    <span class="kw">try</span>:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get(<span class="str">"sub"</span>)
+        <span class="kw">if not</span> user_id:
+            <span class="kw">raise</span> credentials_exception
+    <span class="kw">except</span> JWTError:
+        <span class="kw">raise</span> credentials_exception
+    user = db.get(User, int(user_id))
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> credentials_exception
+    <span class="kw">return</span> user
+
+<span class="cm"># ── DEPENDENCY 3: Role-based access ───────────────</span>
+<span class="kw">def</span> <span class="fn">require_role</span>(*roles: str):
+    <span class="kw">async def</span> <span class="fn">check_role</span>(user: Annotated[User, Depends(get_current_user)]):
+        <span class="kw">if</span> user.role <span class="kw">not in</span> roles:
+            <span class="kw">raise</span> HTTPException(<span class="num">403</span>, <span class="str">"Insufficient permissions"</span>)
+        <span class="kw">return</span> user
+    <span class="kw">return</span> check_role
+
+<span class="cm"># ── Usage in routes ────────────────────────────────</span>
+<span class="cm"># Type aliases for cleaner code (like TypeScript type aliases)</span>
+CurrentUser = Annotated[User, Depends(get_current_user)]
+AdminOnly   = Annotated[User, Depends(require_role(<span class="str">"admin"</span>))]
+DBSession   = Annotated[Session, Depends(get_db)]
+
+<span class="dec">@router.get</span>(<span class="str">"/profile"</span>)
+<span class="kw">async def</span> <span class="fn">profile</span>(user: CurrentUser):  <span class="cm"># auto-injects current user</span>
+    <span class="kw">return</span> user
+
+<span class="dec">@router.delete</span>(<span class="str">"/users/{id}"</span>)
+<span class="kw">async def</span> <span class="fn">delete_user</span>(id: int, admin: AdminOnly, db: DBSession):
+    <span class="kw">return</span> db.delete(db.get(User, id))
+
+<span class="cm"># ── DEPENDENCY 4: Class-based dependency ──────────</span>
+<span class="kw">class</span> <span class="cls">Pagination</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, skip: int = <span class="num">0</span>, limit: int = Query(<span class="num">10</span>, le=<span class="num">100</span>)):
+        self.skip = skip
+        self.limit = limit
+
+<span class="dec">@router.get</span>(<span class="str">"/items"</span>)
+<span class="kw">async def</span> <span class="fn">list_items</span>(page: Annotated[Pagination, Depends(Pagination)]):
+    <span class="kw">return</span> {<span class="str">"skip"</span>: page.skip, <span class="str">"limit"</span>: page.limit}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MIDDLEWARE -->
+<section class="sec" id="sec-middleware">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);color:var(--hi3)">Module 7</div>
+    <h2>Middleware & CORS</h2>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Custom Middleware — Logging, Timing, CORS</div><div class="ctag" style="background:rgba(255,107,53,0.12);color:var(--hi3)">MIDDLEWARE</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/middleware.py + main.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> Request, Response
+<span class="kw">from</span> starlette.middleware.base <span class="kw">import</span> BaseHTTPMiddleware
+<span class="kw">import</span> time, logging, uuid
+
+<span class="cm"># Custom middleware — runs before AND after every request</span>
+<span class="kw">class</span> <span class="cls">LoggingMiddleware</span>(BaseHTTPMiddleware):
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(self, request: Request, call_next):
+        request_id = str(uuid.uuid4())[:<span class="num">8</span>]
+        start = time.time()
+
+        <span class="cm"># BEFORE the route handler</span>
+        logging.info(<span class="str">f"[{request_id}] {request.method} {request.url.path}"</span>)
+
+        response: Response = <span class="kw">await</span> call_next(request)  <span class="cm"># run route handler</span>
+
+        <span class="cm"># AFTER the route handler</span>
+        duration = (time.time() - start) * <span class="num">1000</span>
+        logging.info(<span class="str">f"[{request_id}] {response.status_code} — {duration:.1f}ms"</span>)
+        response.headers[<span class="str">"X-Request-ID"</span>] = request_id
+        response.headers[<span class="str">"X-Process-Time"</span>] = <span class="str">f"{duration:.1f}ms"</span>
+        <span class="kw">return</span> response
+
+<span class="cm"># Rate limiting middleware</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">import</span> time
+
+<span class="kw">class</span> <span class="cls">RateLimitMiddleware</span>(BaseHTTPMiddleware):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, app, max_requests=<span class="num">100</span>, window=<span class="num">60</span>):
+        super().__init__(app)
+        self.requests = defaultdict(list)
+        self.max_requests = max_requests
+        self.window = window
+
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(self, request: Request, call_next):
+        ip = request.client.host
+        now = time.time()
+        self.requests[ip] = [t <span class="kw">for</span> t <span class="kw">in</span> self.requests[ip] <span class="kw">if</span> now - t < self.window]
+        <span class="kw">if</span> len(self.requests[ip]) >= self.max_requests:
+            <span class="kw">return</span> JSONResponse({<span class="str">"error"</span>: <span class="str">"Rate limit exceeded"</span>}, status_code=<span class="num">429</span>)
+        self.requests[ip].append(now)
+        <span class="kw">return</span> <span class="kw">await</span> call_next(request)
+
+<span class="cm"># Register in main.py</span>
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RateLimitMiddleware, max_requests=<span class="num">100</span>, window=<span class="num">60</span>)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[<span class="str">"http://localhost:4200"</span>],  <span class="cm"># Angular dev server</span>
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="str">"*"</span>],
+    allow_headers=[<span class="str">"*"</span>],
+)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATABASE -->
+<section class="sec" id="sec-database">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.25);color:var(--hi4)">Module 8</div>
+    <h2>Database with<br>SQLAlchemy</h2>
+    <p>Full database setup: connection, ORM models, sessions, CRUD operations, migrations with Alembic.</p>
+  </div>
+  <div class="grid">
+
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Database Setup — SQLAlchemy + FastAPI</div><div class="ctag" style="background:rgba(192,132,252,0.12);color:var(--hi4)">DATABASE</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/database.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sqlalchemy.ext.declarative <span class="kw">import</span> declarative_base
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> sessionmaker
+<span class="kw">import</span> os
+
+DATABASE_URL = os.getenv(<span class="str">"DATABASE_URL"</span>, <span class="str">"sqlite:///./dev.db"</span>)
+<span class="cm"># For PostgreSQL: postgresql://user:password@host:5432/dbname</span>
+<span class="cm"># For MySQL:      mysql+pymysql://user:password@host:3306/dbname</span>
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={<span class="str">"check_same_thread"</span>: <span class="kw">False</span>} <span class="kw">if</span> <span class="str">"sqlite"</span> <span class="kw">in</span> DATABASE_URL <span class="kw">else</span> {}
+)
+SessionLocal = sessionmaker(autocommit=<span class="kw">False</span>, autoflush=<span class="kw">False</span>, bind=engine)
+Base = declarative_base()</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/models/user.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> sqlalchemy <span class="kw">import</span> Column, Integer, String, Boolean, DateTime, ForeignKey, Enum
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> relationship
+<span class="kw">from</span> sqlalchemy.sql <span class="kw">import</span> func
+<span class="kw">from</span> app.database <span class="kw">import</span> Base
+
+<span class="kw">class</span> <span class="cls">User</span>(Base):
+    __tablename__ = <span class="str">"users"</span>
+
+    id         = Column(Integer, primary_key=<span class="kw">True</span>, index=<span class="kw">True</span>)
+    name       = Column(String(<span class="num">50</span>), nullable=<span class="kw">False</span>)
+    email      = Column(String(<span class="num">255</span>), unique=<span class="kw">True</span>, index=<span class="kw">True</span>, nullable=<span class="kw">False</span>)
+    password   = Column(String(<span class="num">255</span>), nullable=<span class="kw">False</span>)
+    role       = Column(Enum(<span class="str">"admin"</span>, <span class="str">"user"</span>, <span class="str">"viewer"</span>), default=<span class="str">"user"</span>)
+    is_active  = Column(Boolean, default=<span class="kw">True</span>)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    <span class="cm"># Relationship — one user has many posts</span>
+    posts = relationship(<span class="str">"Post"</span>, back_populates=<span class="str">"author"</span>, cascade=<span class="str">"all, delete"</span>)
+
+<span class="kw">class</span> <span class="cls">Post</span>(Base):
+    __tablename__ = <span class="str">"posts"</span>
+    id        = Column(Integer, primary_key=<span class="kw">True</span>)
+    title     = Column(String(<span class="num">200</span>), nullable=<span class="kw">False</span>)
+    content   = Column(String(<span class="num">10000</span>))
+    author_id = Column(Integer, ForeignKey(<span class="str">"users.id"</span>), nullable=<span class="kw">False</span>)
+    author    = relationship(<span class="str">"User"</span>, back_populates=<span class="str">"posts"</span>)</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/services/user_service.py — CRUD</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> Session
+<span class="kw">from</span> app.models.user <span class="kw">import</span> User
+<span class="kw">from</span> app.schemas.user <span class="kw">import</span> UserCreate, UserUpdate
+<span class="kw">from</span> passlib.context <span class="kw">import</span> CryptContext
+
+pwd_context = CryptContext(schemes=[<span class="str">"bcrypt"</span>], deprecated=<span class="str">"auto"</span>)
+
+<span class="kw">class</span> <span class="cls">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db: Session):
+        self.db = db
+
+    <span class="kw">def</span> <span class="fn">create</span>(self, data: UserCreate) -> User:
+        hashed = pwd_context.hash(data.password)
+        user = User(**data.model_dump(exclude={<span class="str">"password"</span>}), password=hashed)
+        self.db.add(user)
+        self.db.commit()
+        self.db.refresh(user)
+        <span class="kw">return</span> user
+
+    <span class="kw">def</span> <span class="fn">get_by_id</span>(self, user_id: int) -> User | <span class="kw">None</span>:
+        <span class="kw">return</span> self.db.query(User).filter(User.id == user_id).first()
+
+    <span class="kw">def</span> <span class="fn">get_by_email</span>(self, email: str) -> User | <span class="kw">None</span>:
+        <span class="kw">return</span> self.db.query(User).filter(User.email == email).first()
+
+    <span class="kw">def</span> <span class="fn">get_all</span>(self, skip=<span class="num">0</span>, limit=<span class="num">10</span>) -> list[User]:
+        <span class="kw">return</span> self.db.query(User).offset(skip).limit(limit).all()
+
+    <span class="kw">def</span> <span class="fn">update</span>(self, user_id: int, data: UserUpdate) -> User:
+        user = self.get_by_id(user_id)
+        <span class="kw">for</span> key, val <span class="kw">in</span> data.model_dump(exclude_none=<span class="kw">True</span>).items():
+            setattr(user, key, val)
+        self.db.commit()
+        self.db.refresh(user)
+        <span class="kw">return</span> user
+
+    <span class="kw">def</span> <span class="fn">delete</span>(self, user_id: int):
+        user = self.get_by_id(user_id)
+        self.db.delete(user)
+        self.db.commit()</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AUTH -->
+<section class="sec" id="sec-auth">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:var(--hi6)">Module 9</div>
+    <h2>JWT Authentication</h2>
+    <p>Complete login/register/token system. Same pattern as every production API.</p>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">JWT Auth — Complete Implementation</div><div class="ctag" style="background:rgba(244,63,94,0.12);color:var(--hi6)">AUTH</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/routers/auth.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, Depends, HTTPException, status
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordRequestForm
+<span class="kw">from</span> jose <span class="kw">import</span> jwt, JWTError
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">import</span> os
+
+router = APIRouter()
+SECRET_KEY = os.getenv(<span class="str">"SECRET_KEY"</span>, <span class="str">"change-this-in-production"</span>)
+ALGORITHM = <span class="str">"HS256"</span>
+ACCESS_TOKEN_EXPIRE = <span class="num">30</span>    <span class="cm"># minutes</span>
+REFRESH_TOKEN_EXPIRE = <span class="num">7</span>    <span class="cm"># days</span>
+
+<span class="kw">def</span> <span class="fn">create_token</span>(data: dict, expires_in: timedelta) -> str:
+    payload = data.copy()
+    payload[<span class="str">"exp"</span>] = datetime.utcnow() + expires_in
+    <span class="kw">return</span> jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+<span class="cm"># POST /auth/register</span>
+<span class="dec">@router.post</span>(<span class="str">"/register"</span>, response_model=UserResponse, status_code=<span class="num">201</span>)
+<span class="kw">async def</span> <span class="fn">register</span>(data: UserCreate, db: DBSession):
+    svc = UserService(db)
+    <span class="kw">if</span> svc.get_by_email(data.email):
+        <span class="kw">raise</span> HTTPException(<span class="num">400</span>, <span class="str">"Email already registered"</span>)
+    <span class="kw">return</span> svc.create(data)
+
+<span class="cm"># POST /auth/token — login (OAuth2 compatible, works with Swagger UI!)</span>
+<span class="dec">@router.post</span>(<span class="str">"/token"</span>)
+<span class="kw">async def</span> <span class="fn">login</span>(form: OAuth2PasswordRequestForm = Depends(), db: DBSession = ...):
+    svc = UserService(db)
+    user = svc.get_by_email(form.username)    <span class="cm"># username field = email</span>
+    <span class="kw">if not</span> user <span class="kw">or not</span> pwd_context.verify(form.password, user.password):
+        <span class="kw">raise</span> HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=<span class="str">"Incorrect email or password"</span>,
+            headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>}
+        )
+    access_token = create_token(
+        {<span class="str">"sub"</span>: str(user.id), <span class="str">"role"</span>: user.role},
+        timedelta(minutes=ACCESS_TOKEN_EXPIRE)
+    )
+    refresh_token = create_token(
+        {<span class="str">"sub"</span>: str(user.id), <span class="str">"type"</span>: <span class="str">"refresh"</span>},
+        timedelta(days=REFRESH_TOKEN_EXPIRE)
+    )
+    <span class="kw">return</span> {
+        <span class="str">"access_token"</span>: access_token,
+        <span class="str">"refresh_token"</span>: refresh_token,
+        <span class="str">"token_type"</span>: <span class="str">"bearer"</span>
+    }
+
+<span class="cm"># POST /auth/refresh — get new access token using refresh token</span>
+<span class="dec">@router.post</span>(<span class="str">"/refresh"</span>)
+<span class="kw">async def</span> <span class="fn">refresh</span>(refresh_token: str, db: DBSession):
+    <span class="kw">try</span>:
+        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+        <span class="kw">if</span> payload.get(<span class="str">"type"</span>) != <span class="str">"refresh"</span>:
+            <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Invalid token type"</span>)
+        user_id = payload.get(<span class="str">"sub"</span>)
+        user = UserService(db).get_by_id(int(user_id))
+        access_token = create_token({<span class="str">"sub"</span>: str(user.id)}, timedelta(minutes=<span class="num">30</span>))
+        <span class="kw">return</span> {<span class="str">"access_token"</span>: access_token, <span class="str">"token_type"</span>: <span class="str">"bearer"</span>}
+    <span class="kw">except</span> JWTError:
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Invalid refresh token"</span>)
+
+<span class="cm"># GET /auth/me — get current user profile</span>
+<span class="dec">@router.get</span>(<span class="str">"/me"</span>, response_model=UserResponse)
+<span class="kw">async def</span> <span class="fn">me</span>(user: CurrentUser):
+    <span class="kw">return</span> user</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASYNC -->
+<section class="sec" id="sec-async">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.25);color:var(--hi)">Module 10</div>
+    <h2>Async / Await<br>Deep Dive</h2>
+    <p>Understanding async is key to FastAPI's performance — and to building WebSockets.</p>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Sync vs Async — When to Use Which</div><div class="ctag" style="background:rgba(0,212,170,0.12);color:var(--hi)">ASYNC</div></div>
+      <div class="cb">
+        <div class="ana">Async is like a waiter at a restaurant. Sync waiter: takes order → goes to kitchen → stands there waiting → brings food → takes next order. Async waiter: takes order → goes to kitchen → takes 5 more orders → brings food when ready. Same waiter, 6x the efficiency.</div>
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">async patterns in FastAPI</span><span class="lang">Python</span></div>
+          <pre><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx
+
+<span class="cm"># ✅ USE async when: calling other APIs, DB operations, file I/O</span>
+<span class="dec">@app.get</span>(<span class="str">"/weather"</span>)
+<span class="kw">async def</span> <span class="fn">get_weather</span>(city: str):
+    <span class="kw">async with</span> httpx.AsyncClient() <span class="kw">as</span> client:
+        response = <span class="kw">await</span> client.get(<span class="str">f"https://api.weather.com/v1/{city}"</span>)
+        <span class="kw">return</span> response.json()
+
+<span class="cm"># ✅ Run multiple async operations in PARALLEL (like Promise.all)</span>
+<span class="dec">@app.get</span>(<span class="str">"/dashboard"</span>)
+<span class="kw">async def</span> <span class="fn">dashboard</span>(user: CurrentUser, db: DBSession):
+    users_task   = asyncio.create_task(get_users_async(db))
+    orders_task  = asyncio.create_task(get_orders_async(db))
+    metrics_task = asyncio.create_task(get_metrics_async())
+
+    <span class="cm"># Wait for ALL to finish simultaneously — not one by one!</span>
+    users, orders, metrics = <span class="kw">await</span> asyncio.gather(
+        users_task, orders_task, metrics_task
+    )
+    <span class="kw">return</span> {<span class="str">"users"</span>: users, <span class="str">"orders"</span>: orders, <span class="str">"metrics"</span>: metrics}
+
+<span class="cm"># ⚠️ CPU-heavy work? Use run_in_executor to not block the event loop</span>
+<span class="kw">import</span> concurrent.futures
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="kw">async def</span> <span class="fn">predict</span>(data: PredictRequest):
+    loop = asyncio.get_event_loop()
+    <span class="kw">with</span> concurrent.futures.ThreadPoolExecutor() <span class="kw">as</span> pool:
+        <span class="cm"># Run CPU-heavy ML prediction in a thread (won't block other requests)</span>
+        result = <span class="kw">await</span> loop.run_in_executor(pool, ml_model.predict, data.features)
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: result}
+
+<span class="cm"># def vs async def — both work! FastAPI handles both</span>
+<span class="cm"># def     → FastAPI runs in a thread (for CPU/blocking code)</span>
+<span class="cm"># async def → runs in event loop (for I/O bound code)</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ERRORS -->
+<section class="sec" id="sec-errors">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.25);color:var(--hi6)">Module 11</div>
+    <h2>Error Handling</h2>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Global Error Handlers — Production Patterns</div><div class="ctag" style="background:rgba(244,63,94,0.12);color:var(--hi6)">ERRORS</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">app/main.py — error handling</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request, HTTPException
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse
+<span class="kw">from</span> fastapi.exceptions <span class="kw">import</span> RequestValidationError
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+<span class="cm"># Custom exception class</span>
+<span class="kw">class</span> <span class="cls">AppException</span>(Exception):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, status_code: int, message: str, code: str = <span class="kw">None</span>):
+        self.status_code = status_code
+        self.message = message
+        self.code = code
+
+<span class="cm"># Handle your custom exceptions</span>
+<span class="dec">@app.exception_handler</span>(AppException)
+<span class="kw">async def</span> <span class="fn">app_exception_handler</span>(request: Request, exc: AppException):
+    <span class="kw">return</span> JSONResponse(
+        status_code=exc.status_code,
+        content={<span class="str">"error"</span>: exc.message, <span class="str">"code"</span>: exc.code}
+    )
+
+<span class="cm"># Handle FastAPI's built-in 404, 401, etc</span>
+<span class="dec">@app.exception_handler</span>(HTTPException)
+<span class="kw">async def</span> <span class="fn">http_exception_handler</span>(request: Request, exc: HTTPException):
+    <span class="kw">return</span> JSONResponse(
+        status_code=exc.status_code,
+        content={<span class="str">"error"</span>: exc.detail, <span class="str">"status_code"</span>: exc.status_code}
+    )
+
+<span class="cm"># Handle Pydantic validation errors (bad request body)</span>
+<span class="dec">@app.exception_handler</span>(RequestValidationError)
+<span class="kw">async def</span> <span class="fn">validation_error_handler</span>(request: Request, exc: RequestValidationError):
+    errors = []
+    <span class="kw">for</span> error <span class="kw">in</span> exc.errors():
+        errors.append({
+            <span class="str">"field"</span>: <span class="str">" → "</span>.join(str(x) <span class="kw">for</span> x <span class="kw">in</span> error[<span class="str">"loc"</span>][<span class="num">1</span>:]),
+            <span class="str">"message"</span>: error[<span class="str">"msg"</span>],
+            <span class="str">"type"</span>: error[<span class="str">"type"</span>]
+        })
+    <span class="kw">return</span> JSONResponse(
+        status_code=<span class="num">422</span>,
+        content={<span class="str">"error"</span>: <span class="str">"Validation failed"</span>, <span class="str">"details"</span>: errors}
+    )
+
+<span class="cm"># Handle all other unexpected errors</span>
+<span class="dec">@app.exception_handler</span>(Exception)
+<span class="kw">async def</span> <span class="fn">generic_exception_handler</span>(request: Request, exc: Exception):
+    logging.error(<span class="str">f"Unhandled error: {exc}"</span>, exc_info=<span class="kw">True</span>)
+    <span class="kw">return</span> JSONResponse(
+        status_code=<span class="num">500</span>,
+        content={<span class="str">"error"</span>: <span class="str">"Internal server error"</span>}
+    )
+
+<span class="cm"># Usage in routes</span>
+<span class="dec">@app.get</span>(<span class="str">"/users/{id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_user</span>(id: int, db: DBSession):
+    user = UserService(db).get_by_id(id)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> AppException(<span class="num">404</span>, <span class="str">f"User {id} not found"</span>, code=<span class="str">"USER_NOT_FOUND"</span>)
+    <span class="kw">return</span> user</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTING -->
+<section class="sec" id="sec-testing">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);color:var(--hi5)">Module 12</div>
+    <h2>Testing with Pytest</h2>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">FastAPI Testing — Full Test Suite</div><div class="ctag" style="background:rgba(251,191,36,0.12);color:var(--hi5)">TESTING</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">tests/test_users.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">import</span> pytest
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> sessionmaker
+<span class="kw">from</span> app.main <span class="kw">import</span> app
+<span class="kw">from</span> app.database <span class="kw">import</span> Base, get_db
+
+<span class="cm"># Use an in-memory SQLite for tests</span>
+TEST_DB_URL = <span class="str">"sqlite:///./test.db"</span>
+engine = create_engine(TEST_DB_URL, connect_args={<span class="str">"check_same_thread"</span>: <span class="kw">False</span>})
+TestSession = sessionmaker(bind=engine)
+
+<span class="dec">@pytest.fixture</span>(scope=<span class="str">"function"</span>, autouse=<span class="kw">True</span>)
+<span class="kw">def</span> <span class="fn">setup_db</span>():
+    Base.metadata.create_all(bind=engine)  <span class="cm"># create tables</span>
+    <span class="kw">yield</span>
+    Base.metadata.drop_all(bind=engine)   <span class="cm"># clean up after each test</span>
+
+<span class="dec">@pytest.fixture</span>()
+<span class="kw">def</span> <span class="fn">client</span>():
+    <span class="kw">def</span> <span class="fn">override_get_db</span>():
+        db = TestSession()
+        <span class="kw">try</span>: <span class="kw">yield</span> db
+        <span class="kw">finally</span>: db.close()
+
+    app.dependency_overrides[get_db] = override_get_db  <span class="cm"># swap real DB for test DB</span>
+    <span class="kw">with</span> TestClient(app) <span class="kw">as</span> c: <span class="kw">yield</span> c
+    app.dependency_overrides.clear()
+
+<span class="cm"># ── TESTS ─────────────────────────────────────────────</span>
+
+<span class="kw">def</span> <span class="fn">test_register_user</span>(client):
+    response = client.post(<span class="str">"/users/"</span>, json={
+        <span class="str">"name"</span>: <span class="str">"Ravi Kumar"</span>,
+        <span class="str">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9deffcebf4ddf8e5fcf0edf1f8b3fef2f0">[email&#160;protected]</a>"</span>,
+        <span class="str">"password"</span>: <span class="str">"securepassword123"</span>
+    })
+    assert response.status_code == <span class="num">201</span>
+    data = response.json()
+    assert data[<span class="str">"email"</span>] == <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e4c5f48577e5b465f534e525b105d5153">[email&#160;protected]</a>"</span>
+    assert <span class="str">"password"</span> <span class="kw">not in</span> data  <span class="cm"># password must never be in response!</span>
+
+<span class="kw">def</span> <span class="fn">test_duplicate_email_fails</span>(client):
+    payload = {<span class="str">"name"</span>: <span class="str">"Test"</span>, <span class="str">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e1f3e1f501d1113">[email&#160;protected]</a>"</span>, <span class="str">"password"</span>: <span class="str">"password123"</span>}
+    client.post(<span class="str">"/users/"</span>, json=payload)
+    response = client.post(<span class="str">"/users/"</span>, json=payload)  <span class="cm"># duplicate</span>
+    assert response.status_code == <span class="num">400</span>
+
+<span class="kw">def</span> <span class="fn">test_login_and_get_profile</span>(client):
+    <span class="cm"># Register</span>
+    client.post(<span class="str">"/users/"</span>, json={<span class="str">"name"</span>: <span class="str">"Test"</span>, <span class="str">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c586c58024f4341">[email&#160;protected]</a>"</span>, <span class="str">"password"</span>: <span class="str">"password123"</span>})
+    <span class="cm"># Login</span>
+    login = client.post(<span class="str">"/auth/token"</span>, data={<span class="str">"username"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9de9dde9b3fef2f0">[email&#160;protected]</a>"</span>, <span class="str">"password"</span>: <span class="str">"password123"</span>})
+    assert login.status_code == <span class="num">200</span>
+    token = login.json()[<span class="str">"access_token"</span>]
+    <span class="cm"># Use token</span>
+    profile = client.get(<span class="str">"/auth/me"</span>, headers={<span class="str">"Authorization"</span>: <span class="str">f"Bearer {token}"</span>})
+    assert profile.status_code == <span class="num">200</span>
+    assert profile.json()[<span class="str">"email"</span>] == <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="354175411b565a58">[email&#160;protected]</a>"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOY -->
+<section class="sec" id="sec-deploy">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);color:var(--hi3)">Module 13</div>
+    <h2>Docker &<br>Deployment</h2>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Production Dockerfile + docker-compose</div><div class="ctag" style="background:rgba(255,107,53,0.12);color:var(--hi3)">DOCKER</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">Dockerfile</span><span class="lang">Docker</span></div>
+          <pre><span class="cm"># Multi-stage build for smaller image</span>
+FROM python:3.11-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+FROM python:3.11-slim
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY ./app ./app
+ENV PATH=/root/.local/bin:$PATH
+
+<span class="cm"># Run with Gunicorn + Uvicorn workers (production-ready)</span>
+CMD ["gunicorn", "app.main:app", \
+     "--workers", "4", \
+     "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:8000", \
+     "--timeout", "120"]</pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">docker-compose.yml</span><span class="lang">YAML</span></div>
+          <pre>version: '3.9'
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+      - SECRET_KEY=your-super-secret-key
+    depends_on: [db, redis]
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  pgdata:</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATTERNS -->
+<section class="sec" id="sec-patterns">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,150,255,0.1);border:1px solid rgba(0,150,255,0.25);color:var(--hi2)">Module 14</div>
+    <h2>Real-World Patterns</h2>
+    <p>Pagination, filtering, background jobs, caching — the stuff you'll use every day.</p>
+  </div>
+  <div class="grid">
+    <div class="card card-full">
+      <div class="ch"><div class="ct">Pagination, Filtering & Generic Response Envelope</div><div class="ctag" style="background:rgba(0,150,255,0.12);color:var(--hi2)">PATTERNS</div></div>
+      <div class="cb">
+        <div class="code-wrap">
+          <div class="code-hdr"><span class="file">patterns.py</span><span class="lang">Python</span></div>
+          <pre><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> Generic, TypeVar, Optional, List
+<span class="kw">from</span> math <span class="kw">import</span> ceil
+
+T = TypeVar(<span class="str">'T'</span>)
+
+<span class="cm"># Generic paginated response — works for ANY model</span>
+<span class="kw">class</span> <span class="cls">Page</span>(BaseModel, Generic[T]):
+    items: List[T]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+    has_next: bool
+    has_prev: bool
+
+<span class="kw">def</span> <span class="fn">paginate</span>(query, page: int, page_size: int) -> Page:
+    total = query.count()
+    items = query.offset((page - <span class="num">1</span>) * page_size).limit(page_size).all()
+    total_pages = ceil(total / page_size) <span class="kw">if</span> total > <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+    <span class="kw">return</span> Page(items=items, total=total, page=page, page_size=page_size,
+                total_pages=total_pages, has_next=page < total_pages,
+                has_prev=page > <span class="num">1</span>)
+
+<span class="cm"># Usage: GET /users?page=2&page_size=10</span>
+<span class="dec">@router.get</span>(<span class="str">"/users"</span>, response_model=Page[UserResponse])
+<span class="kw">async def</span> <span class="fn">get_users</span>(page: int = <span class="num">1</span>, page_size: int = Query(<span class="num">10</span>, le=<span class="num">100</span>), db: DBSession):
+    query = db.query(User).filter(User.is_active == <span class="kw">True</span>)
+    <span class="kw">return</span> paginate(query, page, page_size)
+
+<span class="cm"># Generic API response envelope</span>
+<span class="kw">class</span> <span class="cls">ApiResponse</span>(BaseModel, Generic[T]):
+    success: bool = <span class="kw">True</span>
+    data: Optional[T] = <span class="kw">None</span>
+    message: Optional[str] = <span class="kw">None</span>
+    errors: Optional[list] = <span class="kw">None</span>
+
+<span class="dec">@router.get</span>(<span class="str">"/users/{id}"</span>, response_model=ApiResponse[UserResponse])
+<span class="kw">async def</span> <span class="fn">get_user</span>(id: int, db: DBSession):
+    user = UserService(db).get_by_id(id)
+    <span class="kw">return</span> ApiResponse(data=user, message=<span class="str">"User found"</span>)
+
+<span class="cm"># Filtering with query params</span>
+<span class="kw">class</span> <span class="cls">UserFilter</span>(BaseModel):
+    name: Optional[str] = <span class="kw">None</span>
+    role: Optional[str] = <span class="kw">None</span>
+    is_active: Optional[bool] = <span class="kw">None</span>
+
+<span class="dec">@router.get</span>(<span class="str">"/users/search"</span>)
+<span class="kw">async def</span> <span class="fn">search_users</span>(filters: Annotated[UserFilter, Query()], db: DBSession):
+    query = db.query(User)
+    <span class="kw">if</span> filters.name: query = query.filter(User.name.ilike(<span class="str">f"%{filters.name}%"</span>))
+    <span class="kw">if</span> filters.role: query = query.filter(User.role == filters.role)
+    <span class="kw">if</span> filters.is_active <span class="kw">is not None</span>: query = query.filter(User.is_active == filters.is_active)
+    <span class="kw">return</span> query.all()</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script data-cfasy

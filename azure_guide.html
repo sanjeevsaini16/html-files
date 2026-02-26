@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azure Cloud — Complete Guide (Simple Explanations)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#010913;--surface:#040f1e;--card:#071525;--border:#0f2035;--azure:#0078d4;--a2:#50e6ff;--a3:#00b4d8;--green:#00cc6a;--orange:#ff8c00;--red:#e81123;--purple:#7a43b6;--yellow:#ffb900;--text:#cce4ff;--muted:#2a5070;--code:#020c18;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.75;}
+.app{display:flex;}
+.sidebar{width:270px;background:var(--surface);border-right:1px solid var(--border);position:fixed;height:100vh;overflow-y:auto;padding-bottom:40px;z-index:50;}
+.main{margin-left:270px;padding:0 40px 80px;}
+.brand{padding:20px 16px 14px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,120,212,0.15),transparent);}
+.brand h1{font-size:1rem;font-weight:800;}
+.brand h1 em{font-style:normal;color:var(--azure);}
+.brand p{font-size:0.6rem;color:var(--muted);margin-top:2px;letter-spacing:2px;text-transform:uppercase;}
+.sb-search{padding:11px 14px;border-bottom:1px solid var(--border);}
+.sb-search input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-family:inherit;font-size:0.78rem;outline:none;}
+.sb-search input:focus{border-color:var(--azure);}
+.ng{padding:13px 14px 4px;font-size:0.57rem;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:0.78rem;color:var(--muted);transition:all 0.15s;border-left:3px solid transparent;}
+.ni:hover{color:var(--text);background:var(--card);}
+.ni.active{color:var(--text);border-left-color:var(--azure);background:rgba(0,120,212,0.08);}
+.d{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ph{padding:44px 0 22px;border-bottom:1px solid var(--border);margin-bottom:32px;}
+.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.ph h2{font-size:2rem;font-weight:800;letter-spacing:-0.8px;line-height:1.2;}
+.ph p{color:var(--muted);font-size:0.87rem;margin-top:7px;max-width:660px;}
+.ts{display:none;}
+.ts.active{display:block;}
+.cg{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.2s,transform 0.15s;}
+.card:hover{border-color:rgba(0,120,212,0.4);transform:translateY(-2px);}
+.ch{padding:14px 16px 11px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.ct{font-size:0.88rem;font-weight:700;}
+.ctag{font-size:0.61rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.cb{padding:14px 16px;}
+.cb p{font-size:0.8rem;color:var(--muted);margin-bottom:9px;}
+.cb strong{color:var(--text);}
+.life{background:rgba(80,230,255,0.06);border:1px solid rgba(80,230,255,0.18);border-radius:7px;padding:10px 13px;margin:9px 0;font-size:0.78rem;}
+.life::before{content:'🌍 Real Life: ';}
+.life em{font-style:normal;font-weight:700;color:var(--a2);}
+.cb-block{background:var(--code);border:1px solid var(--border);border-radius:7px;overflow:hidden;margin:9px 0;}
+.cb-hdr{background:#030e1c;padding:6px 11px;font-size:0.67rem;color:var(--muted);display:flex;justify-content:space-between;border-bottom:1px solid var(--border);}
+.cb-hdr span:first-child{color:var(--a2);}
+pre{padding:11px;overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.6;font-size:0.72rem;}
+.kw{color:#ff79c6;}.fn{color:#50fa7b;}.str{color:#f1fa8c;}.cm{color:#1a3a55;font-style:italic;}.num{color:#bd93f9;}.cls{color:#8be9fd;}
+.tbox{background:rgba(0,204,106,0.06);border:1px solid rgba(0,204,106,0.2);border-radius:7px;padding:9px 12px;margin:9px 0;}
+.tbox-t{font-size:0.65rem;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.tbox ul{list-style:none;}
+.tbox ul li{font-size:0.76rem;color:var(--muted);padding:1px 0;}
+.tbox ul li::before{content:'✓ ';color:var(--green);}
+.wbox{background:rgba(255,140,0,0.06);border:1px solid rgba(255,140,0,0.2);border-radius:7px;padding:9px 12px;margin:9px 0;font-size:0.77rem;color:var(--muted);}
+.wbox::before{content:'💡 Key insight: ';color:var(--orange);font-weight:700;}
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+.svc{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 10px;}
+.svc-name{font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.svc-desc{font-size:0.68rem;color:var(--muted);}
+.menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:7px 10px;cursor:pointer;color:var(--text);}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.main{margin-left:0;padding:50px 16px 60px;}.menu-toggle{display:block;}.cg{grid-template-columns:1fr;}.svc-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+<div class="app">
+<nav class="sidebar" id="sidebar">
+  <div class="brand"><h1>Azure <em>Cloud</em></h1><p>Simple · Every Concept Explained</p></div>
+  <div class="sb-search"><input type="text" id="si" placeholder="Search Azure..." oninput="filter()"></div>
+
+  <div class="ng">Core Concepts</div>
+  <div class="ni active" onclick="s('overview')" data-s="overview"><span class="d" style="background:#fff"></span>Overview & Mental Model</div>
+  <div class="ni" onclick="s('compute')" data-s="compute"><span class="d" style="background:var(--azure)"></span>Compute Services</div>
+  <div class="ni" onclick="s('storage')" data-s="storage"><span class="d" style="background:var(--green)"></span>Storage Services</div>
+  <div class="ni" onclick="s('networking')" data-s="networking"><span class="d" style="background:var(--a2)"></span>Networking</div>
+
+  <div class="ng">Security & Identity</div>
+  <div class="ni" onclick="s('identity')" data-s="identity"><span class="d" style="background:var(--purple)"></span>Identity & Access (AAD)</div>
+  <div class="ni" onclick="s('keyvault')" data-s="keyvault"><span class="d" style="background:var(--orange)"></span>Key Vault & Secrets</div>
+
+  <div class="ng">Data & AI</div>
+  <div class="ni" onclick="s('databases')" data-s="databases"><span class="d" style="background:var(--yellow)"></span>Databases</div>
+  <div class="ni" onclick="s('messaging')" data-s="messaging"><span class="d" style="background:var(--a2)"></span>Messaging & Events</div>
+  <div class="ni" onclick="s('aiservices')" data-s="aiservices"><span class="d" style="background:var(--purple)"></span>AI & Cognitive Services</div>
+
+  <div class="ng">DevOps & Monitoring</div>
+  <div class="ni" onclick="s('devops')" data-s="devops"><span class="d" style="background:var(--green)"></span>Azure DevOps & CI/CD</div>
+  <div class="ni" onclick="s('monitoring')" data-s="monitoring"><span class="d" style="background:var(--orange)"></span>Monitoring & Logging</div>
+  <div class="ni" onclick="s('pricing')" data-s="pricing"><span class="d" style="background:var(--azure)"></span>Pricing & Cost Management</div>
+</nav>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<section class="ts active" id="section-overview">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,120,212,0.15);border:1px solid rgba(0,120,212,0.3);color:var(--azure)">☁️ Start Here</div>
+    <h2>Azure Cloud —<br>The Mental Model</h2>
+    <p>Every concept explained like you're 15. No jargon without explanation. Built for your developer background with practical examples.</p>
+  </div>
+
+  <div class="cg">
+    <div class="card" style="grid-column:1/-1;">
+      <div class="ch"><div class="ct">What Is Cloud Computing? (The Big Picture)</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">CORE</div></div>
+      <div class="cb">
+        <div class="life"><em>Before cloud:</em> Every company had a server room. Like owning a generator for your house. Expensive, you manage everything, even when idle. <em>Cloud:</em> Microsoft runs the servers. You rent what you need. Like connecting to the electricity grid — you pay for what you use, they handle the power plant.</div>
+        <p><strong>3 Service Models:</strong></p>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">🏗️ IaaS — Infrastructure as a Service</div><div class="svc-desc">You get: raw servers, storage, networking. YOU install OS, runtime, apps. Like renting an empty building. <em>Azure VM, VNet</em></div></div>
+          <div class="svc"><div class="svc-name">🏠 PaaS — Platform as a Service</div><div class="svc-desc">You get: a managed runtime. YOU just deploy your code. Like renting a furnished apartment. <em>App Service, Azure Functions</em></div></div>
+          <div class="svc"><div class="svc-name">📱 SaaS — Software as a Service</div><div class="svc-desc">You get: a complete product. Just use it. Like staying in a hotel. <em>Microsoft 365, GitHub</em></div></div>
+          <div class="svc"><div class="svc-name">☁️ Serverless</div><div class="svc-desc">You get: run code without thinking about servers. Pay per execution, not per hour. <em>Azure Functions, Logic Apps</em></div></div>
+        </div>
+        <div class="wbox">Azure = Microsoft's cloud. It's #2 globally (behind AWS), but #1 in enterprise because it integrates with Microsoft's products (Office 365, Active Directory, Windows). If your company uses Microsoft products, Azure is often the default choice.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Regions, Availability Zones & Resource Groups</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">GEOGRAPHY</div></div>
+      <div class="cb">
+        <div class="life"><em>Region:</em> Azure has data centers in 60+ regions worldwide — India Central, East US, West Europe, etc. Like post office sorting centers in each city. <em>Availability Zone:</em> Multiple physical data centers within one region. If one floods, others still run. <em>Resource Group:</em> A folder that groups related Azure resources together for billing and management.</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Resource Group structure</span><span>concept</span></div>
+          <pre>MyApp-Production (Resource Group)
+├── myapp-webapp (App Service)
+├── myapp-db (SQL Database)  
+├── myapp-storage (Storage Account)
+├── myapp-cache (Redis)
+└── myapp-vault (Key Vault)
+
+<span class="cm">// All resources share lifecycle, region, billing tags</span>
+<span class="cm">// Delete the resource group → deletes EVERYTHING in it</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Subscription & Management Hierarchy</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">STRUCTURE</div></div>
+      <div class="cb">
+        <div class="life">Like a company's org chart: <em>Management Group</em> = the corporation, <em>Subscription</em> = a department with its own budget, <em>Resource Group</em> = a project within that department, <em>Resource</em> = individual tools/services used.</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">Management Group</div><div class="svc-desc">Groups subscriptions. Set policies across all.</div></div>
+          <div class="svc"><div class="svc-name">Subscription</div><div class="svc-desc">A billing unit. One company may have Dev + Prod subscriptions.</div></div>
+          <div class="svc"><div class="svc-name">Resource Group</div><div class="svc-desc">Logical container for related resources.</div></div>
+          <div class="svc"><div class="svc-name">Resource</div><div class="svc-desc">Actual service: VM, DB, Storage, etc.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPUTE -->
+<section class="ts" id="section-compute">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,120,212,0.15);border:1px solid rgba(0,120,212,0.3);color:var(--azure)">Compute</div>
+    <h2>Compute Services</h2>
+    <p>"Compute" = things that run your code. Azure has 4 main ways to run code, each with different tradeoffs.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Virtual Machines (VM)</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">IaaS</div></div>
+      <div class="cb">
+        <div class="life">Renting a full computer in the cloud. You choose: how many CPUs, how much RAM, what OS (Windows/Linux), and pay by the hour. You're responsible for installing software, patches, security.</div>
+        <p><strong>When to use:</strong> Legacy apps that need specific OS, full control over environment, lift-and-shift of on-premise servers.</p>
+        <div class="tbox">
+          <div class="tbox-t">VM Key Concepts</div>
+          <ul>
+            <li>VM Size — Standard_B2s (2 vCPU, 4GB RAM) to massive GPU machines</li>
+            <li>VM Scale Sets — Auto-scale VM count based on CPU/traffic demand</li>
+            <li>Availability Set — Spread VMs across physical racks (prevent single point of failure)</li>
+            <li>Managed Disks — OS and data disks, backed by Azure (SSD or HDD)</li>
+            <li>Azure Bastion — Secure SSH/RDP access WITHOUT exposing public IP</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Create VM — Azure CLI</span><span>bash</span></div>
+          <pre><span class="cm"># Create a Linux VM</span>
+az vm create \
+  --resource-group MyRG \
+  --name MyVM \
+  --image UbuntuLTS \
+  --admin-username azureuser \
+  --generate-ssh-keys \
+  --size Standard_B2s
+
+<span class="cm"># Open port 80 for web traffic</span>
+az vm open-port --resource-group MyRG --name MyVM --port 80</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure App Service</div><div class="ctag" style="background:rgba(0,204,106,0.15);color:var(--green)">PaaS</div></div>
+      <div class="cb">
+        <div class="life">Like an apartment vs. building your own house. App Service manages the OS, runtime (Node, Python, .NET), server patches, scaling. You just push your code and it runs. Perfect for web APIs!</div>
+        <p><strong>When to use:</strong> Web apps, REST APIs, Angular frontends, .NET/Node/Python backends. This is what you'd deploy your Angular app or a Python ML API to.</p>
+        <div class="tbox">
+          <div class="tbox-t">App Service Features</div>
+          <ul>
+            <li>Deployment slots — staging slot, then swap to production with ZERO downtime</li>
+            <li>Auto-scale — scale out (more instances) automatically based on CPU/requests</li>
+            <li>Custom domains + free SSL certificates (Let's Encrypt)</li>
+            <li>App Service Plan — the underlying compute you pay for (F1=Free, B1=Basic, P1=Premium)</li>
+            <li>CI/CD built-in — connect GitHub, push code → auto-deploys</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Deploy Node.js API to App Service</span><span>bash</span></div>
+          <pre><span class="cm"># Create App Service Plan</span>
+az appservice plan create \
+  --name MyPlan --resource-group MyRG \
+  --sku B1 --is-linux
+
+<span class="cm"># Create web app</span>
+az webapp create \
+  --name myapi-prod \
+  --resource-group MyRG \
+  --plan MyPlan \
+  --runtime "NODE|18-lts"
+
+<span class="cm"># Deploy from local git</span>
+az webapp deployment source config-local-git \
+  --name myapi-prod --resource-group MyRG</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Functions — Serverless</div><div class="ctag" style="background:rgba(255,140,0,0.15);color:var(--orange)">SERVERLESS</div></div>
+      <div class="cb">
+        <div class="life">Imagine a light switch that only powers on when you flip it, and turns off immediately after. Azure Functions run your code ONLY when triggered — an HTTP request, a timer, a message in a queue. You pay only for the milliseconds it runs, not 24/7.</div>
+        <p><strong>Perfect for:</strong> Event-driven code, scheduled tasks (cron jobs), webhooks, data processing pipelines, background jobs.</p>
+        <div class="tbox">
+          <div class="tbox-t">Function Triggers</div>
+          <ul>
+            <li>HTTP Trigger — runs when someone calls a URL (like a REST endpoint)</li>
+            <li>Timer Trigger — cron schedule (every day at 9am, every 5 minutes)</li>
+            <li>Blob Trigger — runs when file uploaded to Azure Storage</li>
+            <li>Queue Trigger — runs when message added to Azure Queue/Service Bus</li>
+            <li>Event Grid Trigger — runs in response to Azure events</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Azure Function — HTTP + Timer</span><span>Python</span></div>
+          <pre><span class="kw">import</span> azure.functions <span class="kw">as</span> func
+<span class="kw">import</span> logging
+
+<span class="cm"># HTTP Trigger — becomes a REST endpoint</span>
+<span class="dec">@app.route</span>(route=<span class="str">"predict"</span>, methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">predict</span>(req: func.HttpRequest) -> func.HttpResponse:
+    data = req.get_json()
+    result = ml_model.predict(data[<span class="str">'features'</span>])
+    <span class="kw">return</span> func.HttpResponse(json.dumps({<span class="str">'prediction'</span>: result}))
+
+<span class="cm"># Timer Trigger — runs every day at 9am UTC</span>
+<span class="dec">@app.timer_trigger</span>(schedule=<span class="str">"0 0 9 * * *"</span>)
+<span class="kw">def</span> <span class="fn">daily_report</span>(timer: func.TimerRequest):
+    logging.info(<span class="str">'Running daily report...'</span>)
+    generate_report_and_email()</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Kubernetes Service (AKS)</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">CONTAINERS</div></div>
+      <div class="cb">
+        <div class="life">Docker containers are like shipping containers — standardized boxes that run anywhere. Kubernetes (K8s) is the shipping port that manages thousands of containers: which ships carry which containers, auto-replacing broken ones, scaling up when busy. AKS is Azure's managed K8s.</div>
+        <p><strong>When to use:</strong> Microservices, complex multi-container apps, when you need fine-grained control over scaling and deployment strategies.</p>
+        <div class="tbox">
+          <div class="tbox-t">Key K8s Concepts</div>
+          <ul>
+            <li>Pod — smallest unit, one or more containers running together</li>
+            <li>Deployment — manages pods, rolling updates, rollbacks</li>
+            <li>Service — stable IP/DNS name for a group of pods</li>
+            <li>Ingress — HTTP routing rules, like an nginx config for all your services</li>
+            <li>ConfigMap / Secret — inject config/secrets into pods without hardcoding</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Container Instances (ACI)</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">CONTAINERS</div></div>
+      <div class="cb">
+        <div class="life">Run a single Docker container without setting up K8s. Like renting a taxi for one ride vs. buying a fleet. Perfect for one-off tasks, batch jobs, or quick testing. Pay per second.</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Run ML model as container</span><span>bash</span></div>
+          <pre"><span class="cm"># Run your Python ML API as a container, instantly</span>
+az container create \
+  --resource-group MyRG \
+  --name ml-api \
+  --image myregistry.azurecr.io/ml-model:latest \
+  --cpu 2 --memory 4 \
+  --ports 8000 \
+  --environment-variables MODEL_PATH=/models/v2</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STORAGE -->
+<section class="ts" id="section-storage">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,204,106,0.1);border:1px solid rgba(0,204,106,0.2);color:var(--green)">Storage</div>
+    <h2>Storage Services</h2>
+    <p>Azure has multiple storage types because different data needs different storage. Files ≠ Tables ≠ Blobs ≠ Queues.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Blob Storage</div><div class="ctag" style="background:rgba(0,204,106,0.15);color:var(--green)">OBJECT STORE</div></div>
+      <div class="cb">
+        <div class="life">Like a massive Google Drive for your app. Store any file: images, videos, PDFs, ML model files, backups, CSV datasets. "Blob" = Binary Large Object. Massively scalable, cheap, globally accessible via URL.</div>
+        <div class="tbox">
+          <div class="tbox-t">Blob Storage Tiers (by cost vs access speed)</div>
+          <ul>
+            <li>Hot — frequently accessed data, highest storage cost, lowest access cost</li>
+            <li>Cool — infrequently accessed, lower cost, slightly slower</li>
+            <li>Archive — rarely accessed, cheapest storage, hours to retrieve</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Blob Storage — Python SDK</span><span>Python</span></div>
+          <pre><span class="kw">from</span> azure.storage.blob <span class="kw">import</span> BlobServiceClient
+
+client = BlobServiceClient.from_connection_string(conn_str)
+container = client.get_container_client(<span class="str">"ml-datasets"</span>)
+
+<span class="cm"># Upload a file (e.g., CSV dataset)</span>
+<span class="kw">with</span> open(<span class="str">"dataset.csv"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    container.upload_blob(<span class="str">"data/dataset.csv"</span>, f, overwrite=<span class="kw">True</span>)
+
+<span class="cm"># Download it</span>
+blob = container.get_blob_client(<span class="str">"data/dataset.csv"</span>)
+data = blob.download_blob().readall()
+
+<span class="cm"># Generate a temporary shareable URL (SAS Token)</span>
+<span class="kw">from</span> azure.storage.blob <span class="kw">import</span> generate_blob_sas, BlobSasPermissions
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+sas = generate_blob_sas(account_name, container_name, blob_name,
+    account_key=key, permission=BlobSasPermissions(read=<span class="kw">True</span>),
+    expiry=datetime.utcnow() + timedelta(hours=<span class="num">1</span>))
+url = <span class="str">f"https://{account_name}.blob.core.windows.net/{container_name}/{blob_name}?{sas}"</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Storage Account — 4 Services in One</div><div class="ctag" style="background:rgba(0,204,106,0.15);color:var(--green)">STORAGE</div></div>
+      <div class="cb">
+        <div class="life">A Storage Account is like a building with 4 different types of offices inside. You can use all 4 or just the ones you need.</div>
+        <div class="svc-grid">
+          <div class="svc">
+            <div class="svc-name">📦 Blob Storage</div>
+            <div class="svc-desc">Files, images, videos, datasets, backups. Access via URL.</div>
+          </div>
+          <div class="svc">
+            <div class="svc-name">📋 Table Storage</div>
+            <div class="svc-desc">NoSQL key-value store. Cheap, simple. Like a massive spreadsheet in the cloud.</div>
+          </div>
+          <div class="svc">
+            <div class="svc-name">📬 Queue Storage</div>
+            <div class="svc-desc">Message queue for decoupling services. App writes message, worker reads and processes it.</div>
+          </div>
+          <div class="svc">
+            <div class="svc-name">🗂️ File Storage</div>
+            <div class="svc-desc">SMB network file share. Mount it on VMs like a drive (Z:\ drive on Windows).</div>
+          </div>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Create storage account — CLI</span><span>bash</span></div>
+          <pre>az storage account create \
+  --name mystorageaccount \
+  --resource-group MyRG \
+  --location eastus \
+  --sku Standard_LRS \    <span class="cm"># Locally Redundant = 3 copies in 1 datacenter</span>
+  --kind StorageV2        <span class="cm"># Latest version, supports all 4 types</span>
+
+<span class="cm"># Redundancy options:</span>
+<span class="cm"># LRS — 3 copies, same datacenter (cheapest)</span>
+<span class="cm"># ZRS — 3 copies across 3 Availability Zones (same region)</span>
+<span class="cm"># GRS — LRS + copies in paired region (disaster recovery)</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure CDN & Static Web Hosting</div><div class="ctag" style="background:rgba(0,204,106,0.15);color:var(--green)">CDN</div></div>
+      <div class="cb">
+        <div class="life">A CDN (Content Delivery Network) is like a chain of warehouses near customers. Instead of shipping everything from one factory in the US to customers in India, you pre-stock a warehouse in Mumbai. When an Indian user requests your Angular app, it comes from Mumbai — much faster!</div>
+        <p><strong>For Angular apps:</strong> Build with ng build → upload to Blob Storage → enable Static Website → add Azure CDN in front → users get your app in milliseconds globally.</p>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Deploy Angular app to Azure Storage + CDN</span><span>bash</span></div>
+          <pre"><span class="cm"># 1. Build Angular app</span>
+ng build --configuration production
+
+<span class="cm"># 2. Upload to blob storage (with web hosting enabled)</span>
+az storage blob upload-batch \
+  --source dist/my-app \
+  --destination '$web' \
+  --account-name mystaticsite
+
+<span class="cm"># 3. Get the URL</span>
+az storage account show \
+  --name mystaticsite \
+  --query "primaryEndpoints.web"
+<span class="cm"># → https://mystaticsite.z13.web.core.windows.net</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NETWORKING -->
+<section class="ts" id="section-networking">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(80,230,255,0.1);border:1px solid rgba(80,230,255,0.2);color:var(--a2)">Networking</div>
+    <h2>Networking in Azure</h2>
+    <p>How Azure resources talk to each other and to the internet — securely.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Virtual Network (VNet) & Subnets</div><div class="ctag" style="background:rgba(80,230,255,0.15);color:var(--a2)">NETWORK</div></div>
+      <div class="cb">
+        <div class="life">A VNet is a private, isolated network in Azure — like your company's private office building floor. No one outside can enter unless you explicitly let them in. Subnets are different rooms on that floor (one for web servers, one for databases, one for backend services).</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>VNet structure</span><span>concept</span></div>
+          <pre">MyApp-VNet (10.0.0.0/16)
+├── Frontend-Subnet  (10.0.1.0/24) — App Service, Load Balancer
+├── Backend-Subnet   (10.0.2.0/24) — APIs, Functions
+└── DB-Subnet        (10.0.3.0/24) — SQL, Redis — NO internet access
+
+<span class="cm"># Resources in same VNet talk freely</span>
+<span class="cm"># NSG (Network Security Group) = firewall rules per subnet</span>
+<span class="cm"># DB-Subnet NSG: only allow traffic FROM Backend-Subnet on port 1433</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Load Balancer & Application Gateway</div><div class="ctag" style="background:rgba(80,230,255,0.15);color:var(--a2)">TRAFFIC</div></div>
+      <div class="cb">
+        <div class="life"><em>Load Balancer:</em> Like a traffic cop at a busy intersection — distributes incoming cars (requests) across multiple lanes (server instances). <em>Application Gateway:</em> Smarter traffic cop that also checks IDs — it's a Layer 7 (HTTP/HTTPS) load balancer with Web Application Firewall (WAF).</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">Azure Load Balancer</div><div class="svc-desc">Layer 4 (TCP/UDP). Simple round-robin or hash distribution. Fast, cheap.</div></div>
+          <div class="svc"><div class="svc-name">Application Gateway</div><div class="svc-desc">Layer 7 (HTTP). URL-based routing, SSL termination, WAF. More features.</div></div>
+          <div class="svc"><div class="svc-name">Azure Front Door</div><div class="svc-desc">Global CDN + Load Balancer + WAF. Routes users to nearest healthy region.</div></div>
+          <div class="svc"><div class="svc-name">Traffic Manager</div><div class="svc-desc">DNS-based routing across regions. Route to nearest/fastest endpoint.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Private Endpoint & Service Endpoint</div><div class="ctag" style="background:rgba(80,230,255,0.15);color:var(--a2)">SECURITY</div></div>
+      <div class="cb">
+        <div class="life"><em>Service Endpoint:</em> Add a shortcut from your VNet to an Azure service (like SQL DB) that bypasses the public internet. Traffic stays on the Microsoft backbone. <em>Private Endpoint:</em> Give the Azure service a PRIVATE IP inside your VNet. Now SQL DB looks like it's physically in your network — no public IP at all. Much more secure.</div>
+        <div class="wbox">Private Endpoint is the gold standard for security. Your storage account, Key Vault, SQL Database all get private IPs in your VNet. No exposure to the internet whatsoever. This is what enterprise apps use.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- IDENTITY -->
+<section class="ts" id="section-identity">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(122,67,182,0.1);border:1px solid rgba(122,67,182,0.2);color:var(--purple)">Identity</div>
+    <h2>Identity & Access Management</h2>
+    <p>Who is allowed to do what in Azure. The most important security topic.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Active Directory (Azure AD / Entra ID)</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">IDENTITY</div></div>
+      <div class="cb">
+        <div class="life">Azure AD is like the security reception desk for your entire company. Everyone (users, apps, services) must sign in here. It issues ID badges (tokens). Other services call the reception desk to verify the badge. It's SSO for everything Microsoft.</div>
+        <div class="tbox">
+          <div class="tbox-t">Key Concepts</div>
+          <ul>
+            <li>Tenant — your organization's Azure AD instance (one per company)</li>
+            <li>User — a person with email + password in Azure AD</li>
+            <li>Service Principal — an identity for an APP (not a person) to authenticate</li>
+            <li>Managed Identity — an automatic identity for Azure services (no password needed!)</li>
+            <li>App Registration — register your app to use Azure AD for login (OAuth2/OIDC)</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Managed Identity — secure, no passwords!</span><span>Python</span></div>
+          <pre><span class="kw">from</span> azure.identity <span class="kw">import</span> DefaultAzureCredential
+<span class="kw">from</span> azure.keyvault.secrets <span class="kw">import</span> SecretClient
+
+<span class="cm"># No password, connection string, or API key anywhere in code!</span>
+<span class="cm"># The VM/Function/App Service has an identity, Azure validates it</span>
+credential = DefaultAzureCredential()
+
+<span class="cm"># Access Key Vault using managed identity</span>
+kv_client = SecretClient(
+    vault_url=<span class="str">"https://myvault.vault.azure.net"</span>,
+    credential=credential
+)
+secret = kv_client.get_secret(<span class="str">"db-connection-string"</span>)
+print(secret.value)  <span class="cm"># Got it without any hardcoded credentials!</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">RBAC — Role-Based Access Control</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">RBAC</div></div>
+      <div class="cb">
+        <div class="life">Like hotel key cards — a cleaner's keycard opens rooms but not the vault. A guest's card opens their own room. A manager's card opens everything. RBAC in Azure: you assign roles to users/services at different scopes.</div>
+        <div class="tbox">
+          <div class="tbox-t">Built-in Roles (most common)</div>
+          <ul>
+            <li>Owner — full access including managing who else has access</li>
+            <li>Contributor — create/modify resources, but can't manage access</li>
+            <li>Reader — view resources only, no changes</li>
+            <li>Storage Blob Data Contributor — read/write blobs only</li>
+            <li>Key Vault Secrets User — read secrets only (not keys or certificates)</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Assign RBAC role — CLI</span><span>bash</span></div>
+          <pre><span class="cm"># Give a user "Reader" access to a resource group</span>
+az role assignment create \
+  --assignee <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a5d0d6c0d7e5c6cac8d5c4cbdc8bc6cac8">[email&#160;protected]</a> \
+  --role Reader \
+  --resource-group MyRG
+
+<span class="cm"># Give a Function App's managed identity access to Key Vault</span>
+az role assignment create \
+  --assignee {managed-identity-object-id} \
+  --role "Key Vault Secrets User" \
+  --scope /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.KeyVault/vaults/{vault}</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- KEY VAULT -->
+<section class="ts" id="section-keyvault">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.2);color:var(--orange)">Secrets</div>
+    <h2>Azure Key Vault</h2>
+    <p>The secure place to store all your passwords, API keys, certificates, and connection strings. Never hardcode secrets in code again.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card" style="grid-column:1/-1;">
+      <div class="ch"><div class="ct">Key Vault — Secrets, Keys & Certificates</div><div class="ctag" style="background:rgba(255,140,0,0.15);color:var(--orange)">VAULT</div></div>
+      <div class="cb">
+        <div class="life">Key Vault is a bank safety deposit box for your app. You never write the combination (password) on a sticky note (in code). Instead, you put secrets IN the vault and your app retrieves them at runtime using its ID badge (Managed Identity).</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">🔑 Secrets</div><div class="svc-desc">Passwords, API keys, connection strings. Store and retrieve by name. Versioned. "db-password" → "P@ssw0rd123"</div></div>
+          <div class="svc"><div class="svc-name">🗝️ Keys</div><div class="svc-desc">Cryptographic keys for encryption/signing. Keys never leave the vault — you send data IN, get encrypted data back.</div></div>
+          <div class="svc"><div class="svc-name">📜 Certificates</div><div class="svc-desc">TLS/SSL certificates. Auto-renewal, no more "certificate expired" incidents.</div></div>
+          <div class="svc"><div class="svc-name">🔒 HSM</div><div class="svc-desc">Hardware Security Module — physically tamper-proof key storage for max security (Premium tier).</div></div>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Key Vault — full workflow</span><span>Python + bash</span></div>
+          <pre><span class="cm"># 1. Store a secret via CLI</span>
+az keyvault secret set \
+  --vault-name myapp-vault \
+  --name "openai-api-key" \
+  --value "sk-xxxxxxxxxxxxxxxx"
+
+<span class="cm"># 2. Give your app's managed identity access</span>
+az keyvault set-policy \
+  --name myapp-vault \
+  --object-id {app-managed-identity-id} \
+  --secret-permissions get list
+
+<span class="cm"># 3. App reads secret at runtime — Python</span>
+<span class="kw">from</span> azure.identity <span class="kw">import</span> DefaultAzureCredential
+<span class="kw">from</span> azure.keyvault.secrets <span class="kw">import</span> SecretClient
+
+credential = DefaultAzureCredential()
+client = SecretClient(<span class="str">"https://myapp-vault.vault.azure.net"</span>, credential)
+
+openai_key = client.get_secret(<span class="str">"openai-api-key"</span>).value
+<span class="cm"># Use it — never stored in code or environment variables!</span>
+
+<span class="cm"># App Service: reference Key Vault in app settings</span>
+<span class="cm"># @Microsoft.KeyVault(SecretUri=https://vault.azure.net/secrets/name/version)</span></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DATABASES -->
+<section class="ts" id="section-databases">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(255,185,0,0.1);border:1px solid rgba(255,185,0,0.2);color:var(--yellow)">Databases</div>
+    <h2>Azure Database Services</h2>
+    <p>Azure has managed versions of every popular database. "Managed" means Azure handles backups, patches, HA, scaling.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure SQL Database</div><div class="ctag" style="background:rgba(255,185,0,0.15);color:var(--yellow)">SQL</div></div>
+      <div class="cb">
+        <div class="life">Fully managed SQL Server in the cloud. You just run queries — Azure handles: automatic backups every 5-35 days, automatic failover if the server crashes, automatic patching, built-in threat detection.</div>
+        <div class="tbox">
+          <div class="tbox-t">Purchasing Models</div>
+          <ul>
+            <li>DTU model — simpler, fixed bundles (Basic/Standard/Premium)</li>
+            <li>vCore model — choose exact CPUs and RAM, more flexible</li>
+            <li>Serverless — auto-scales compute, pauses when idle (save cost!)</li>
+            <li>Hyperscale — up to 100TB, read replicas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Cosmos DB</div><div class="ctag" style="background:rgba(255,185,0,0.15);color:var(--yellow)">NOSQL</div></div>
+      <div class="cb">
+        <div class="life">The world's biggest, most globally distributed NoSQL database. Like having a copy of your database on every continent, all staying in sync within milliseconds. Used by most Fortune 500 companies for global apps.</div>
+        <p><strong>APIs supported:</strong> NoSQL (documents), MongoDB, Cassandra, Gremlin (graph), Table. You pick your preferred API and it works.</p>
+        <div class="tbox">
+          <div class="tbox-t">When to use Cosmos DB</div>
+          <ul>
+            <li>Global apps needing &lt;10ms reads anywhere in the world</li>
+            <li>Variable/schema-less data (JSON documents)</li>
+            <li>Massive scale (millions of requests/second)</li>
+            <li>IoT telemetry, social media feeds, gaming leaderboards</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Cache for Redis</div><div class="ctag" style="background:rgba(255,185,0,0.15);color:var(--yellow)">CACHE</div></div>
+      <div class="cb">
+        <div class="life">Your database is like a library — great for storing everything, but slow to fetch. Redis is like sticky notes on your desk — the 10 things you access most often, RIGHT THERE, instantly. Cache frequently accessed data in Redis, drastically reducing DB load and response times.</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Redis cache pattern — Python</span><span>Python</span></div>
+          <pre><span class="kw">import</span> redis
+r = redis.from_url(os.getenv(<span class="str">"REDIS_URL"</span>))
+
+<span class="kw">def</span> <span class="fn">get_user</span>(user_id: str):
+    <span class="cm"># 1. Check cache first</span>
+    cached = r.get(<span class="str">f"user:{user_id}"</span>)
+    <span class="kw">if</span> cached:
+        <span class="kw">return</span> json.loads(cached)
+
+    <span class="cm"># 2. Cache miss — fetch from DB</span>
+    user = db.query(<span class="str">"SELECT * FROM users WHERE id=?"</span>, user_id)
+
+    <span class="cm"># 3. Store in cache for 5 minutes</span>
+    r.setex(<span class="str">f"user:{user_id}"</span>, <span class="num">300</span>, json.dumps(user))
+    <span class="kw">return</span> user</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MESSAGING -->
+<section class="ts" id="section-messaging">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(80,230,255,0.1);border:1px solid rgba(80,230,255,0.2);color:var(--a2)">Messaging</div>
+    <h2>Messaging & Event Services</h2>
+    <p>Decouple your services. Instead of calling each other directly (tight coupling), services communicate via messages or events.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Service Bus</div><div class="ctag" style="background:rgba(80,230,255,0.15);color:var(--a2)">MESSAGING</div></div>
+      <div class="cb">
+        <div class="life">Enterprise-grade message broker. Like a courier service between departments in a company: Service A drops a package (message) at the courier. Service B picks it up when ready. Even if B is offline for 2 hours, the package waits. Messages are guaranteed to be delivered exactly once.</div>
+        <div class="tbox">
+          <div class="tbox-t">Queue vs Topic</div>
+          <ul>
+            <li>Queue — one sender, one receiver (point-to-point, competitive consumers)</li>
+            <li>Topic + Subscriptions — one sender, many receivers (pub/sub, fan-out)</li>
+            <li>Dead Letter Queue — failed messages go here for inspection/retry</li>
+            <li>Sessions — guarantee ordering for a specific customer's messages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Event Hub & Event Grid</div><div class="ctag" style="background:rgba(80,230,255,0.15);color:var(--a2)">EVENTS</div></div>
+      <div class="cb">
+        <div class="life"><em>Event Hub:</em> A data pipeline for massive volume of events. Like a high-speed conveyor belt at Amazon's warehouse — millions of packages per second. Used for telemetry, clickstreams, IoT sensor data. Kafka-compatible. <em>Event Grid:</em> React to Azure events. When someone uploads a file to Blob Storage, automatically run a Function. When a VM is deleted, send a Slack notification. Infrastructure events → code reactions.</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">Event Hub</div><div class="svc-desc">Big data streaming. Millions of events/sec. 1 to 90 day retention. Kafka protocol.</div></div>
+          <div class="svc"><div class="svc-name">Event Grid</div><div class="svc-desc">Reactive to Azure events. HTTP push to subscribers. Low volume, event-driven.</div></div>
+          <div class="svc"><div class="svc-name">Service Bus</div><div class="svc-desc">Enterprise messaging. Guaranteed delivery, ordering, dead-lettering.</div></div>
+          <div class="svc"><div class="svc-name">Storage Queue</div><div class="svc-desc">Simple, cheap. Max 64KB message. Basic at-least-once delivery.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AI SERVICES -->
+<section class="ts" id="section-aiservices">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(122,67,182,0.1);border:1px solid rgba(122,67,182,0.2);color:var(--purple)">AI</div>
+    <h2>Azure AI & Cognitive Services</h2>
+    <p>Pre-built AI models as APIs — no ML knowledge required to USE them. This connects directly to your ML learning.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure OpenAI Service</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">OPENAI</div></div>
+      <div class="cb">
+        <div class="life">GPT-4, DALL-E, Whisper — accessed via Azure's infrastructure with enterprise security, private networking, GDPR compliance, SLAs. Same models as OpenAI.com but with Azure's security wrapper. Your data doesn't train their models.</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Azure OpenAI — Python</span><span>Python</span></div>
+          <pre><span class="kw">from</span> openai <span class="kw">import</span> AzureOpenAI
+
+client = AzureOpenAI(
+    azure_endpoint=<span class="str">"https://myapp.openai.azure.com"</span>,
+    api_key=os.getenv(<span class="str">"AZURE_OPENAI_KEY"</span>),  <span class="cm"># or Managed Identity!</span>
+    api_version=<span class="str">"2024-02-01"</span>
+)
+
+response = client.chat.completions.create(
+    model=<span class="str">"gpt-4"</span>,  <span class="cm"># your deployment name</span>
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"You are a helpful assistant."</span>},
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Explain machine learning simply."</span>}
+    ]
+)
+print(response.choices[<span class="num">0</span>].message.content)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure ML Studio & Machine Learning</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">ML</div></div>
+      <div class="cb">
+        <div class="life">Azure ML is a complete platform for ML teams: create datasets, train models (on GPU clusters), track experiments, register models, deploy them as REST APIs, monitor them in production. The entire ML lifecycle in one place.</div>
+        <div class="tbox">
+          <div class="tbox-t">Azure ML Key Components</div>
+          <ul>
+            <li>Workspace — the container for everything ML in your project</li>
+            <li>Compute Clusters — auto-scale GPU/CPU VMs for training</li>
+            <li>Experiments — track model training runs (hyperparams, metrics, artifacts)</li>
+            <li>Model Registry — versioned models with metadata</li>
+            <li>Endpoints — deploy a model as a REST API (managed online endpoint)</li>
+            <li>Pipelines — chain data prep → training → evaluation → deployment</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Deploy ML model as API — Python</span><span>Python</span></div>
+          <pre"><span class="kw">from</span> azure.ai.ml <span class="kw">import</span> MLClient
+<span class="kw">from</span> azure.identity <span class="kw">import</span> DefaultAzureCredential
+
+ml_client = MLClient(DefaultAzureCredential(), subscription, rg, workspace)
+
+<span class="cm"># Register trained model</span>
+model = ml_client.models.create_or_update(Model(
+    path=<span class="str">"./model"</span>, name=<span class="str">"fraud-detector"</span>, version=<span class="str">"2"</span>
+))
+
+<span class="cm"># Deploy as online endpoint</span>
+deployment = ManagedOnlineDeployment(
+    name=<span class="str">"v2"</span>, endpoint_name=<span class="str">"fraud-api"</span>,
+    model=model, instance_type=<span class="str">"Standard_DS3_v2"</span>, instance_count=<span class="num">1</span>
+)
+ml_client.online_deployments.begin_create_or_update(deployment)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Cognitive Services (AI APIs)</div><div class="ctag" style="background:rgba(122,67,182,0.15);color:var(--purple)">COGNITIVE</div></div>
+      <div class="cb">
+        <div class="life">Pre-built AI you can call via REST API — no training required. Like buying a calculator vs. building one. Microsoft trained these models, you just call the API.</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">👁️ Computer Vision</div><div class="svc-desc">Analyze images, detect objects, OCR text from images, describe photos</div></div>
+          <div class="svc"><div class="svc-name">💬 Language</div><div class="svc-desc">Sentiment analysis, entity extraction, key phrase, language detection, summarization</div></div>
+          <div class="svc"><div class="svc-name">🗣️ Speech</div><div class="svc-desc">Speech-to-text, text-to-speech, real-time transcription, speaker diarization</div></div>
+          <div class="svc"><div class="svc-name">🔍 Document Intelligence</div><div class="svc-desc">Extract structured data from invoices, receipts, contracts, forms (formerly Form Recognizer)</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEVOPS -->
+<section class="ts" id="section-devops">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,204,106,0.1);border:1px solid rgba(0,204,106,0.2);color:var(--green)">DevOps</div>
+    <h2>Azure DevOps & CI/CD</h2>
+    <p>Automate everything from code commit to production deployment.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure DevOps — All Services</div><div class="ctag" style="background:rgba(0,204,106,0.15);color:var(--green)">DEVOPS</div></div>
+      <div class="cb">
+        <div class="life">Azure DevOps is like a complete factory management system for software: from accepting raw materials (code) to delivering finished products (deployed apps) through quality control (testing) and automated assembly lines (CI/CD pipelines).</div>
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">📋 Boards</div><div class="svc-desc">Work items, sprints, Kanban boards, backlogs. Like Jira.</div></div>
+          <div class="svc"><div class="svc-name">📦 Repos</div><div class="svc-desc">Git repositories. Like GitHub.</div></div>
+          <div class="svc"><div class="svc-name">🔄 Pipelines</div><div class="svc-desc">CI/CD automation. Build, test, deploy on every push.</div></div>
+          <div class="svc"><div class="svc-name">🧪 Test Plans</div><div class="svc-desc">Manual + automated testing management.</div></div>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Azure Pipelines — YAML CI/CD for Angular + Python API</span><span>YAML</span></div>
+          <pre>trigger:
+  branches:
+    include: [main]
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildAngular
+    steps:
+    - task: NodeTool@0
+      inputs: { versionSpec: '18.x' }
+    - script: |
+        npm ci
+        npm run build -- --configuration production
+    - publish: dist/my-app
+      artifact: angular-build
+
+  - job: BuildPythonAPI
+    steps:
+    - script: pip install -r requirements.txt
+    - script: pytest tests/ -v
+    - script: docker build -t myapi:$(Build.BuildId) .
+
+- stage: Deploy
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: DeployToProduction
+    environment: production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'MyAzureConnection'
+              appName: 'myapp-api'
+              package: '$(Pipeline.Workspace)/drop/*.zip'</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MONITORING -->
+<section class="ts" id="section-monitoring">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.2);color:var(--orange)">Monitoring</div>
+    <h2>Monitoring & Observability</h2>
+    <p>"If you can't measure it, you can't improve it." Azure Monitor is the central hub for all observability.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Azure Monitor & Application Insights</div><div class="ctag" style="background:rgba(255,140,0,0.15);color:var(--orange)">MONITOR</div></div>
+      <div class="cb">
+        <div class="life"><em>Azure Monitor:</em> The mission control center — collects metrics and logs from ALL Azure resources. CPU of your VM, error rate of your API, storage usage. <em>Application Insights:</em> Smart APM (Application Performance Monitoring) for your code. Automatically tracks requests, exceptions, dependencies, response times — without you adding log statements everywhere.</div>
+        <div class="tbox">
+          <div class="tbox-t">Application Insights gives you</div>
+          <ul>
+            <li>Live Metrics — see requests/sec and failures in real time</li>
+            <li>Transaction Search — trace every individual request end-to-end</li>
+            <li>Failures — which endpoints fail, what exceptions are thrown</li>
+            <li>Performance — slowest requests, external dependencies (SQL, HTTP calls)</li>
+            <li>Users — page views, sessions, geographic breakdown</li>
+            <li>Alerts — notify on Slack/email when error rate > 5%</li>
+          </ul>
+        </div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>Add App Insights to Python API</span><span>Python</span></div>
+          <pre"><span class="kw">from</span> applicationinsights <span class="kw">import</span> TelemetryClient
+
+tc = TelemetryClient(os.getenv(<span class="str">"APPINSIGHTS_KEY"</span>))
+
+<span class="cm"># Track custom events</span>
+tc.track_event(<span class="str">"ModelPrediction"</span>, {<span class="str">"model_version"</span>: <span class="str">"v2"</span>}, {<span class="str">"confidence"</span>: <span class="num">0.95</span>})
+
+<span class="cm"># Track exceptions</span>
+<span class="kw">try</span>:
+    result = model.predict(data)
+<span class="kw">except Exception</span> <span class="kw">as</span> e:
+    tc.track_exception()
+    tc.flush()
+    raise
+
+<span class="cm"># For FastAPI — use opencensus-ext-azure (auto-instruments everything)</span>
+<span class="kw">from</span> opencensus.ext.azure.trace_exporter <span class="kw">import</span> AzureExporter
+<span class="kw">from</span> opencensus.trace.samplers <span class="kw">import</span> ProbabilitySampler</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Log Analytics & KQL Queries</div><div class="ctag" style="background:rgba(255,140,0,0.15);color:var(--orange)">LOGS</div></div>
+      <div class="cb">
+        <div class="life">Log Analytics is like Google for your logs. All logs from all services flow into one place. You query them with KQL (Kusto Query Language) — like SQL but optimized for time-series log data.</div>
+        <div class="cb-block">
+          <div class="cb-hdr"><span>KQL — common queries</span><span>KQL</span></div>
+          <pre><span class="cm">// Top 10 most common errors in last 24h</span>
+exceptions
+| where timestamp > ago(24h)
+| summarize count() by outerMessage
+| order by count_ desc
+| take 10
+
+<span class="cm">// Average API response time by endpoint</span>
+requests
+| where timestamp > ago(1h)
+| summarize avg(duration) by name
+| order by avg_duration desc
+
+<span class="cm">// Find slow SQL queries</span>
+dependencies
+| where type == "SQL" and duration > 1000
+| project timestamp, name, duration, data</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="ts" id="section-pricing">
+  <div class="ph">
+    <div class="bdg" style="background:rgba(0,120,212,0.1);border:1px solid rgba(0,120,212,0.2);color:var(--azure)">Cost</div>
+    <h2>Pricing & Cost Management</h2>
+    <p>Cloud costs can surprise you. Understand pricing models and how to keep bills low.</p>
+  </div>
+  <div class="cg">
+
+    <div class="card">
+      <div class="ch"><div class="ct">Pricing Models</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">PRICING</div></div>
+      <div class="cb">
+        <div class="svc-grid">
+          <div class="svc"><div class="svc-name">Pay-as-you-go</div><div class="svc-desc">No commitment. Pay per second/GB/request. Most expensive per unit but zero lock-in.</div></div>
+          <div class="svc"><div class="svc-name">Reserved Instances</div><div class="svc-desc">Commit to 1 or 3 years upfront. Save 40-72% vs pay-as-you-go for predictable workloads.</div></div>
+          <div class="svc"><div class="svc-name">Spot/Low Priority VMs</div><div class="svc-desc">Unused capacity, up to 90% discount. Azure can reclaim at any time — use for batch jobs.</div></div>
+          <div class="svc"><div class="svc-name">Azure Hybrid Benefit</div><div class="svc-desc">Bring your own Windows Server / SQL Server licenses. Save 40%+.</div></div>
+        </div>
+        <div class="tbox">
+          <div class="tbox-t">Cost Saving Tips</div>
+          <ul>
+            <li>Auto-shutdown dev/test VMs outside business hours</li>
+            <li>Use Azure Functions (serverless) instead of always-on VMs for intermittent work</li>
+            <li>Set budgets and alerts in Cost Management before you overspend</li>
+            <li>Delete unused resources (orphaned disks, old snapshots, unused IPs)</li>
+            <li>Use Cool/Archive blob tiers for infrequently accessed data</li>
+            <li>Azure Advisor — free recommendations on cost, security, performance</li>
+          </ul>
+        </div>
+        <div class="wbox">Azure Pricing Calculator (calculator.azure.com) lets you estimate costs before you build. Azure Cost Management shows your actual spending by service, resource group, and tag. Set a budget alert at 80% of your monthly limit to avoid surprises.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Certification Path</div><div class="ctag" style="background:rgba(0,120,212,0.15);color:var(--azure)">CERTS</div></div>
+      <div class="cb">
+        <div class="life">Azure certifications are like driving licenses — they prove to employers you know the concepts. They're internationally recognized and often required for senior cloud roles.</div>
+        <div class="tbox">
+          <div class="tbox-t">Recommended Path for You</div>
+          <ul>
+            <li>AZ-900: Azure Fundamentals — concepts, no technical depth (start here if new)</li>
+            <li>AZ-104: Azure Administrator — VMs, networking, storage, identity (3yr devs)</li>
+            <li>AZ-204: Azure Developer — Functions, App Service, Cosmos DB, APIs ← MOST RELEVANT</li>
+            <li>AZ-305: Azure Architect — design solutions end-to-end</li>
+            <li>AI-102: Azure AI Engineer — Cognitive Services, Azure ML</li>
+          </ul>
+        </div>
+        <p><strong>For your background</strong> (3yr dev, learning ML): Start with AZ-204 (Developer) — it covers exactly what you'll use: App Service, Functions, Cosmos DB, Key Vault, Storage, identity. Then AI-102 to combine cloud + ML knowledge.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function s(name) {
+  document.querySelectorAll('.ts').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x => x.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelector(`[data-s="${name}"]`).classList.add('active');
+  window.scrollTo(0,0);
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+}
+function filter() {
